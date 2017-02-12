@@ -84,7 +84,14 @@
   (let ((map (make-sparse-keymap))
         (after-make-frame-functions nil) ; Avoid interference by elscreen
         )
-    (select-frame (make-frame elshogi-display-frame-params))
+    (select-frame
+     (make-frame `((tool-bar-lines . 0)
+                   (menu-bar-lines . 0)
+                   ;; Make new frames minibufferless so they can refer
+                   ;; the parent frame with `default-minibuffer-frame'.
+                   (minibuffer . nil)
+                   (vertical-scroll-bars . nil)
+                   ,@elshogi-display-frame-params)))
     (define-key map [?q] #'elshogi-display-quit-frame)
     (set-keymap-parent map elshogi-mode-map)
     (use-local-map map)))
