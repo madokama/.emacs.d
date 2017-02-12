@@ -18,7 +18,8 @@
                               'face 'mode-line-buffer-id)))
   (setq-local revert-buffer-function #'elshogi-watch-update))
 
-(defun elshogi-watch-ambiguate-count (n amb-p)
+(defsubst elshogi-watch-may-amb-count (n amb-p)
+  ;; To avoid revealing the winner.
   (if amb-p
       (replace-regexp-in-string (rx digit eos) "x" (number-to-string n))
     n))
@@ -29,7 +30,7 @@
                   0)))
     (format "%d/%s"
             (count #'elshogi-game-latest-move)
-            (elshogi-watch-ambiguate-count
+            (elshogi-watch-may-amb-count
              (count #'elshogi-game-final-move)
              (not (elshogi-game/live-p elshogi-current-game))))))
 
