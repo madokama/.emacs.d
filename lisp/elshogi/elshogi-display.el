@@ -72,13 +72,13 @@
   (delete-frame))
 
 (defun elshogi-display-buffer (buf &optional update-p)
-  (prog1 buf
-    (with-current-buffer buf
-      (elshogi-mode)
-      (if (and (not update-p) elshogi-display-use-frame)
-          (elshogi-display-frame)
-        (pop-to-buffer-same-window buf))
-      (run-hooks 'elshogi-display-after-hooks))))
+  (with-current-buffer buf
+    (elshogi-mode)
+    (if (and elshogi-display-use-frame (not update-p))
+        (elshogi-display-frame)
+      (pop-to-buffer-same-window buf))
+    (run-hooks 'elshogi-display-after-hooks))
+  buf)
 
 (defun elshogi-display-frame ()
   (let ((map (make-sparse-keymap))
