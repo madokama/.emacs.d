@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+#name : x-offset
+#key : xo
+# --
+\\tweak X-offset #$0

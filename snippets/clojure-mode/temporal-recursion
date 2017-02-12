@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: temporal recursion
+# key: t
+# --
+(defn ${1:func-name} [beat dur]
+  $0
+  (after dur $1 dur))
+
+($1 (next-bar) ${2:4})

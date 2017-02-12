@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+#name : use-package
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+#key : up
+# binding: direct-keybinding
+# --
+(use-package ${1:package}
+  :unless noninteractive
+  :load-path "site-lisp/$1"
+  :defer t
+  :diminish ""
+  :commands ()
+  :bind ()
+  :init
+  :config
+  $0)

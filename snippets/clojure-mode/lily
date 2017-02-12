@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: play lily
+# key: ly
+# --
+(play-music ${1:inst}
+            (parse-music 'c${2:'} '($0)))

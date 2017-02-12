@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: global
+# key: g
+# --
+\version "2.18.2"
+
+\include "../../global.ly"
+
+global = {
+  $0\time 4/4
+  \key c \major
+  %%\tempo "Adagio"
+}

@@ -1,0 +1,4 @@
+# key: pcdia
+# name: pc diatonic
+# --
+(pc:diatonic ${1:0} ${2::m} ${3:degree})

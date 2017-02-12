@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: provide
+# key: provide
+# --
+;;; `(file-name-sans-extension (buffer-name))` --- description -*- lexical-binding: t; -*-
+
+;;; Commentary:
+
+;;; Code:
+
+$0(provide '`(file-name-sans-extension (buffer-name))`)
+;;; `(file-name-nondirectory (buffer-name))` ends here

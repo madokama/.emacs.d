@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ranged rand
+# key: rr
+# --
+(ranged-rand ${1:from} ${2:to})

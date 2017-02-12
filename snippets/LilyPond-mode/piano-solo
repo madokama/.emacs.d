@@ -1,0 +1,29 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: piano solo
+# key: piano
+# --
+rh = \relative c' {
+}
+
+lh = \relative c {
+}
+
+\score {
+  \new PianoStaff <<
+    %%\set PianoStaff.connectArpeggios = ##t
+    \new Staff = "up" \with {
+      %%\consists "Span_arpeggio_engraver"
+    } <<
+      \global
+      \clef treble
+      \new Voice = "rh" \rh
+    >>
+
+    \new Staff = "down" <<
+      \global
+      \clef bass
+      \new Voice = "lh" \lh
+    >>
+  >>
+  \layout { indent = 0 }
+}

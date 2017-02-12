@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : lexical-binding
+#key : lb
+#contributor :
+# --
+;; -*- lexical-binding: t; -*-

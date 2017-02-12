@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: new voice
+# key: nv
+# binding: direct-keybinding
+# --
+\new Voice = "$1" \\$1

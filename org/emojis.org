@@ -1,0 +1,2269 @@
+#+BEGIN_QUOTE
+(cl-loop for c from #Xe100 to #Xe16f
+   do (insert (format "(%d .	%c)\n" c c)))
+(57600 .	)
+(57601 .	)
+(57602 .	)
+(57603 .	)
+(57604 .	)
+(57605 .	)
+(57606 .	)
+(57607 .	)
+(57608 .	)
+(57609 .	)
+(57610 .	)
+(57611 .	)
+(57612 .	)
+(57613 .	)
+(57614 .	)
+(57615 .	)
+(57616 .	)
+(57617 .	)
+(57618 .	)
+(57619 .	)
+(57620 .	)
+(57621 .	)
+(57622 .	)
+(57623 .	)
+(57624 .	)
+(57625 .	)
+(57626 .	)
+(57627 .	)
+(57628 .	)
+(57629 .	)
+(57630 .	)
+(57631 .	)
+(57632 .	)
+(57633 .	)
+(57634 .	)
+(57635 .	)
+(57636 .	)
+(57637 .	)
+(57638 .	)
+(57639 .	)
+(57640 .	)
+(57641 .	)
+(57642 .	)
+(57643 .	)
+(57644 .	)
+(57645 .	)
+(57646 .	)
+(57647 .	)
+(57648 .	)
+(57649 .	)
+(57650 .	)
+(57651 .	)
+(57652 .	)
+(57653 .	)
+(57654 .	)
+(57655 .	)
+(57656 .	)
+(57657 .	)
+(57658 .	)
+(57659 .	)
+(57660 .	)
+(57661 .	)
+(57662 .	)
+(57663 .	)
+(57664 .	)
+(57665 .	)
+(57666 .	)
+(57667 .	)
+(57668 .	)
+(57669 .	)
+(57670 .	)
+(57671 .	)
+(57672 .	)
+(57673 .	)
+(57674 .	)
+(57675 .	)
+(57676 .	)
+(57677 .	)
+(57678 .	)
+(57679 .	)
+(57680 .	)
+(57681 .	)
+(57682 .	)
+(57683 .	)
+(57684 .	)
+(57685 .	)
+(57686 .	)
+(57687 .	)
+(57688 .	)
+(57689 .	)
+(57690 .	)
+(57691 .	)
+(57692 .	)
+(57693 .	)
+(57694 .	)
+(57695 .	)
+(57696 .	)
+(57697 .	)
+(57698 .	)
+(57699 .	)
+(57700 .	)
+(57701 .	)
+(57702 .	)
+(57703 .	)
+(57704 .	)
+(57705 .	)
+(57706 .	)
+(57707 .	)
+(57708 .	)
+(57709 .	)
+(57710 .	)
+(57711 .	)
+#+END_QUOTE
+
+#+RESULTS: FontAwesome
+|  | #xf000 | fa-glass                               |
+|  | #xf001 | fa-music                               |
+|  | #xf002 | fa-search                              |
+|  | #xf003 | fa-envelope-o                          |
+|  | #xf004 | fa-heart                               |
+|  | #xf005 | fa-star                                |
+|  | #xf006 | fa-star-o                              |
+|  | #xf007 | fa-user                                |
+|  | #xf008 | fa-film                                |
+|  | #xf009 | fa-th-large                            |
+|  | #xf00a | fa-th                                  |
+|  | #xf00b | fa-th-list                             |
+|  | #xf00c | fa-check                               |
+|  | #xf00d | fa-times                               |
+|  | #xf00d | fa-remove                              |
+|  | #xf00d | fa-close                               |
+|  | #xf00e | fa-search-plus                         |
+|  | #xf010 | fa-search-minus                        |
+|  | #xf011 | fa-power-off                           |
+|  | #xf012 | fa-signal                              |
+|  | #xf013 | fa-gear                                |
+|  | #xf013 | fa-cog                                 |
+|  | #xf014 | fa-trash-o                             |
+|  | #xf015 | fa-home                                |
+|  | #xf016 | fa-file-o                              |
+|  | #xf017 | fa-clock-o                             |
+|  | #xf018 | fa-road                                |
+|  | #xf019 | fa-download                            |
+|  | #xf01a | fa-arrow-circle-o-down                 |
+|  | #xf01b | fa-arrow-circle-o-up                   |
+|  | #xf01c | fa-inbox                               |
+|  | #xf01d | fa-play-circle-o                       |
+|  | #xf01e | fa-rotate-right                        |
+|  | #xf01e | fa-repeat                              |
+|  | #xf021 | fa-refresh                             |
+|  | #xf022 | fa-list-alt                            |
+|  | #xf023 | fa-lock                                |
+|  | #xf024 | fa-flag                                |
+|  | #xf025 | fa-headphones                          |
+|  | #xf026 | fa-volume-off                          |
+|  | #xf027 | fa-volume-down                         |
+|  | #xf028 | fa-volume-up                           |
+|  | #xf029 | fa-qrcode                              |
+|  | #xf02a | fa-barcode                             |
+|  | #xf02b | fa-tag                                 |
+|  | #xf02c | fa-tags                                |
+|  | #xf02d | fa-book                                |
+|  | #xf02e | fa-bookmark                            |
+|  | #xf02f | fa-print                               |
+|  | #xf030 | fa-camera                              |
+|  | #xf031 | fa-font                                |
+|  | #xf032 | fa-bold                                |
+|  | #xf033 | fa-italic                              |
+|  | #xf034 | fa-text-height                         |
+|  | #xf035 | fa-text-width                          |
+|  | #xf036 | fa-align-left                          |
+|  | #xf037 | fa-align-center                        |
+|  | #xf038 | fa-align-right                         |
+|  | #xf039 | fa-align-justify                       |
+|  | #xf03a | fa-list                                |
+|  | #xf03b | fa-outdent                             |
+|  | #xf03b | fa-dedent                              |
+|  | #xf03c | fa-indent                              |
+|  | #xf03d | fa-video-camera                        |
+|  | #xf03e | fa-picture-o                           |
+|  | #xf03e | fa-photo                               |
+|  | #xf03e | fa-image                               |
+|  | #xf040 | fa-pencil                              |
+|  | #xf041 | fa-map-marker                          |
+|  | #xf042 | fa-adjust                              |
+|  | #xf043 | fa-tint                                |
+|  | #xf044 | fa-pencil-square-o                     |
+|  | #xf044 | fa-edit                                |
+|  | #xf045 | fa-share-square-o                      |
+|  | #xf046 | fa-check-square-o                      |
+|  | #xf047 | fa-arrows                              |
+|  | #xf048 | fa-step-backward                       |
+|  | #xf049 | fa-fast-backward                       |
+|  | #xf04a | fa-backward                            |
+|  | #xf04b | fa-play                                |
+|  | #xf04c | fa-pause                               |
+|  | #xf04d | fa-stop                                |
+|  | #xf04e | fa-forward                             |
+|  | #xf050 | fa-fast-forward                        |
+|  | #xf051 | fa-step-forward                        |
+|  | #xf052 | fa-eject                               |
+|  | #xf053 | fa-chevron-left                        |
+|  | #xf054 | fa-chevron-right                       |
+|  | #xf055 | fa-plus-circle                         |
+|  | #xf056 | fa-minus-circle                        |
+|  | #xf057 | fa-times-circle                        |
+|  | #xf058 | fa-check-circle                        |
+|  | #xf059 | fa-question-circle                     |
+|  | #xf05a | fa-info-circle                         |
+|  | #xf05b | fa-crosshairs                          |
+|  | #xf05c | fa-times-circle-o                      |
+|  | #xf05d | fa-check-circle-o                      |
+|  | #xf05e | fa-ban                                 |
+|  | #xf060 | fa-arrow-left                          |
+|  | #xf061 | fa-arrow-right                         |
+|  | #xf062 | fa-arrow-up                            |
+|  | #xf063 | fa-arrow-down                          |
+|  | #xf064 | fa-share                               |
+|  | #xf064 | fa-mail-forward                        |
+|  | #xf065 | fa-expand                              |
+|  | #xf066 | fa-compress                            |
+|  | #xf067 | fa-plus                                |
+|  | #xf068 | fa-minus                               |
+|  | #xf069 | fa-asterisk                            |
+|  | #xf06a | fa-exclamation-circle                  |
+|  | #xf06b | fa-gift                                |
+|  | #xf06c | fa-leaf                                |
+|  | #xf06d | fa-fire                                |
+|  | #xf06e | fa-eye                                 |
+|  | #xf070 | fa-eye-slash                           |
+|  | #xf071 | fa-warning                             |
+|  | #xf071 | fa-exclamation-triangle                |
+|  | #xf072 | fa-plane                               |
+|  | #xf073 | fa-calendar                            |
+|  | #xf074 | fa-random                              |
+|  | #xf075 | fa-comment                             |
+|  | #xf076 | fa-magnet                              |
+|  | #xf077 | fa-chevron-up                          |
+|  | #xf078 | fa-chevron-down                        |
+|  | #xf079 | fa-retweet                             |
+|  | #xf07a | fa-shopping-cart                       |
+|  | #xf07b | fa-folder                              |
+|  | #xf07c | fa-folder-open                         |
+|  | #xf07d | fa-arrows-v                            |
+|  | #xf07e | fa-arrows-h                            |
+|  | #xf080 | fa-bar-chart-o                         |
+|  | #xf080 | fa-bar-chart                           |
+|  | #xf081 | fa-twitter-square                      |
+|  | #xf082 | fa-facebook-square                     |
+|  | #xf083 | fa-camera-retro                        |
+|  | #xf084 | fa-key                                 |
+|  | #xf085 | fa-gears                               |
+|  | #xf085 | fa-cogs                                |
+|  | #xf086 | fa-comments                            |
+|  | #xf087 | fa-thumbs-o-up                         |
+|  | #xf088 | fa-thumbs-o-down                       |
+|  | #xf089 | fa-star-half                           |
+|  | #xf08a | fa-heart-o                             |
+|  | #xf08b | fa-sign-out                            |
+|  | #xf08c | fa-linkedin-square                     |
+|  | #xf08d | fa-thumb-tack                          |
+|  | #xf08e | fa-external-link                       |
+|  | #xf090 | fa-sign-in                             |
+|  | #xf091 | fa-trophy                              |
+|  | #xf092 | fa-github-square                       |
+|  | #xf093 | fa-upload                              |
+|  | #xf094 | fa-lemon-o                             |
+|  | #xf095 | fa-phone                               |
+|  | #xf096 | fa-square-o                            |
+|  | #xf097 | fa-bookmark-o                          |
+|  | #xf098 | fa-phone-square                        |
+|  | #xf099 | fa-twitter                             |
+|  | #xf09a | fa-facebook-f                          |
+|  | #xf09a | fa-facebook                            |
+|  | #xf09b | fa-github                              |
+|  | #xf09c | fa-unlock                              |
+|  | #xf09d | fa-credit-card                         |
+|  | #xf09e | fa-rss                                 |
+|  | #xf09e | fa-feed                                |
+|  | #xf0a0 | fa-hdd-o                               |
+|  | #xf0a1 | fa-bullhorn                            |
+|  | #xf0a2 | fa-bell-o                              |
+|  | #xf0a3 | fa-certificate                         |
+|  | #xf0a4 | fa-hand-o-right                        |
+|  | #xf0a5 | fa-hand-o-left                         |
+|  | #xf0a6 | fa-hand-o-up                           |
+|  | #xf0a7 | fa-hand-o-down                         |
+|  | #xf0a8 | fa-arrow-circle-left                   |
+|  | #xf0a9 | fa-arrow-circle-right                  |
+|  | #xf0aa | fa-arrow-circle-up                     |
+|  | #xf0ab | fa-arrow-circle-down                   |
+|  | #xf0ac | fa-globe                               |
+|  | #xf0ad | fa-wrench                              |
+|  | #xf0ae | fa-tasks                               |
+|  | #xf0b0 | fa-filter                              |
+|  | #xf0b1 | fa-briefcase                           |
+|  | #xf0b2 | fa-arrows-alt                          |
+|  | #xf0c0 | fa-users                               |
+|  | #xf0c0 | fa-group                               |
+|  | #xf0c1 | fa-link                                |
+|  | #xf0c1 | fa-chain                               |
+|  | #xf0c2 | fa-cloud                               |
+|  | #xf0c3 | fa-flask                               |
+|  | #xf0c4 | fa-scissors                            |
+|  | #xf0c4 | fa-cut                                 |
+|  | #xf0c5 | fa-files-o                             |
+|  | #xf0c5 | fa-copy                                |
+|  | #xf0c6 | fa-paperclip                           |
+|  | #xf0c7 | fa-save                                |
+|  | #xf0c7 | fa-floppy-o                            |
+|  | #xf0c8 | fa-square                              |
+|  | #xf0c9 | fa-reorder                             |
+|  | #xf0c9 | fa-navicon                             |
+|  | #xf0c9 | fa-bars                                |
+|  | #xf0ca | fa-list-ul                             |
+|  | #xf0cb | fa-list-ol                             |
+|  | #xf0cc | fa-strikethrough                       |
+|  | #xf0cd | fa-underline                           |
+|  | #xf0ce | fa-table                               |
+|  | #xf0d0 | fa-magic                               |
+|  | #xf0d1 | fa-truck                               |
+|  | #xf0d2 | fa-pinterest                           |
+|  | #xf0d3 | fa-pinterest-square                    |
+|  | #xf0d4 | fa-google-plus-square                  |
+|  | #xf0d5 | fa-google-plus                         |
+|  | #xf0d6 | fa-money                               |
+|  | #xf0d7 | fa-caret-down                          |
+|  | #xf0d8 | fa-caret-up                            |
+|  | #xf0d9 | fa-caret-left                          |
+|  | #xf0da | fa-caret-right                         |
+|  | #xf0db | fa-columns                             |
+|  | #xf0dc | fa-unsorted                            |
+|  | #xf0dc | fa-sort                                |
+|  | #xf0dd | fa-sort-down                           |
+|  | #xf0dd | fa-sort-desc                           |
+|  | #xf0de | fa-sort-up                             |
+|  | #xf0de | fa-sort-asc                            |
+|  | #xf0e0 | fa-envelope                            |
+|  | #xf0e1 | fa-linkedin                            |
+|  | #xf0e2 | fa-undo                                |
+|  | #xf0e2 | fa-rotate-left                         |
+|  | #xf0e3 | fa-legal                               |
+|  | #xf0e3 | fa-gavel                               |
+|  | #xf0e4 | fa-tachometer                          |
+|  | #xf0e4 | fa-dashboard                           |
+|  | #xf0e5 | fa-comment-o                           |
+|  | #xf0e6 | fa-comments-o                          |
+|  | #xf0e7 | fa-flash                               |
+|  | #xf0e7 | fa-bolt                                |
+|  | #xf0e8 | fa-sitemap                             |
+|  | #xf0e9 | fa-umbrella                            |
+|  | #xf0ea | fa-paste                               |
+|  | #xf0ea | fa-clipboard                           |
+|  | #xf0eb | fa-lightbulb-o                         |
+|  | #xf0ec | fa-exchange                            |
+|  | #xf0ed | fa-cloud-download                      |
+|  | #xf0ee | fa-cloud-upload                        |
+|  | #xf0f0 | fa-user-md                             |
+|  | #xf0f1 | fa-stethoscope                         |
+|  | #xf0f2 | fa-suitcase                            |
+|  | #xf0f3 | fa-bell                                |
+|  | #xf0f4 | fa-coffee                              |
+|  | #xf0f5 | fa-cutlery                             |
+|  | #xf0f6 | fa-file-text-o                         |
+|  | #xf0f7 | fa-building-o                          |
+|  | #xf0f8 | fa-hospital-o                          |
+|  | #xf0f9 | fa-ambulance                           |
+|  | #xf0fa | fa-medkit                              |
+|  | #xf0fb | fa-fighter-jet                         |
+|  | #xf0fc | fa-beer                                |
+|  | #xf0fd | fa-h-square                            |
+|  | #xf0fe | fa-plus-square                         |
+|  | #xf100 | fa-angle-double-left                   |
+|  | #xf101 | fa-angle-double-right                  |
+|  | #xf102 | fa-angle-double-up                     |
+|  | #xf103 | fa-angle-double-down                   |
+|  | #xf104 | fa-angle-left                          |
+|  | #xf105 | fa-angle-right                         |
+|  | #xf106 | fa-angle-up                            |
+|  | #xf107 | fa-angle-down                          |
+|  | #xf108 | fa-desktop                             |
+|  | #xf109 | fa-laptop                              |
+|  | #xf10a | fa-tablet                              |
+|  | #xf10b | fa-mobile-phone                        |
+|  | #xf10b | fa-mobile                              |
+|  | #xf10c | fa-circle-o                            |
+|  | #xf10d | fa-quote-left                          |
+|  | #xf10e | fa-quote-right                         |
+|  | #xf110 | fa-spinner                             |
+|  | #xf111 | fa-circle                              |
+|  | #xf112 | fa-reply                               |
+|  | #xf112 | fa-mail-reply                          |
+|  | #xf113 | fa-github-alt                          |
+|  | #xf114 | fa-folder-o                            |
+|  | #xf115 | fa-folder-open-o                       |
+|  | #xf118 | fa-smile-o                             |
+|  | #xf119 | fa-frown-o                             |
+|  | #xf11a | fa-meh-o                               |
+|  | #xf11b | fa-gamepad                             |
+|  | #xf11c | fa-keyboard-o                          |
+|  | #xf11d | fa-flag-o                              |
+|  | #xf11e | fa-flag-checkered                      |
+|  | #xf120 | fa-terminal                            |
+|  | #xf121 | fa-code                                |
+|  | #xf122 | fa-reply-all                           |
+|  | #xf122 | fa-mail-reply-all                      |
+|  | #xf123 | fa-star-half-o                         |
+|  | #xf123 | fa-star-half-full                      |
+|  | #xf123 | fa-star-half-empty                     |
+|  | #xf124 | fa-location-arrow                      |
+|  | #xf125 | fa-crop                                |
+|  | #xf126 | fa-code-fork                           |
+|  | #xf127 | fa-unlink                              |
+|  | #xf127 | fa-chain-broken                        |
+|  | #xf128 | fa-question                            |
+|  | #xf129 | fa-info                                |
+|  | #xf12a | fa-exclamation                         |
+|  | #xf12b | fa-superscript                         |
+|  | #xf12c | fa-subscript                           |
+|  | #xf12d | fa-eraser                              |
+|  | #xf12e | fa-puzzle-piece                        |
+|  | #xf130 | fa-microphone                          |
+|  | #xf131 | fa-microphone-slash                    |
+|  | #xf132 | fa-shield                              |
+|  | #xf133 | fa-calendar-o                          |
+|  | #xf134 | fa-fire-extinguisher                   |
+|  | #xf135 | fa-rocket                              |
+|  | #xf136 | fa-maxcdn                              |
+|  | #xf137 | fa-chevron-circle-left                 |
+|  | #xf138 | fa-chevron-circle-right                |
+|  | #xf139 | fa-chevron-circle-up                   |
+|  | #xf13a | fa-chevron-circle-down                 |
+|  | #xf13b | fa-html5                               |
+|  | #xf13c | fa-css3                                |
+|  | #xf13d | fa-anchor                              |
+|  | #xf13e | fa-unlock-alt                          |
+|  | #xf140 | fa-bullseye                            |
+|  | #xf141 | fa-ellipsis-h                          |
+|  | #xf142 | fa-ellipsis-v                          |
+|  | #xf143 | fa-rss-square                          |
+|  | #xf144 | fa-play-circle                         |
+|  | #xf145 | fa-ticket                              |
+|  | #xf146 | fa-minus-square                        |
+|  | #xf147 | fa-minus-square-o                      |
+|  | #xf148 | fa-level-up                            |
+|  | #xf149 | fa-level-down                          |
+|  | #xf14a | fa-check-square                        |
+|  | #xf14b | fa-pencil-square                       |
+|  | #xf14c | fa-external-link-square                |
+|  | #xf14d | fa-share-square                        |
+|  | #xf14e | fa-compass                             |
+|  | #xf150 | fa-toggle-down                         |
+|  | #xf150 | fa-caret-square-o-down                 |
+|  | #xf151 | fa-toggle-up                           |
+|  | #xf151 | fa-caret-square-o-up                   |
+|  | #xf152 | fa-toggle-right                        |
+|  | #xf152 | fa-caret-square-o-right                |
+|  | #xf153 | fa-euro                                |
+|  | #xf153 | fa-eur                                 |
+|  | #xf154 | fa-gbp                                 |
+|  | #xf155 | fa-usd                                 |
+|  | #xf155 | fa-dollar                              |
+|  | #xf156 | fa-rupee                               |
+|  | #xf156 | fa-inr                                 |
+|  | #xf157 | fa-yen                                 |
+|  | #xf157 | fa-rmb                                 |
+|  | #xf157 | fa-jpy                                 |
+|  | #xf157 | fa-cny                                 |
+|  | #xf158 | fa-ruble                               |
+|  | #xf158 | fa-rub                                 |
+|  | #xf158 | fa-rouble                              |
+|  | #xf159 | fa-won                                 |
+|  | #xf159 | fa-krw                                 |
+|  | #xf15a | fa-btc                                 |
+|  | #xf15a | fa-bitcoin                             |
+|  | #xf15b | fa-file                                |
+|  | #xf15c | fa-file-text                           |
+|  | #xf15d | fa-sort-alpha-asc                      |
+|  | #xf15e | fa-sort-alpha-desc                     |
+|  | #xf160 | fa-sort-amount-asc                     |
+|  | #xf161 | fa-sort-amount-desc                    |
+|  | #xf162 | fa-sort-numeric-asc                    |
+|  | #xf163 | fa-sort-numeric-desc                   |
+|  | #xf164 | fa-thumbs-up                           |
+|  | #xf165 | fa-thumbs-down                         |
+|  | #xf166 | fa-youtube-square                      |
+|  | #xf167 | fa-youtube                             |
+|  | #xf168 | fa-xing                                |
+|  | #xf169 | fa-xing-square                         |
+|  | #xf16a | fa-youtube-play                        |
+|  | #xf16b | fa-dropbox                             |
+|  | #xf16c | fa-stack-overflow                      |
+|  | #xf16d | fa-instagram                           |
+|  | #xf16e | fa-flickr                              |
+|  | #xf170 | fa-adn                                 |
+|  | #xf171 | fa-bitbucket                           |
+|  | #xf172 | fa-bitbucket-square                    |
+|  | #xf173 | fa-tumblr                              |
+|  | #xf174 | fa-tumblr-square                       |
+|  | #xf175 | fa-long-arrow-down                     |
+|  | #xf176 | fa-long-arrow-up                       |
+|  | #xf177 | fa-long-arrow-left                     |
+|  | #xf178 | fa-long-arrow-right                    |
+|  | #xf179 | fa-apple                               |
+|  | #xf17a | fa-windows                             |
+|  | #xf17b | fa-android                             |
+|  | #xf17c | fa-linux                               |
+|  | #xf17d | fa-dribbble                            |
+|  | #xf17e | fa-skype                               |
+|  | #xf180 | fa-foursquare                          |
+|  | #xf181 | fa-trello                              |
+|  | #xf182 | fa-female                              |
+|  | #xf183 | fa-male                                |
+|  | #xf184 | fa-gratipay                            |
+|  | #xf184 | fa-gittip                              |
+|  | #xf185 | fa-sun-o                               |
+|  | #xf186 | fa-moon-o                              |
+|  | #xf187 | fa-archive                             |
+|  | #xf188 | fa-bug                                 |
+|  | #xf189 | fa-vk                                  |
+|  | #xf18a | fa-weibo                               |
+|  | #xf18b | fa-renren                              |
+|  | #xf18c | fa-pagelines                           |
+|  | #xf18d | fa-stack-exchange                      |
+|  | #xf18e | fa-arrow-circle-o-right                |
+|  | #xf190 | fa-arrow-circle-o-left                 |
+|  | #xf191 | fa-toggle-left                         |
+|  | #xf191 | fa-caret-square-o-left                 |
+|  | #xf192 | fa-dot-circle-o                        |
+|  | #xf193 | fa-wheelchair                          |
+|  | #xf194 | fa-vimeo-square                        |
+|  | #xf195 | fa-turkish-lira                        |
+|  | #xf195 | fa-try                                 |
+|  | #xf196 | fa-plus-square-o                       |
+|  | #xf197 | fa-space-shuttle                       |
+|  | #xf198 | fa-slack                               |
+|  | #xf199 | fa-envelope-square                     |
+|  | #xf19a | fa-wordpress                           |
+|  | #xf19b | fa-openid                              |
+|  | #xf19c | fa-university                          |
+|  | #xf19c | fa-institution                         |
+|  | #xf19c | fa-bank                                |
+|  | #xf19d | fa-mortar-board                        |
+|  | #xf19d | fa-graduation-cap                      |
+|  | #xf19e | fa-yahoo                               |
+|  | #xf1a0 | fa-google                              |
+|  | #xf1a1 | fa-reddit                              |
+|  | #xf1a2 | fa-reddit-square                       |
+|  | #xf1a3 | fa-stumbleupon-circle                  |
+|  | #xf1a4 | fa-stumbleupon                         |
+|  | #xf1a5 | fa-delicious                           |
+|  | #xf1a6 | fa-digg                                |
+|  | #xf1a7 | fa-pied-piper                          |
+|  | #xf1a8 | fa-pied-piper-alt                      |
+|  | #xf1a9 | fa-drupal                              |
+|  | #xf1aa | fa-joomla                              |
+|  | #xf1ab | fa-language                            |
+|  | #xf1ac | fa-fax                                 |
+|  | #xf1ad | fa-building                            |
+|  | #xf1ae | fa-child                               |
+|  | #xf1b0 | fa-paw                                 |
+|  | #xf1b1 | fa-spoon                               |
+|  | #xf1b2 | fa-cube                                |
+|  | #xf1b3 | fa-cubes                               |
+|  | #xf1b4 | fa-behance                             |
+|  | #xf1b5 | fa-behance-square                      |
+|  | #xf1b6 | fa-steam                               |
+|  | #xf1b7 | fa-steam-square                        |
+|  | #xf1b8 | fa-recycle                             |
+|  | #xf1b9 | fa-car                                 |
+|  | #xf1b9 | fa-automobile                          |
+|  | #xf1ba | fa-taxi                                |
+|  | #xf1ba | fa-cab                                 |
+|  | #xf1bb | fa-tree                                |
+|  | #xf1bc | fa-spotify                             |
+|  | #xf1bd | fa-deviantart                          |
+|  | #xf1be | fa-soundcloud                          |
+|  | #xf1c0 | fa-database                            |
+|  | #xf1c1 | fa-file-pdf-o                          |
+|  | #xf1c2 | fa-file-word-o                         |
+|  | #xf1c3 | fa-file-excel-o                        |
+|  | #xf1c4 | fa-file-powerpoint-o                   |
+|  | #xf1c5 | fa-file-picture-o                      |
+|  | #xf1c5 | fa-file-photo-o                        |
+|  | #xf1c5 | fa-file-image-o                        |
+|  | #xf1c6 | fa-file-zip-o                          |
+|  | #xf1c6 | fa-file-archive-o                      |
+|  | #xf1c7 | fa-file-sound-o                        |
+|  | #xf1c7 | fa-file-audio-o                        |
+|  | #xf1c8 | fa-file-video-o                        |
+|  | #xf1c8 | fa-file-movie-o                        |
+|  | #xf1c9 | fa-file-code-o                         |
+|  | #xf1ca | fa-vine                                |
+|  | #xf1cb | fa-codepen                             |
+|  | #xf1cc | fa-jsfiddle                            |
+|  | #xf1cd | fa-support                             |
+|  | #xf1cd | fa-life-saver                          |
+|  | #xf1cd | fa-life-ring                           |
+|  | #xf1cd | fa-life-buoy                           |
+|  | #xf1cd | fa-life-bouy                           |
+|  | #xf1ce | fa-circle-o-notch                      |
+|  | #xf1d0 | fa-rebel                               |
+|  | #xf1d0 | fa-ra                                  |
+|  | #xf1d1 | fa-ge                                  |
+|  | #xf1d1 | fa-empire                              |
+|  | #xf1d2 | fa-git-square                          |
+|  | #xf1d3 | fa-git                                 |
+|  | #xf1d4 | fa-yc-square                           |
+|  | #xf1d4 | fa-y-combinator-square                 |
+|  | #xf1d4 | fa-hacker-news                         |
+|  | #xf1d5 | fa-tencent-weibo                       |
+|  | #xf1d6 | fa-qq                                  |
+|  | #xf1d7 | fa-weixin                              |
+|  | #xf1d7 | fa-wechat                              |
+|  | #xf1d8 | fa-send                                |
+|  | #xf1d8 | fa-paper-plane                         |
+|  | #xf1d9 | fa-send-o                              |
+|  | #xf1d9 | fa-paper-plane-o                       |
+|  | #xf1da | fa-history                             |
+|  | #xf1db | fa-circle-thin                         |
+|  | #xf1dc | fa-header                              |
+|  | #xf1dd | fa-paragraph                           |
+|  | #xf1de | fa-sliders                             |
+|  | #xf1e0 | fa-share-alt                           |
+|  | #xf1e1 | fa-share-alt-square                    |
+|  | #xf1e2 | fa-bomb                                |
+|  | #xf1e3 | fa-soccer-ball-o                       |
+|  | #xf1e3 | fa-futbol-o                            |
+|  | #xf1e4 | fa-tty                                 |
+|  | #xf1e5 | fa-binoculars                          |
+|  | #xf1e6 | fa-plug                                |
+|  | #xf1e7 | fa-slideshare                          |
+|  | #xf1e8 | fa-twitch                              |
+|  | #xf1e9 | fa-yelp                                |
+|  | #xf1ea | fa-newspaper-o                         |
+|  | #xf1eb | fa-wifi                                |
+|  | #xf1ec | fa-calculator                          |
+|  | #xf1ed | fa-paypal                              |
+|  | #xf1ee | fa-google-wallet                       |
+|  | #xf1f0 | fa-cc-visa                             |
+|  | #xf1f1 | fa-cc-mastercard                       |
+|  | #xf1f2 | fa-cc-discover                         |
+|  | #xf1f3 | fa-cc-amex                             |
+|  | #xf1f4 | fa-cc-paypal                           |
+|  | #xf1f5 | fa-cc-stripe                           |
+|  | #xf1f6 | fa-bell-slash                          |
+|  | #xf1f7 | fa-bell-slash-o                        |
+|  | #xf1f8 | fa-trash                               |
+|  | #xf1f9 | fa-copyright                           |
+|  | #xf1fa | fa-at                                  |
+|  | #xf1fb | fa-eyedropper                          |
+|  | #xf1fc | fa-paint-brush                         |
+|  | #xf1fd | fa-birthday-cake                       |
+|  | #xf1fe | fa-area-chart                          |
+|  | #xf200 | fa-pie-chart                           |
+|  | #xf201 | fa-line-chart                          |
+|  | #xf202 | fa-lastfm                              |
+|  | #xf203 | fa-lastfm-square                       |
+|  | #xf204 | fa-toggle-off                          |
+|  | #xf205 | fa-toggle-on                           |
+|  | #xf206 | fa-bicycle                             |
+|  | #xf207 | fa-bus                                 |
+|  | #xf208 | fa-ioxhost                             |
+|  | #xf209 | fa-angellist                           |
+|  | #xf20a | fa-cc                                  |
+|  | #xf20b | fa-sheqel                              |
+|  | #xf20b | fa-shekel                              |
+|  | #xf20b | fa-ils                                 |
+|  | #xf20c | fa-meanpath                            |
+|  | #xf20d | fa-buysellads                          |
+|  | #xf20e | fa-connectdevelop                      |
+|  | #xf210 | fa-dashcube                            |
+|  | #xf211 | fa-forumbee                            |
+|  | #xf212 | fa-leanpub                             |
+|  | #xf213 | fa-sellsy                              |
+|  | #xf214 | fa-shirtsinbulk                        |
+|  | #xf215 | fa-simplybuilt                         |
+|  | #xf216 | fa-skyatlas                            |
+|  | #xf217 | fa-cart-plus                           |
+|  | #xf218 | fa-cart-arrow-down                     |
+|  | #xf219 | fa-diamond                             |
+|  | #xf21a | fa-ship                                |
+|  | #xf21b | fa-user-secret                         |
+|  | #xf21c | fa-motorcycle                          |
+|  | #xf21d | fa-street-view                         |
+|  | #xf21e | fa-heartbeat                           |
+|  | #xf221 | fa-venus                               |
+|  | #xf222 | fa-mars                                |
+|  | #xf223 | fa-mercury                             |
+|  | #xf224 | fa-transgender                         |
+|  | #xf224 | fa-intersex                            |
+|  | #xf225 | fa-transgender-alt                     |
+|  | #xf226 | fa-venus-double                        |
+|  | #xf227 | fa-mars-double                         |
+|  | #xf228 | fa-venus-mars                          |
+|  | #xf229 | fa-mars-stroke                         |
+|  | #xf22a | fa-mars-stroke-v                       |
+|  | #xf22b | fa-mars-stroke-h                       |
+|  | #xf22c | fa-neuter                              |
+|  | #xf22d | fa-genderless                          |
+|  | #xf230 | fa-facebook-official                   |
+|  | #xf231 | fa-pinterest-p                         |
+|  | #xf232 | fa-whatsapp                            |
+|  | #xf233 | fa-server                              |
+|  | #xf234 | fa-user-plus                           |
+|  | #xf235 | fa-user-times                          |
+|  | #xf236 | fa-hotel                               |
+|  | #xf236 | fa-bed                                 |
+|  | #xf237 | fa-viacoin                             |
+|  | #xf238 | fa-train                               |
+|  | #xf239 | fa-subway                              |
+|  | #xf23a | fa-medium                              |
+|  | #xf23b | fa-yc                                  |
+|  | #xf23b | fa-y-combinator                        |
+|  | #xf23c | fa-optin-monster                       |
+|  | #xf23d | fa-opencart                            |
+|  | #xf23e | fa-expeditedssl                        |
+|  | #xf240 | fa-battery-full                        |
+|  | #xf240 | fa-battery-4                           |
+|  | #xf241 | fa-battery-three-quarters              |
+|  | #xf241 | fa-battery-3                           |
+|  | #xf242 | fa-battery-half                        |
+|  | #xf242 | fa-battery-2                           |
+|  | #xf243 | fa-battery-quarter                     |
+|  | #xf243 | fa-battery-1                           |
+|  | #xf244 | fa-battery-empty                       |
+|  | #xf244 | fa-battery-0                           |
+|  | #xf245 | fa-mouse-pointer                       |
+|  | #xf246 | fa-i-cursor                            |
+|  | #xf247 | fa-object-group                        |
+|  | #xf248 | fa-object-ungroup                      |
+|  | #xf249 | fa-sticky-note                         |
+|  | #xf24a | fa-sticky-note-o                       |
+|  | #xf24b | fa-cc-jcb                              |
+|  | #xf24c | fa-cc-diners-club                      |
+|  | #xf24d | fa-clone                               |
+|  | #xf24e | fa-balance-scale                       |
+|  | #xf250 | fa-hourglass-o                         |
+|  | #xf251 | fa-hourglass-start                     |
+|  | #xf251 | fa-hourglass-1                         |
+|  | #xf252 | fa-hourglass-half                      |
+|  | #xf252 | fa-hourglass-2                         |
+|  | #xf253 | fa-hourglass-end                       |
+|  | #xf253 | fa-hourglass-3                         |
+|  | #xf254 | fa-hourglass                           |
+|  | #xf255 | fa-hand-rock-o                         |
+|  | #xf255 | fa-hand-grab-o                         |
+|  | #xf256 | fa-hand-stop-o                         |
+|  | #xf256 | fa-hand-paper-o                        |
+|  | #xf257 | fa-hand-scissors-o                     |
+|  | #xf258 | fa-hand-lizard-o                       |
+|  | #xf259 | fa-hand-spock-o                        |
+|  | #xf25a | fa-hand-pointer-o                      |
+|  | #xf25b | fa-hand-peace-o                        |
+|  | #xf25c | fa-trademark                           |
+|  | #xf25d | fa-registered                          |
+|  | #xf25e | fa-creative-commons                    |
+|  | #xf260 | fa-gg                                  |
+|  | #xf261 | fa-gg-circle                           |
+|  | #xf262 | fa-tripadvisor                         |
+|  | #xf263 | fa-odnoklassniki                       |
+|  | #xf264 | fa-odnoklassniki-square                |
+|  | #xf265 | fa-get-pocket                          |
+|  | #xf266 | fa-wikipedia-w                         |
+|  | #xf267 | fa-safari                              |
+|  | #xf268 | fa-chrome                              |
+|  | #xf269 | fa-firefox                             |
+|  | #xf26a | fa-opera                               |
+|  | #xf26b | fa-internet-explorer                   |
+|  | #xf26c | fa-tv                                  |
+|  | #xf26c | fa-television                          |
+|  | #xf26d | fa-contao                              |
+|  | #xf26e | fa-500px                               |
+|  | #xf270 | fa-amazon                              |
+|  | #xf271 | fa-calendar-plus-o                     |
+|  | #xf272 | fa-calendar-minus-o                    |
+|  | #xf273 | fa-calendar-times-o                    |
+|  | #xf274 | fa-calendar-check-o                    |
+|  | #xf275 | fa-industry                            |
+|  | #xf276 | fa-map-pin                             |
+|  | #xf277 | fa-map-signs                           |
+|  | #xf278 | fa-map-o                               |
+|  | #xf279 | fa-map                                 |
+|  | #xf27a | fa-commenting                          |
+|  | #xf27b | fa-commenting-o                        |
+|  | #xf27c | fa-houzz                               |
+|  | #xf27d | fa-vimeo                               |
+|  | #xf27e | fa-black-tie                           |
+|  | #xf280 | fa-fonticons                           |
+|  | #xf281 | fa-reddit-alien                        |
+|  | #xf282 | fa-edge                                |
+|  | #xf283 | fa-credit-card-alt                     |
+|  | #xf284 | fa-codiepie                            |
+|  | #xf285 | fa-modx                                |
+|  | #xf286 | fa-fort-awesome                        |
+|  | #xf287 | fa-usb                                 |
+|  | #xf288 | fa-product-hunt                        |
+|  | #xf289 | fa-mixcloud                            |
+|  | #xf28a | fa-scribd                              |
+|  | #xf28b | fa-pause-circle                        |
+|  | #xf28c | fa-pause-circle-o                      |
+|  | #xf28d | fa-stop-circle                         |
+|  | #xf28e | fa-stop-circle-o                       |
+|  | #xf290 | fa-shopping-bag                        |
+|  | #xf291 | fa-shopping-basket                     |
+|  | #xf292 | fa-hashtag                             |
+|  | #xf293 | fa-bluetooth                           |
+|  | #xf294 | fa-bluetooth-b                         |
+|  | #xf295 | fa-percent                             |
+|  | #xf296 | fa-gitlab                              |
+|  | #xf297 | fa-wpbeginner                          |
+|  | #xf298 | fa-wpforms                             |
+|  | #xf299 | fa-envira                              |
+|  | #xf29a | fa-universal-access                    |
+|  | #xf29b | fa-wheelchair-alt                      |
+|  | #xf29c | fa-question-circle-o                   |
+|  | #xf29d | fa-blind                               |
+|  | #xf29e | fa-audio-description                   |
+|  | #xf2a0 | fa-volume-control-phone                |
+|  | #xf2a1 | fa-braille                             |
+|  | #xf2a2 | fa-assistive-listening-systems         |
+|  | #xf2a3 | fa-asl-interpreting                    |
+|  | #xf2a3 | fa-american-sign-language-interpreting |
+|  | #xf2a4 | fa-hard-of-hearing                     |
+|  | #xf2a4 | fa-deafness                            |
+|  | #xf2a4 | fa-deaf                                |
+|  | #xf2a5 | fa-glide                               |
+|  | #xf2a6 | fa-glide-g                             |
+|  | #xf2a7 | fa-signing                             |
+|  | #xf2a7 | fa-sign-language                       |
+|  | #xf2a8 | fa-low-vision                          |
+|  | #xf2a9 | fa-viadeo                              |
+|  | #xf2aa | fa-viadeo-square                       |
+|  | #xf2ab | fa-snapchat                            |
+|  | #xf2ac | fa-snapchat-ghost                      |
+|  | #xf2ad | fa-snapchat-square                     |
+
+#+RESULTS: IcoMoon
+|  | #xE900 | home                |
+|  | #xE901 | home2               |
+|  | #xE902 | home3               |
+|  | #xE903 | office              |
+|  | #xE904 | newspaper           |
+|  | #xE905 | pencil              |
+|  | #xE906 | pencil2             |
+|  | #xE907 | quill               |
+|  | #xE908 | pen                 |
+|  | #xE909 | blog                |
+|  | #xE90A | eyedropper          |
+|  | #xE90B | droplet             |
+|  | #xE90C | paint-format        |
+|  | #xE90D | image               |
+|  | #xE90E | images              |
+|  | #xE90F | camera              |
+|  | #xE910 | headphones          |
+|  | #xE911 | music               |
+|  | #xE912 | play                |
+|  | #xE913 | film                |
+|  | #xE914 | video-camera        |
+|  | #xE915 | dice                |
+|  | #xE916 | pacman              |
+|  | #xE917 | spades              |
+|  | #xE918 | clubs               |
+|  | #xE919 | diamonds            |
+|  | #xE91A | bullhorn            |
+|  | #xE91B | connection          |
+|  | #xE91C | podcast             |
+|  | #xE91D | feed                |
+|  | #xE91E | mic                 |
+|  | #xE91F | book                |
+|  | #xE920 | books               |
+|  | #xE921 | library             |
+|  | #xE922 | file-text           |
+|  | #xE923 | profile             |
+|  | #xE924 | file-empty          |
+|  | #xE925 | files-empty         |
+|  | #xE926 | file-text2          |
+|  | #xE927 | file-picture        |
+|  | #xE928 | file-music          |
+|  | #xE929 | file-play           |
+|  | #xE92A | file-video          |
+|  | #xE92B | file-zip            |
+|  | #xE92C | copy                |
+|  | #xE92D | paste               |
+|  | #xE92E | stack               |
+|  | #xE92F | folder              |
+|  | #xE930 | folder-open         |
+|  | #xE931 | folder-plus         |
+|  | #xE932 | folder-minus        |
+|  | #xE933 | folder-download     |
+|  | #xE934 | folder-upload       |
+|  | #xE935 | price-tag           |
+|  | #xE936 | price-tags          |
+|  | #xE937 | barcode             |
+|  | #xE938 | qrcode              |
+|  | #xE939 | ticket              |
+|  | #xE93A | cart                |
+|  | #xE93B | coin-dollar         |
+|  | #xE93C | coin-euro           |
+|  | #xE93D | coin-pound          |
+|  | #xE93E | coin-yen            |
+|  | #xE93F | credit-card         |
+|  | #xE940 | calculator          |
+|  | #xE941 | lifebuoy            |
+|  | #xE942 | phone               |
+|  | #xE943 | phone-hang-up       |
+|  | #xE944 | address-book        |
+|  | #xE945 | envelop             |
+|  | #xE946 | pushpin             |
+|  | #xE947 | location            |
+|  | #xE948 | location2           |
+|  | #xE949 | compass             |
+|  | #xE94A | compass2            |
+|  | #xE94B | map                 |
+|  | #xE94C | map2                |
+|  | #xE94D | history             |
+|  | #xE94E | clock               |
+|  | #xE94F | clock2              |
+|  | #xE950 | alarm               |
+|  | #xE951 | bell                |
+|  | #xE952 | stopwatch           |
+|  | #xE953 | calendar            |
+|  | #xE954 | printer             |
+|  | #xE955 | keyboard            |
+|  | #xE956 | display             |
+|  | #xE957 | laptop              |
+|  | #xE958 | mobile              |
+|  | #xE959 | mobile2             |
+|  | #xE95A | tablet              |
+|  | #xE95B | tv                  |
+|  | #xE95C | drawer              |
+|  | #xE95D | drawer2             |
+|  | #xE95E | box-add             |
+|  | #xE95F | box-remove          |
+|  | #xE960 | download            |
+|  | #xE961 | upload              |
+|  | #xE962 | floppy-disk         |
+|  | #xE963 | drive               |
+|  | #xE964 | database            |
+|  | #xE965 | undo                |
+|  | #xE966 | redo                |
+|  | #xE967 | undo2               |
+|  | #xE968 | redo2               |
+|  | #xE969 | forward             |
+|  | #xE96A | reply               |
+|  | #xE96B | bubble              |
+|  | #xE96C | bubbles             |
+|  | #xE96D | bubbles2            |
+|  | #xE96E | bubble2             |
+|  | #xE96F | bubbles3            |
+|  | #xE970 | bubbles4            |
+|  | #xE971 | user                |
+|  | #xE972 | users               |
+|  | #xE973 | user-plus           |
+|  | #xE974 | user-minus          |
+|  | #xE975 | user-check          |
+|  | #xE976 | user-tie            |
+|  | #xE977 | quotes-left         |
+|  | #xE978 | quotes-right        |
+|  | #xE979 | hour-glass          |
+|  | #xE97A | spinner             |
+|  | #xE97B | spinner2            |
+|  | #xE97C | spinner3            |
+|  | #xE97D | spinner4            |
+|  | #xE97E | spinner5            |
+|  | #xE97F | spinner6            |
+|  | #xE980 | spinner7            |
+|  | #xE981 | spinner8            |
+|  | #xE982 | spinner9            |
+|  | #xE983 | spinner10           |
+|  | #xE984 | spinner11           |
+|  | #xE985 | binoculars          |
+|  | #xE986 | search              |
+|  | #xE987 | zoom-in             |
+|  | #xE988 | zoom-out            |
+|  | #xE989 | enlarge             |
+|  | #xE98A | shrink              |
+|  | #xE98B | enlarge2            |
+|  | #xE98C | shrink2             |
+|  | #xE98D | key                 |
+|  | #xE98E | key2                |
+|  | #xE98F | lock                |
+|  | #xE990 | unlocked            |
+|  | #xE991 | wrench              |
+|  | #xE992 | equalizer           |
+|  | #xE993 | equalizer2          |
+|  | #xE994 | cog                 |
+|  | #xE995 | cogs                |
+|  | #xE996 | hammer              |
+|  | #xE997 | magic-wand          |
+|  | #xE998 | aid-kit             |
+|  | #xE999 | bug                 |
+|  | #xE99A | pie-chart           |
+|  | #xE99B | stats-dots          |
+|  | #xE99C | stats-bars          |
+|  | #xE99D | stats-bars2         |
+|  | #xE99E | trophy              |
+|  | #xE99F | gift                |
+|  | #xE9A0 | glass               |
+|  | #xE9A1 | glass2              |
+|  | #xE9A2 | mug                 |
+|  | #xE9A3 | spoon-knife         |
+|  | #xE9A4 | leaf                |
+|  | #xE9A5 | rocket              |
+|  | #xE9A6 | meter               |
+|  | #xE9A7 | meter2              |
+|  | #xE9A8 | hammer2             |
+|  | #xE9A9 | fire                |
+|  | #xE9AA | lab                 |
+|  | #xE9AB | magnet              |
+|  | #xE9AC | bin                 |
+|  | #xE9AD | bin2                |
+|  | #xE9AE | briefcase           |
+|  | #xE9AF | airplane            |
+|  | #xE9B0 | truck               |
+|  | #xE9B1 | road                |
+|  | #xE9B2 | accessibility       |
+|  | #xE9B3 | target              |
+|  | #xE9B4 | shield              |
+|  | #xE9B5 | power               |
+|  | #xE9B6 | switch              |
+|  | #xE9B7 | power-cord          |
+|  | #xE9B8 | clipboard           |
+|  | #xE9B9 | list-numbered       |
+|  | #xE9BA | list                |
+|  | #xE9BB | list2               |
+|  | #xE9BC | tree                |
+|  | #xE9BD | menu                |
+|  | #xE9BE | menu2               |
+|  | #xE9BF | menu3               |
+|  | #xE9C0 | menu4               |
+|  | #xE9C1 | cloud               |
+|  | #xE9C2 | cloud-download      |
+|  | #xE9C3 | cloud-upload        |
+|  | #xE9C4 | cloud-check         |
+|  | #xE9C5 | download2           |
+|  | #xE9C6 | upload2             |
+|  | #xE9C7 | download3           |
+|  | #xE9C8 | upload3             |
+|  | #xE9C9 | sphere              |
+|  | #xE9CA | earth               |
+|  | #xE9CB | link                |
+|  | #xE9CC | flag                |
+|  | #xE9CD | attachment          |
+|  | #xE9CE | eye                 |
+|  | #xE9CF | eye-plus            |
+|  | #xE9D0 | eye-minus           |
+|  | #xE9D1 | eye-blocked         |
+|  | #xE9D2 | bookmark            |
+|  | #xE9D3 | bookmarks           |
+|  | #xE9D4 | sun                 |
+|  | #xE9D5 | contrast            |
+|  | #xE9D6 | brightness-contrast |
+|  | #xE9D7 | star-empty          |
+|  | #xE9D8 | star-half           |
+|  | #xE9D9 | star-full           |
+|  | #xE9DA | heart               |
+|  | #xE9DB | heart-broken        |
+|  | #xE9DC | man                 |
+|  | #xE9DD | woman               |
+|  | #xE9DE | man-woman           |
+|  | #xE9DF | happy               |
+|  | #xE9E0 | happy2              |
+|  | #xE9E1 | smile               |
+|  | #xE9E2 | smile2              |
+|  | #xE9E3 | tongue              |
+|  | #xE9E4 | tongue2             |
+|  | #xE9E5 | sad                 |
+|  | #xE9E6 | sad2                |
+|  | #xE9E7 | wink                |
+|  | #xE9E8 | wink2               |
+|  | #xE9E9 | grin                |
+|  | #xE9EA | grin2               |
+|  | #xE9EB | cool                |
+|  | #xE9EC | cool2               |
+|  | #xE9ED | angry               |
+|  | #xE9EE | angry2              |
+|  | #xE9EF | evil                |
+|  | #xE9F0 | evil2               |
+|  | #xE9F1 | shocked             |
+|  | #xE9F2 | shocked2            |
+|  | #xE9F3 | baffled             |
+|  | #xE9F4 | baffled2            |
+|  | #xE9F5 | confused            |
+|  | #xE9F6 | confused2           |
+|  | #xE9F7 | neutral             |
+|  | #xE9F8 | neutral2            |
+|  | #xE9F9 | hipster             |
+|  | #xE9FA | hipster2            |
+|  | #xE9FB | wondering           |
+|  | #xE9FC | wondering2          |
+|  | #xE9FD | sleepy              |
+|  | #xE9FE | sleepy2             |
+|  | #xE9FF | frustrated          |
+|  | #xEA00 | frustrated2         |
+|  | #xEA01 | crying              |
+|  | #xEA02 | crying2             |
+|  | #xEA03 | point-up            |
+|  | #xEA04 | point-right         |
+|  | #xEA05 | point-down          |
+|  | #xEA06 | point-left          |
+|  | #xEA07 | warning             |
+|  | #xEA08 | notification        |
+|  | #xEA09 | question            |
+|  | #xEA0A | plus                |
+|  | #xEA0B | minus               |
+|  | #xEA0C | info                |
+|  | #xEA0D | cancel-circle       |
+|  | #xEA0E | blocked             |
+|  | #xEA0F | cross               |
+|  | #xEA10 | checkmark           |
+|  | #xEA11 | checkmark2          |
+|  | #xEA12 | spell-check         |
+|  | #xEA13 | enter               |
+|  | #xEA14 | exit                |
+|  | #xEA15 | play2               |
+|  | #xEA16 | pause               |
+|  | #xEA17 | stop                |
+|  | #xEA18 | previous            |
+|  | #xEA19 | next                |
+|  | #xEA1A | backward            |
+|  | #xEA1B | forward2            |
+|  | #xEA1C | play3               |
+|  | #xEA1D | pause2              |
+|  | #xEA1E | stop2               |
+|  | #xEA1F | backward2           |
+|  | #xEA20 | forward3            |
+|  | #xEA21 | first               |
+|  | #xEA22 | last                |
+|  | #xEA23 | previous2           |
+|  | #xEA24 | next2               |
+|  | #xEA25 | eject               |
+|  | #xEA26 | volume-high         |
+|  | #xEA27 | volume-medium       |
+|  | #xEA28 | volume-low          |
+|  | #xEA29 | volume-mute         |
+|  | #xEA2A | volume-mute2        |
+|  | #xEA2B | volume-increase     |
+|  | #xEA2C | volume-decrease     |
+|  | #xEA2D | loop                |
+|  | #xEA2E | loop2               |
+|  | #xEA2F | infinite            |
+|  | #xEA30 | shuffle             |
+|  | #xEA31 | arrow-up-left       |
+|  | #xEA32 | arrow-up            |
+|  | #xEA33 | arrow-up-right      |
+|  | #xEA34 | arrow-right         |
+|  | #xEA35 | arrow-down-right    |
+|  | #xEA36 | arrow-down          |
+|  | #xEA37 | arrow-down-left     |
+|  | #xEA38 | arrow-left          |
+|  | #xEA39 | arrow-up-left2      |
+|  | #xEA3A | arrow-up2           |
+|  | #xEA3B | arrow-up-right2     |
+|  | #xEA3C | arrow-right2        |
+|  | #xEA3D | arrow-down-right2   |
+|  | #xEA3E | arrow-down2         |
+|  | #xEA3F | arrow-down-left2    |
+|  | #xEA40 | arrow-left2         |
+|  | #xEA41 | circle-up           |
+|  | #xEA42 | circle-right        |
+|  | #xEA43 | circle-down         |
+|  | #xEA44 | circle-left         |
+|  | #xEA45 | tab                 |
+|  | #xEA46 | move-up             |
+|  | #xEA47 | move-down           |
+|  | #xEA48 | sort-alpha-asc      |
+|  | #xEA49 | sort-alpha-desc     |
+|  | #xEA4A | sort-numeric-asc    |
+|  | #xEA4B | sort-numberic-desc  |
+|  | #xEA4C | sort-amount-asc     |
+|  | #xEA4D | sort-amount-desc    |
+|  | #xEA4E | command             |
+|  | #xEA4F | shift               |
+|  | #xEA50 | ctrl                |
+|  | #xEA51 | opt                 |
+|  | #xEA52 | checkbox-checked    |
+|  | #xEA53 | checkbox-unchecked  |
+|  | #xEA54 | radio-checked       |
+|  | #xEA55 | radio-checked2      |
+|  | #xEA56 | radio-unchecked     |
+|  | #xEA57 | crop                |
+|  | #xEA58 | make-group          |
+|  | #xEA59 | ungroup             |
+|  | #xEA5A | scissors            |
+|  | #xEA5B | filter              |
+|  | #xEA5C | font                |
+|  | #xEA5D | ligature            |
+|  | #xEA5E | ligature2           |
+|  | #xEA5F | text-height         |
+|  | #xEA60 | text-width          |
+|  | #xEA61 | font-size           |
+|  | #xEA62 | bold                |
+|  | #xEA63 | underline           |
+|  | #xEA64 | italic              |
+|  | #xEA65 | strikethrough       |
+|  | #xEA66 | omega               |
+|  | #xEA67 | sigma               |
+|  | #xEA68 | page-break          |
+|  | #xEA69 | superscript         |
+|  | #xEA6A | subscript           |
+|  | #xEA6B | superscript2        |
+|  | #xEA6C | subscript2          |
+|  | #xEA6D | text-color          |
+|  | #xEA6E | pagebreak           |
+|  | #xEA6F | clear-formatting    |
+|  | #xEA70 | table               |
+|  | #xEA71 | table2              |
+|  | #xEA72 | insert-template     |
+|  | #xEA73 | pilcrow             |
+|  | #xEA74 | ltr                 |
+|  | #xEA75 | rtl                 |
+|  | #xEA76 | section             |
+|  | #xEA77 | paragraph-left      |
+|  | #xEA78 | paragraph-center    |
+|  | #xEA79 | paragraph-right     |
+|  | #xEA7A | paragraph-justify   |
+|  | #xEA7B | indent-increase     |
+|  | #xEA7C | indent-decrease     |
+|  | #xEA7D | share               |
+|  | #xEA7E | new-tab             |
+|  | #xEA7F | embed               |
+|  | #xEA80 | embed2              |
+|  | #xEA81 | terminal            |
+|  | #xEA82 | share2              |
+|  | #xEA83 | mail                |
+|  | #xEA84 | mail2               |
+|  | #xEA85 | mail3               |
+|  | #xEA86 | mail4               |
+|  | #xEA87 | amazon              |
+|  | #xEA88 | google              |
+|  | #xEA89 | google2             |
+|  | #xEA8A | google3             |
+|  | #xEA8B | google-plus         |
+|  | #xEA8C | google-plus2        |
+|  | #xEA8D | google-plus3        |
+|  | #xEA8E | hangouts            |
+|  | #xEA8F | google-drive        |
+|  | #xEA90 | facebook            |
+|  | #xEA91 | facebook2           |
+|  | #xEA92 | instagram           |
+|  | #xEA93 | whatsapp            |
+|  | #xEA94 | spotify             |
+|  | #xEA95 | telegram            |
+|  | #xEA96 | twitter             |
+|  | #xEA97 | vine                |
+|  | #xEA98 | vk                  |
+|  | #xEA99 | renren              |
+|  | #xEA9A | sina-weibo          |
+|  | #xEA9B | rss                 |
+|  | #xEA9C | rss2                |
+|  | #xEA9D | youtube             |
+|  | #xEA9E | youtube           |
+|  | #xEA9F | twitch              |
+|  | #xEAA0 | vimeo               |
+|  | #xEAA1 | vimeo2              |
+|  | #xEAA2 | lanyrd              |
+|  | #xEAA3 | flickr              |
+|  | #xEAA4 | flickr2             |
+|  | #xEAA5 | flickr3             |
+|  | #xEAA6 | flickr4             |
+|  | #xEAA7 | dribbble            |
+|  | #xEAA8 | behance             |
+|  | #xEAA9 | behance2            |
+|  | #xEAAA | deviantart          |
+|  | #xEAAB | 500px               |
+|  | #xEAAC | steam               |
+|  | #xEAAD | steam2              |
+|  | #xEAAE | dropbox             |
+|  | #xEAAF | onedrive            |
+|  | #xEAB0 | github              |
+|  | #xEAB1 | npm                 |
+|  | #xEAB2 | basecamp            |
+|  | #xEAB3 | trello              |
+|  | #xEAB4 | wordpress           |
+|  | #xEAB5 | joomla              |
+|  | #xEAB6 | ello                |
+|  | #xEAB7 | blogger             |
+|  | #xEAB8 | blogger2            |
+|  | #xEAB9 | tumblr              |
+|  | #xEABA | tumblr2             |
+|  | #xEABB | yahoo               |
+|  | #xEABC | yahoo2              |
+|  | #xEABD | tux                 |
+|  | #xEABE | appleinc            |
+|  | #xEABF | finder              |
+|  | #xEAC0 | android             |
+|  | #xEAC1 | windows             |
+|  | #xEAC2 | windows8            |
+|  | #xEAC3 | soundcloud          |
+|  | #xEAC4 | soundcloud2         |
+|  | #xEAC5 | skype               |
+|  | #xEAC6 | reddit              |
+|  | #xEAC7 | hackernews          |
+|  | #xEAC8 | wikipedia           |
+|  | #xEAC9 | linkedin            |
+|  | #xEACA | linkedin2           |
+|  | #xEACB | lastfm              |
+|  | #xEACC | lastfm2             |
+|  | #xEACD | delicious           |
+|  | #xEACE | stumbleupon         |
+|  | #xEACF | stumbleupon2        |
+|  | #xEAD0 | stackoverflow       |
+|  | #xEAD1 | pinterest           |
+|  | #xEAD2 | pinterest2          |
+|  | #xEAD3 | xing                |
+|  | #xEAD4 | xing2               |
+|  | #xEAD5 | flattr              |
+|  | #xEAD6 | foursquare          |
+|  | #xEAD7 | yelp                |
+|  | #xEAD8 | paypal              |
+|  | #xEAD9 | chrome              |
+|  | #xEADA | firefox             |
+|  | #xEADB | IE                  |
+|  | #xEADC | edge                |
+|  | #xEADD | safari              |
+|  | #xEADE | opera               |
+|  | #xEADF | file-pdf            |
+|  | #xEAE0 | file-openoffice     |
+|  | #xEAE1 | file-word           |
+|  | #xEAE2 | file-excel          |
+|  | #xEAE3 | libreoffice         |
+|  | #xEAE4 | html-five           |
+|  | #xEAE5 | html-five2          |
+|  | #xEAE6 | css3                |
+|  | #xEAE7 | git                 |
+|  | #xEAE8 | codepen             |
+|  | #xEAE9 | svg                 |
+|  | #xEAEA | IcoMoon             |
+
+#+RESULTS: Segoe_UI_Emoji
+| 🌀 | #x1f300 | CYCLONE                                                                        |
+| 🌁 | #x1f301 | FOGGY                                                                          |
+| 🌂 | #x1f302 | CLOSED UMBRELLA                                                                |
+| 🌃 | #x1f303 | NIGHT WITH STARS                                                               |
+| 🌄 | #x1f304 | SUNRISE OVER MOUNTAINS                                                         |
+| 🌅 | #x1f305 | SUNRISE                                                                        |
+| 🌆 | #x1f306 | CITYSCAPE AT DUSK                                                              |
+| 🌇 | #x1f307 | SUNSET OVER BUILDINGS                                                          |
+| 🌈 | #x1f308 | RAINBOW                                                                        |
+| 🌉 | #x1f309 | BRIDGE AT NIGHT                                                                |
+| 🌊 | #x1f30a | WATER WAVE                                                                     |
+| 🌋 | #x1f30b | VOLCANO                                                                        |
+| 🌌 | #x1f30c | MILKY WAY                                                                      |
+| 🌍 | #x1f30d | EARTH GLOBE EUROPE                                                             |
+| 🌎 | #x1f30e | EARTH GLOBE AMERICAS                                                           |
+| 🌏 | #x1f30f | EARTH GLOBE ASIA                                                               |
+| 🌐 | #x1f310 | GLOBE WITH MERIDIANS                                                           |
+| 🌑 | #x1f311 | NEW MOON SYMBOL                                                                |
+| 🌒 | #x1f312 | WAXING CRESCENT MOON SYMBOL                                                    |
+| 🌓 | #x1f313 | FIRST QUARTER MOON SYMBOL                                                      |
+| 🌔 | #x1f314 | WAXING GIBBOUS MOON SYMBOL                                                     |
+| 🌕 | #x1f315 | FULL MOON SYMBOL                                                               |
+| 🌖 | #x1f316 | WANING GIBBOUS MOON SYMBOL                                                     |
+| 🌗 | #x1f317 | LAST QUARTER MOON SYMBOL                                                       |
+| 🌘 | #x1f318 | WANING CRESCENT MOON SYMBOL                                                    |
+| 🌙 | #x1f319 | CRESCENT MOON                                                                  |
+| 🌚 | #x1f31a | NEW MOON WITH FACE                                                             |
+| 🌛 | #x1f31b | FIRST QUARTER MOON WITH FACE                                                   |
+| 🌜 | #x1f31c | LAST QUARTER MOON WITH FACE                                                    |
+| 🌝 | #x1f31d | FULL MOON WITH FACE                                                            |
+| 🌞 | #x1f31e | SUN WITH FACE                                                                  |
+| 🌟 | #x1f31f | GLOWING STAR                                                                   |
+| 🌠 | #x1f320 | SHOOTING STAR                                                                  |
+| 🌰 | #x1f330 | CHESTNUT                                                                       |
+| 🌱 | #x1f331 | SEEDLING                                                                       |
+| 🌲 | #x1f332 | EVERGREEN TREE                                                                 |
+| 🌳 | #x1f333 | DECIDUOUS TREE                                                                 |
+| 🌴 | #x1f334 | PALM TREE                                                                      |
+| 🌵 | #x1f335 | CACTUS                                                                         |
+| 🌷 | #x1f337 | TULIP                                                                          |
+| 🌸 | #x1f338 | CHERRY BLOSSOM                                                                 |
+| 🌹 | #x1f339 | ROSE                                                                           |
+| 🌺 | #x1f33a | HIBISCUS                                                                       |
+| 🌻 | #x1f33b | SUNFLOWER                                                                      |
+| 🌼 | #x1f33c | BLOSSOM                                                                        |
+| 🌽 | #x1f33d | EAR OF MAIZE                                                                   |
+| 🌾 | #x1f33e | EAR OF RICE                                                                    |
+| 🌿 | #x1f33f | HERB                                                                           |
+| 🍀 | #x1f340 | FOUR LEAF CLOVER                                                               |
+| 🍁 | #x1f341 | MAPLE LEAF                                                                     |
+| 🍂 | #x1f342 | FALLEN LEAF                                                                    |
+| 🍃 | #x1f343 | LEAF FLUTTERING IN WIND                                                        |
+| 🍄 | #x1f344 | MUSHROOM                                                                       |
+| 🍅 | #x1f345 | TOMATO                                                                         |
+| 🍆 | #x1f346 | AUBERGINE                                                                      |
+| 🍇 | #x1f347 | GRAPES                                                                         |
+| 🍈 | #x1f348 | MELON                                                                          |
+| 🍉 | #x1f349 | WATERMELON                                                                     |
+| 🍊 | #x1f34a | TANGERINE                                                                      |
+| 🍋 | #x1f34b | LEMON                                                                          |
+| 🍌 | #x1f34c | BANANA                                                                         |
+| 🍍 | #x1f34d | PINEAPPLE                                                                      |
+| 🍎 | #x1f34e | RED APPLE                                                                      |
+| 🍏 | #x1f34f | GREEN APPLE                                                                    |
+| 🍐 | #x1f350 | PEAR                                                                           |
+| 🍑 | #x1f351 | PEACH                                                                          |
+| 🍒 | #x1f352 | CHERRIES                                                                       |
+| 🍓 | #x1f353 | STRAWBERRY                                                                     |
+| 🍔 | #x1f354 | HAMBURGER                                                                      |
+| 🍕 | #x1f355 | SLICE OF PIZZA                                                                 |
+| 🍖 | #x1f356 | MEAT ON BONE                                                                   |
+| 🍗 | #x1f357 | POULTRY LEG                                                                    |
+| 🍘 | #x1f358 | RICE CRACKER                                                                   |
+| 🍙 | #x1f359 | RICE BALL                                                                      |
+| 🍚 | #x1f35a | COOKED RICE                                                                    |
+| 🍛 | #x1f35b | CURRY AND RICE                                                                 |
+| 🍜 | #x1f35c | STEAMING BOWL                                                                  |
+| 🍝 | #x1f35d | SPAGHETTI                                                                      |
+| 🍞 | #x1f35e | BREAD                                                                          |
+| 🍟 | #x1f35f | FRENCH FRIES                                                                   |
+| 🍠 | #x1f360 | ROASTED SWEET POTATO                                                           |
+| 🍡 | #x1f361 | DANGO                                                                          |
+| 🍢 | #x1f362 | ODEN                                                                           |
+| 🍣 | #x1f363 | SUSHI                                                                          |
+| 🍤 | #x1f364 | FRIED SHRIMP                                                                   |
+| 🍥 | #x1f365 | FISH CAKE WITH SWIRL DESIGN                                                    |
+| 🍦 | #x1f366 | SOFT ICE CREAM                                                                 |
+| 🍧 | #x1f367 | SHAVED ICE                                                                     |
+| 🍨 | #x1f368 | ICE CREAM                                                                      |
+| 🍩 | #x1f369 | DOUGHNUT                                                                       |
+| 🍪 | #x1f36a | COOKIE                                                                         |
+| 🍫 | #x1f36b | CHOCOLATE BAR                                                                  |
+| 🍬 | #x1f36c | CANDY                                                                          |
+| 🍭 | #x1f36d | LOLLIPOP                                                                       |
+| 🍮 | #x1f36e | CUSTARD                                                                        |
+| 🍯 | #x1f36f | HONEY POT                                                                      |
+| 🍰 | #x1f370 | SHORTCAKE                                                                      |
+| 🍱 | #x1f371 | BENTO BOX                                                                      |
+| 🍲 | #x1f372 | POT OF FOOD                                                                    |
+| 🍳 | #x1f373 | COOKING                                                                        |
+| 🍴 | #x1f374 | FORK AND KNIFE                                                                 |
+| 🍵 | #x1f375 | TEACUP WITHOUT HANDLE                                                          |
+| 🍶 | #x1f376 | SAKE BOTTLE AND CUP                                                            |
+| 🍷 | #x1f377 | WINE GLASS                                                                     |
+| 🍸 | #x1f378 | COCKTAIL GLASS                                                                 |
+| 🍹 | #x1f379 | TROPICAL DRINK                                                                 |
+| 🍺 | #x1f37a | BEER MUG                                                                       |
+| 🍻 | #x1f37b | CLINKING BEER MUGS                                                             |
+| 🍼 | #x1f37c | BABY BOTTLE                                                                    |
+| 🎀 | #x1f380 | RIBBON                                                                         |
+| 🎁 | #x1f381 | WRAPPED PRESENT                                                                |
+| 🎂 | #x1f382 | BIRTHDAY CAKE                                                                  |
+| 🎃 | #x1f383 | JACK                                                                           |
+| 🎄 | #x1f384 | CHRISTMAS TREE                                                                 |
+| 🎅 | #x1f385 | FATHER CHRISTMAS                                                               |
+| 🎆 | #x1f386 | FIREWORKS                                                                      |
+| 🎇 | #x1f387 | FIREWORK SPARKLER                                                              |
+| 🎈 | #x1f388 | BALLOON                                                                        |
+| 🎉 | #x1f389 | PARTY POPPER                                                                   |
+| 🎊 | #x1f38a | CONFETTI BALL                                                                  |
+| 🎋 | #x1f38b | TANABATA TREE                                                                  |
+| 🎌 | #x1f38c | CROSSED FLAGS                                                                  |
+| 🎍 | #x1f38d | PINE DECORATION                                                                |
+| 🎎 | #x1f38e | JAPANESE DOLLS                                                                 |
+| 🎏 | #x1f38f | CARP STREAMER                                                                  |
+| 🎐 | #x1f390 | WIND CHIME                                                                     |
+| 🎑 | #x1f391 | MOON VIEWING CEREMONY                                                          |
+| 🎒 | #x1f392 | SCHOOL SATCHEL                                                                 |
+| 🎓 | #x1f393 | GRADUATION CAP                                                                 |
+| 🎠 | #x1f3a0 | CAROUSEL HORSE                                                                 |
+| 🎡 | #x1f3a1 | FERRIS WHEEL                                                                   |
+| 🎢 | #x1f3a2 | ROLLER COASTER                                                                 |
+| 🎣 | #x1f3a3 | FISHING POLE AND FISH                                                          |
+| 🎤 | #x1f3a4 | MICROPHONE                                                                     |
+| 🎥 | #x1f3a5 | MOVIE CAMERA                                                                   |
+| 🎦 | #x1f3a6 | CINEMA                                                                         |
+| 🎧 | #x1f3a7 | HEADPHONE                                                                      |
+| 🎨 | #x1f3a8 | ARTIST PALETTE                                                                 |
+| 🎩 | #x1f3a9 | TOP HAT                                                                        |
+| 🎪 | #x1f3aa | CIRCUS TENT                                                                    |
+| 🎫 | #x1f3ab | TICKET                                                                         |
+| 🎬 | #x1f3ac | CLAPPER BOARD                                                                  |
+| 🎭 | #x1f3ad | PERFORMING ARTS                                                                |
+| 🎮 | #x1f3ae | VIDEO GAME                                                                     |
+| 🎯 | #x1f3af | DIRECT HIT                                                                     |
+| 🎰 | #x1f3b0 | SLOT MACHINE                                                                   |
+| 🎱 | #x1f3b1 | BILLIARDS                                                                      |
+| 🎲 | #x1f3b2 | GAME DIE                                                                       |
+| 🎳 | #x1f3b3 | BOWLING                                                                        |
+| 🎴 | #x1f3b4 | FLOWER PLAYING CARDS                                                           |
+| 🎵 | #x1f3b5 | MUSICAL NOTE                                                                   |
+| 🎶 | #x1f3b6 | MULTIPLE MUSICAL NOTES                                                         |
+| 🎷 | #x1f3b7 | SAXOPHONE                                                                      |
+| 🎸 | #x1f3b8 | GUITAR                                                                         |
+| 🎹 | #x1f3b9 | MUSICAL KEYBOARD                                                               |
+| 🎺 | #x1f3ba | TRUMPET                                                                        |
+| 🎻 | #x1f3bb | VIOLIN                                                                         |
+| 🎼 | #x1f3bc | MUSICAL SCORE                                                                  |
+| 🎽 | #x1f3bd | RUNNING SHIRT WITH SASH                                                        |
+| 🎾 | #x1f3be | TENNIS RACQUET AND BALL                                                        |
+| 🎿 | #x1f3bf | SKI AND SKI BOOT                                                               |
+| 🏀 | #x1f3c0 | BASKETBALL AND HOOP                                                            |
+| 🏁 | #x1f3c1 | CHEQUERED FLAG                                                                 |
+| 🏂 | #x1f3c2 | SNOWBOARDER                                                                    |
+| 🏃 | #x1f3c3 | RUNNER                                                                         |
+| 🏄 | #x1f3c4 | SURFER                                                                         |
+| 🏆 | #x1f3c6 | TROPHY                                                                         |
+| 🏇 | #x1f3c7 | HORSE RACING                                                                   |
+| 🏈 | #x1f3c8 | AMERICAN FOOTBALL                                                              |
+| 🏉 | #x1f3c9 | RUGBY FOOTBALL                                                                 |
+| 🏊 | #x1f3ca | SWIMMER                                                                        |
+| 🏠 | #x1f3e0 | HOUSE BUILDING                                                                 |
+| 🏡 | #x1f3e1 | HOUSE WITH GARDEN                                                              |
+| 🏢 | #x1f3e2 | OFFICE BUILDING                                                                |
+| 🏣 | #x1f3e3 | JAPANESE POST OFFICE                                                           |
+| 🏤 | #x1f3e4 | EUROPEAN POST OFFICE                                                           |
+| 🏥 | #x1f3e5 | HOSPITAL                                                                       |
+| 🏦 | #x1f3e6 | BANK                                                                           |
+| 🏧 | #x1f3e7 | AUTOMATED TELLER MACHINE                                                       |
+| 🏨 | #x1f3e8 | HOTEL                                                                          |
+| 🏩 | #x1f3e9 | LOVE HOTEL                                                                     |
+| 🏪 | #x1f3ea | CONVENIENCE STORE                                                              |
+| 🏫 | #x1f3eb | SCHOOL                                                                         |
+| 🏬 | #x1f3ec | DEPARTMENT STORE                                                               |
+| 🏭 | #x1f3ed | FACTORY                                                                        |
+| 🏮 | #x1f3ee | IZAKAYA LANTERN                                                                |
+| 🏯 | #x1f3ef | JAPANESE CASTLE                                                                |
+| 🏰 | #x1f3f0 | EUROPEAN CASTLE                                                                |
+| 🐀  | #x1f400 | RAT                                                                            |
+| 🐁  | #x1f401 | MOUSE                                                                          |
+| 🐂  | #x1f402 | OX                                                                             |
+| 🐃  | #x1f403 | WATER BUFFALO                                                                  |
+| 🐄  | #x1f404 | COW                                                                            |
+| 🐅  | #x1f405 | TIGER                                                                          |
+| 🐆  | #x1f406 | LEOPARD                                                                        |
+| 🐇  | #x1f407 | RABBIT                                                                         |
+| 🐈  | #x1f408 | CAT                                                                            |
+| 🐉  | #x1f409 | DRAGON                                                                         |
+| 🐊  | #x1f40a | CROCODILE                                                                      |
+| 🐋  | #x1f40b | WHALE                                                                          |
+| 🐌  | #x1f40c | SNAIL                                                                          |
+| 🐍  | #x1f40d | SNAKE                                                                          |
+| 🐎  | #x1f40e | HORSE                                                                          |
+| 🐏  | #x1f40f | RAM                                                                            |
+| 🐐  | #x1f410 | GOAT                                                                           |
+| 🐑  | #x1f411 | SHEEP                                                                          |
+| 🐒  | #x1f412 | MONKEY                                                                         |
+| 🐓  | #x1f413 | ROOSTER                                                                        |
+| 🐔  | #x1f414 | CHICKEN                                                                        |
+| 🐕  | #x1f415 | DOG                                                                            |
+| 🐖  | #x1f416 | PIG                                                                            |
+| 🐗  | #x1f417 | BOAR                                                                           |
+| 🐘  | #x1f418 | ELEPHANT                                                                       |
+| 🐙  | #x1f419 | OCTOPUS                                                                        |
+| 🐚  | #x1f41a | SPIRAL SHELL                                                                   |
+| 🐛  | #x1f41b | BUG                                                                            |
+| 🐜  | #x1f41c | ANT                                                                            |
+| 🐝  | #x1f41d | HONEYBEE                                                                       |
+| 🐞  | #x1f41e | LADY BEETLE                                                                    |
+| 🐟  | #x1f41f | FISH                                                                           |
+| 🐠  | #x1f420 | TROPICAL FISH                                                                  |
+| 🐡  | #x1f421 | BLOWFISH                                                                       |
+| 🐢  | #x1f422 | TURTLE                                                                         |
+| 🐣  | #x1f423 | HATCHING CHICK                                                                 |
+| 🐤  | #x1f424 | BABY CHICK                                                                     |
+| 🐥  | #x1f425 | FRONT                                                                          |
+| 🐦  | #x1f426 | BIRD                                                                           |
+| 🐧  | #x1f427 | PENGUIN                                                                        |
+| 🐨  | #x1f428 | KOALA                                                                          |
+| 🐩  | #x1f429 | POODLE                                                                         |
+| 🐪  | #x1f42a | DROMEDARY CAMEL                                                                |
+| 🐫  | #x1f42b | BACTRIAN CAMEL                                                                 |
+| 🐬  | #x1f42c | DOLPHIN                                                                        |
+| 🐭  | #x1f42d | MOUSE FACE                                                                     |
+| 🐮  | #x1f42e | COW FACE                                                                       |
+| 🐯  | #x1f42f | TIGER FACE                                                                     |
+| 🐰  | #x1f430 | RABBIT FACE                                                                    |
+| 🐱  | #x1f431 | CAT FACE                                                                       |
+| 🐲  | #x1f432 | DRAGON FACE                                                                    |
+| 🐳  | #x1f433 | SPOUTING WHALE                                                                 |
+| 🐴  | #x1f434 | HORSE FACE                                                                     |
+| 🐵  | #x1f435 | MONKEY FACE                                                                    |
+| 🐶  | #x1f436 | DOG FACE                                                                       |
+| 🐷  | #x1f437 | PIG FACE                                                                       |
+| 🐸  | #x1f438 | FROG FACE                                                                      |
+| 🐹  | #x1f439 | HAMSTER FACE                                                                   |
+| 🐺  | #x1f43a | WOLF FACE                                                                      |
+| 🐻  | #x1f43b | BEAR FACE                                                                      |
+| 🐼  | #x1f43c | PANDA FACE                                                                     |
+| 🐽  | #x1f43d | PIG NOSE                                                                       |
+| 🐾  | #x1f43e | PAW PRINTS                                                                     |
+| 👀 | #x1f440 | EYES                                                                           |
+| 👂 | #x1f442 | EAR                                                                            |
+| 👃 | #x1f443 | NOSE                                                                           |
+| 👄 | #x1f444 | MOUTH                                                                          |
+| 👅 | #x1f445 | TONGUE                                                                         |
+| 👆 | #x1f446 | WHITE UP POINTING BACKHAND INDEX                                               |
+| 👇 | #x1f447 | WHITE DOWN POINTING BACKHAND INDEX                                             |
+| 👈 | #x1f448 | WHITE LEFT POINTING BACKHAND INDEX                                             |
+| 👉 | #x1f449 | WHITE RIGHT POINTING BACKHAND INDEX                                            |
+| 👊 | #x1f44a | FISTED HAND SIGN                                                               |
+| 👋 | #x1f44b | WAVING HAND SIGN                                                               |
+| 👌 | #x1f44c | OK HAND SIGN                                                                   |
+| 👍 | #x1f44d | THUMBS UP SIGN                                                                 |
+| 👎 | #x1f44e | THUMBS DOWN SIGN                                                               |
+| 👏 | #x1f44f | CLAPPING HANDS SIGN                                                            |
+| 👐 | #x1f450 | OPEN HANDS SIGN                                                                |
+| 👑 | #x1f451 | CROWN                                                                          |
+| 👒 | #x1f452 | WOMANS HAT                                                                     |
+| 👓 | #x1f453 | EYEGLASSES                                                                     |
+| 👔 | #x1f454 | NECKTIE                                                                        |
+| 👕 | #x1f455 | T                                                                              |
+| 👖 | #x1f456 | JEANS                                                                          |
+| 👗 | #x1f457 | DRESS                                                                          |
+| 👘 | #x1f458 | KIMONO                                                                         |
+| 👙 | #x1f459 | BIKINI                                                                         |
+| 👚 | #x1f45a | WOMANS CLOTHES                                                                 |
+| 👛 | #x1f45b | PURSE                                                                          |
+| 👜 | #x1f45c | HANDBAG                                                                        |
+| 👝 | #x1f45d | POUCH                                                                          |
+| 👞 | #x1f45e | MANS SHOE                                                                      |
+| 👟 | #x1f45f | ATHLETIC SHOE                                                                  |
+| 👠 | #x1f460 | HIGH                                                                           |
+| 👡 | #x1f461 | WOMANS SANDAL                                                                  |
+| 👢 | #x1f462 | WOMANS BOOTS                                                                   |
+| 👣 | #x1f463 | FOOTPRINTS                                                                     |
+| 👤 | #x1f464 | BUST IN SILHOUETTE                                                             |
+| 👥 | #x1f465 | BUSTS IN SILHOUETTE                                                            |
+| 👦 | #x1f466 | BOY                                                                            |
+| 👧 | #x1f467 | GIRL                                                                           |
+| 👨 | #x1f468 | MAN                                                                            |
+| 👩 | #x1f469 | WOMAN                                                                          |
+| 👪 | #x1f46a | FAMILY                                                                         |
+| 👫 | #x1f46b | MAN AND WOMAN HOLDING HANDS                                                    |
+| 👬 | #x1f46c | TWO MEN HOLDING HANDS                                                          |
+| 👭 | #x1f46d | TWO WOMEN HOLDING HANDS                                                        |
+| 👮 | #x1f46e | POLICE OFFICER                                                                 |
+| 👯 | #x1f46f | WOMAN WITH BUNNY EARS                                                          |
+| 👰 | #x1f470 | BRIDE WITH VEIL                                                                |
+| 👱 | #x1f471 | PERSON WITH BLOND HAIR                                                         |
+| 👲 | #x1f472 | MAN WITH GUA PI MAO                                                            |
+| 👳 | #x1f473 | MAN WITH TURBAN                                                                |
+| 👴 | #x1f474 | OLDER MAN                                                                      |
+| 👵 | #x1f475 | OLDER WOMAN                                                                    |
+| 👶 | #x1f476 | BABY                                                                           |
+| 👷 | #x1f477 | CONSTRUCTION WORKER                                                            |
+| 👸 | #x1f478 | PRINCESS                                                                       |
+| 👹 | #x1f479 | JAPANESE OGRE                                                                  |
+| 👺 | #x1f47a | JAPANESE GOBLIN                                                                |
+| 👻 | #x1f47b | GHOST                                                                          |
+| 👼 | #x1f47c | BABY ANGEL                                                                     |
+| 👽 | #x1f47d | EXTRATERRESTRIAL ALIEN                                                         |
+| 👾 | #x1f47e | ALIEN MONSTER                                                                  |
+| 👿 | #x1f47f | IMP                                                                            |
+| 💀 | #x1f480 | SKULL                                                                          |
+| 💁 | #x1f481 | INFORMATION DESK PERSON                                                        |
+| 💂 | #x1f482 | GUARDSMAN                                                                      |
+| 💃 | #x1f483 | DANCER                                                                         |
+| 💄 | #x1f484 | LIPSTICK                                                                       |
+| 💅 | #x1f485 | NAIL POLISH                                                                    |
+| 💆 | #x1f486 | FACE MASSAGE                                                                   |
+| 💇 | #x1f487 | HAIRCUT                                                                        |
+| 💈 | #x1f488 | BARBER POLE                                                                    |
+| 💉 | #x1f489 | SYRINGE                                                                        |
+| 💊 | #x1f48a | PILL                                                                           |
+| 💋 | #x1f48b | KISS MARK                                                                      |
+| 💌 | #x1f48c | LOVE LETTER                                                                    |
+| 💍 | #x1f48d | RING                                                                           |
+| 💎 | #x1f48e | GEM STONE                                                                      |
+| 💏 | #x1f48f | KISS                                                                           |
+| 💐 | #x1f490 | BOUQUET                                                                        |
+| 💑 | #x1f491 | COUPLE WITH HEART                                                              |
+| 💒 | #x1f492 | WEDDING                                                                        |
+| 💓 | #x1f493 | BEATING HEART                                                                  |
+| 💔 | #x1f494 | BROKEN HEART                                                                   |
+| 💕 | #x1f495 | TWO HEARTS                                                                     |
+| 💖 | #x1f496 | SPARKLING HEART                                                                |
+| 💗 | #x1f497 | GROWING HEART                                                                  |
+| 💘 | #x1f498 | HEART WITH ARROW                                                               |
+| 💙 | #x1f499 | BLUE HEART                                                                     |
+| 💚 | #x1f49a | GREEN HEART                                                                    |
+| 💛 | #x1f49b | YELLOW HEART                                                                   |
+| 💜 | #x1f49c | PURPLE HEART                                                                   |
+| 💝 | #x1f49d | HEART WITH RIBBON                                                              |
+| 💞 | #x1f49e | REVOLVING HEARTS                                                               |
+| 💟 | #x1f49f | HEART DECORATION                                                               |
+| 💠 | #x1f4a0 | DIAMOND SHAPE WITH A DOT INSIDE                                                |
+| 💡 | #x1f4a1 | ELECTRIC LIGHT BULB                                                            |
+| 💢 | #x1f4a2 | ANGER SYMBOL                                                                   |
+| 💣 | #x1f4a3 | BOMB                                                                           |
+| 💤 | #x1f4a4 | SLEEPING SYMBOL                                                                |
+| 💥 | #x1f4a5 | COLLISION SYMBOL                                                               |
+| 💦 | #x1f4a6 | SPLASHING SWEAT SYMBOL                                                         |
+| 💧 | #x1f4a7 | DROPLET                                                                        |
+| 💨 | #x1f4a8 | DASH SYMBOL                                                                    |
+| 💩 | #x1f4a9 | PILE OF POO                                                                    |
+| 💪 | #x1f4aa | FLEXED BICEPS                                                                  |
+| 💫 | #x1f4ab | DIZZY SYMBOL                                                                   |
+| 💬 | #x1f4ac | SPEECH BALLOON                                                                 |
+| 💭 | #x1f4ad | THOUGHT BALLOON                                                                |
+| 💮 | #x1f4ae | WHITE FLOWER                                                                   |
+| 💯 | #x1f4af | HUNDRED POINTS SYMBOL                                                          |
+| 💰 | #x1f4b0 | MONEY BAG                                                                      |
+| 💱 | #x1f4b1 | CURRENCY EXCHANGE                                                              |
+| 💲 | #x1f4b2 | HEAVY DOLLAR SIGN                                                              |
+| 💳 | #x1f4b3 | CREDIT CARD                                                                    |
+| 💴 | #x1f4b4 | BANKNOTE WITH YEN SIGN                                                         |
+| 💵 | #x1f4b5 | BANKNOTE WITH DOLLAR SIGN                                                      |
+| 💶 | #x1f4b6 | BANKNOTE WITH EURO SIGN                                                        |
+| 💷 | #x1f4b7 | BANKNOTE WITH POUND SIGN                                                       |
+| 💸 | #x1f4b8 | MONEY WITH WINGS                                                               |
+| 💹 | #x1f4b9 | CHART WITH UPWARDS TREND AND YEN SIGN                                          |
+| 💺 | #x1f4ba | SEAT                                                                           |
+| 💻 | #x1f4bb | PERSONAL COMPUTER                                                              |
+| 💼 | #x1f4bc | BRIEFCASE                                                                      |
+| 💽 | #x1f4bd | MINIDISC                                                                       |
+| 💾 | #x1f4be | FLOPPY DISK                                                                    |
+| 💿 | #x1f4bf | OPTICAL DISC                                                                   |
+| 📀 | #x1f4c0 | DVD                                                                            |
+| 📁 | #x1f4c1 | FILE FOLDER                                                                    |
+| 📂 | #x1f4c2 | OPEN FILE FOLDER                                                               |
+| 📃 | #x1f4c3 | PAGE WITH CURL                                                                 |
+| 📄 | #x1f4c4 | PAGE FACING UP                                                                 |
+| 📅 | #x1f4c5 | CALENDAR                                                                       |
+| 📆 | #x1f4c6 | TEAR                                                                           |
+| 📇 | #x1f4c7 | CARD INDEX                                                                     |
+| 📈 | #x1f4c8 | CHART WITH UPWARDS TREND                                                       |
+| 📉 | #x1f4c9 | CHART WITH DOWNWARDS TREND                                                     |
+| 📊 | #x1f4ca | BAR CHART                                                                      |
+| 📋 | #x1f4cb | CLIPBOARD                                                                      |
+| 📌 | #x1f4cc | PUSHPIN                                                                        |
+| 📍 | #x1f4cd | ROUND PUSHPIN                                                                  |
+| 📎 | #x1f4ce | PAPERCLIP                                                                      |
+| 📏 | #x1f4cf | STRAIGHT RULER                                                                 |
+| 📐 | #x1f4d0 | TRIANGULAR RULER                                                               |
+| 📑 | #x1f4d1 | BOOKMARK TABS                                                                  |
+| 📒 | #x1f4d2 | LEDGER                                                                         |
+| 📓 | #x1f4d3 | NOTEBOOK                                                                       |
+| 📔 | #x1f4d4 | NOTEBOOK WITH DECORATIVE COVER                                                 |
+| 📕 | #x1f4d5 | CLOSED BOOK                                                                    |
+| 📖 | #x1f4d6 | OPEN BOOK                                                                      |
+| 📗 | #x1f4d7 | GREEN BOOK                                                                     |
+| 📘 | #x1f4d8 | BLUE BOOK                                                                      |
+| 📙 | #x1f4d9 | ORANGE BOOK                                                                    |
+| 📚 | #x1f4da | BOOKS                                                                          |
+| 📛 | #x1f4db | NAME BADGE                                                                     |
+| 📜 | #x1f4dc | SCROLL                                                                         |
+| 📝 | #x1f4dd | MEMO                                                                           |
+| 📞 | #x1f4de | TELEPHONE RECEIVER                                                             |
+| 📟 | #x1f4df | PAGER                                                                          |
+| 📠 | #x1f4e0 | FAX MACHINE                                                                    |
+| 📡 | #x1f4e1 | SATELLITE ANTENNA                                                              |
+| 📢 | #x1f4e2 | PUBLIC ADDRESS LOUDSPEAKER                                                     |
+| 📣 | #x1f4e3 | CHEERING MEGAPHONE                                                             |
+| 📤 | #x1f4e4 | OUTBOX TRAY                                                                    |
+| 📥 | #x1f4e5 | INBOX TRAY                                                                     |
+| 📦 | #x1f4e6 | PACKAGE                                                                        |
+| 📧 | #x1f4e7 | E                                                                              |
+| 📨 | #x1f4e8 | INCOMING ENVELOPE                                                              |
+| 📩 | #x1f4e9 | ENVELOPE WITH DOWNWARDS ARROW ABOVE                                            |
+| 📪 | #x1f4ea | CLOSED MAILBOX WITH LOWERED FLAG                                               |
+| 📫 | #x1f4eb | CLOSED MAILBOX WITH RAISED FLAG                                                |
+| 📬 | #x1f4ec | OPEN MAILBOX WITH RAISED FLAG                                                  |
+| 📭 | #x1f4ed | OPEN MAILBOX WITH LOWERED FLAG                                                 |
+| 📮 | #x1f4ee | POSTBOX                                                                        |
+| 📯 | #x1f4ef | POSTAL HORN                                                                    |
+| 📰 | #x1f4f0 | NEWSPAPER                                                                      |
+| 📱 | #x1f4f1 | MOBILE PHONE                                                                   |
+| 📲 | #x1f4f2 | MOBILE PHONE WITH RIGHTWARDS ARROW AT LEFT                                     |
+| 📳 | #x1f4f3 | VIBRATION MODE                                                                 |
+| 📴 | #x1f4f4 | MOBILE PHONE OFF                                                               |
+| 📵 | #x1f4f5 | NO MOBILE PHONES                                                               |
+| 📶 | #x1f4f6 | ANTENNA WITH BARS                                                              |
+| 📷 | #x1f4f7 | CAMERA                                                                         |
+| 📹 | #x1f4f9 | VIDEO CAMERA                                                                   |
+| 📺 | #x1f4fa | TELEVISION                                                                     |
+| 📻 | #x1f4fb | RADIO                                                                          |
+| 📼 | #x1f4fc | VIDEOCASSETTE                                                                  |
+| 🔀 | #x1f500 | TWISTED RIGHTWARDS ARROWS                                                      |
+| 🔁 | #x1f501 | CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS                          |
+| 🔂 | #x1f502 | CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY |
+| 🔃 | #x1f503 | CLOCKWISE DOWNWARDS AND UPWARDS OPEN CIRCLE ARROWS                             |
+| 🔄 | #x1f504 | ANTICLOCKWISE DOWNWARDS AND UPWARDS OPEN CIRCLE ARROWS                         |
+| 🔅 | #x1f505 | LOW BRIGHTNESS SYMBOL                                                          |
+| 🔆 | #x1f506 | HIGH BRIGHTNESS SYMBOL                                                         |
+| 🔇 | #x1f507 | SPEAKER WITH CANCELLATION STROKE                                               |
+| 🔈 | #x1f508 | SPEAKER                                                                        |
+| 🔉 | #x1f509 | SPEAKER WITH ONE SOUND WAVE                                                    |
+| 🔊 | #x1f50a | SPEAKER WITH THREE SOUND WAVES                                                 |
+| 🔋 | #x1f50b | BATTERY                                                                        |
+| 🔌 | #x1f50c | ELECTRIC PLUG                                                                  |
+| 🔍 | #x1f50d | LEFT                                                                           |
+| 🔎 | #x1f50e | RIGHT                                                                          |
+| 🔏 | #x1f50f | LOCK WITH INK PEN                                                              |
+| 🔐 | #x1f510 | CLOSED LOCK WITH KEY                                                           |
+| 🔑 | #x1f511 | KEY                                                                            |
+| 🔒 | #x1f512 | LOCK                                                                           |
+| 🔓 | #x1f513 | OPEN LOCK                                                                      |
+| 🔔 | #x1f514 | BELL                                                                           |
+| 🔕 | #x1f515 | BELL WITH CANCELLATION STROKE                                                  |
+| 🔖 | #x1f516 | BOOKMARK                                                                       |
+| 🔗 | #x1f517 | LINK SYMBOL                                                                    |
+| 🔘 | #x1f518 | RADIO BUTTON                                                                   |
+| 🔙 | #x1f519 | BACK WITH LEFTWARDS ARROW ABOVE                                                |
+| 🔚 | #x1f51a | END WITH LEFTWARDS ARROW ABOVE                                                 |
+| 🔛 | #x1f51b | ON WITH EXCLAMATION MARK WITH LEFT RIGHT ARROW ABOVE                           |
+| 🔜 | #x1f51c | SOON WITH RIGHTWARDS ARROW ABOVE                                               |
+| 🔝 | #x1f51d | TOP WITH UPWARDS ARROW ABOVE                                                   |
+| 🔞 | #x1f51e | NO ONE UNDER EIGHTEEN SYMBOL                                                   |
+| 🔟 | #x1f51f | KEYCAP TEN                                                                     |
+| 🔠 | #x1f520 | INPUT SYMBOL FOR LATIN CAPITAL LETTERS                                         |
+| 🔡 | #x1f521 | INPUT SYMBOL FOR LATIN SMALL LETTERS                                           |
+| 🔢 | #x1f522 | INPUT SYMBOL FOR NUMBERS                                                       |
+| 🔣 | #x1f523 | INPUT SYMBOL FOR SYMBOLS                                                       |
+| 🔤 | #x1f524 | INPUT SYMBOL FOR LATIN LETTERS                                                 |
+| 🔥 | #x1f525 | FIRE                                                                           |
+| 🔦 | #x1f526 | ELECTRIC TORCH                                                                 |
+| 🔧 | #x1f527 | WRENCH                                                                         |
+| 🔨 | #x1f528 | HAMMER                                                                         |
+| 🔩 | #x1f529 | NUT AND BOLT                                                                   |
+| 🔪 | #x1f52a | HOCHO                                                                          |
+| 🔫 | #x1f52b | PISTOL                                                                         |
+| 🔬 | #x1f52c | MICROSCOPE                                                                     |
+| 🔭 | #x1f52d | TELESCOPE                                                                      |
+| 🔮 | #x1f52e | CRYSTAL BALL                                                                   |
+| 🔯 | #x1f52f | SIX POINTED STAR WITH MIDDLE DOT                                               |
+| 🔰 | #x1f530 | JAPANESE SYMBOL FOR BEGINNER                                                   |
+| 🔱 | #x1f531 | TRIDENT EMBLEM                                                                 |
+| 🔲 | #x1f532 | BLACK SQUARE BUTTON                                                            |
+| 🔳 | #x1f533 | WHITE SQUARE BUTTON                                                            |
+| 🔴 | #x1f534 | LARGE RED CIRCLE                                                               |
+| 🔵 | #x1f535 | LARGE BLUE CIRCLE                                                              |
+| 🔶 | #x1f536 | LARGE ORANGE DIAMOND                                                           |
+| 🔷 | #x1f537 | LARGE BLUE DIAMOND                                                             |
+| 🔸 | #x1f538 | SMALL ORANGE DIAMOND                                                           |
+| 🔹 | #x1f539 | SMALL BLUE DIAMOND                                                             |
+| 🔺 | #x1f53a | UP                                                                             |
+| 🔻 | #x1f53b | DOWN                                                                           |
+| 🔼 | #x1f53c | UP                                                                             |
+| 🔽 | #x1f53d | DOWN                                                                           |
+| 🕀  | #x1f540 | CIRCLED CROSS POMMEE                                                           |
+| 🕁  | #x1f541 | CROSS POMMEE WITH HALF                                                         |
+| 🕂  | #x1f542 | CROSS POMMEE                                                                   |
+| 🕃  | #x1f543 | NOTCHED LEFT SEMICIRCLE WITH THREE DOTS                                        |
+| 🕐 | #x1f550 | CLOCK FACE ONE OCLOCK                                                          |
+| 🕑 | #x1f551 | CLOCK FACE TWO OCLOCK                                                          |
+| 🕒 | #x1f552 | CLOCK FACE THREE OCLOCK                                                        |
+| 🕓 | #x1f553 | CLOCK FACE FOUR OCLOCK                                                         |
+| 🕔 | #x1f554 | CLOCK FACE FIVE OCLOCK                                                         |
+| 🕕 | #x1f555 | CLOCK FACE SIX OCLOCK                                                          |
+| 🕖 | #x1f556 | CLOCK FACE SEVEN OCLOCK                                                        |
+| 🕗 | #x1f557 | CLOCK FACE EIGHT OCLOCK                                                        |
+| 🕘 | #x1f558 | CLOCK FACE NINE OCLOCK                                                         |
+| 🕙 | #x1f559 | CLOCK FACE TEN OCLOCK                                                          |
+| 🕚 | #x1f55a | CLOCK FACE ELEVEN OCLOCK                                                       |
+| 🕛 | #x1f55b | CLOCK FACE TWELVE OCLOCK                                                       |
+| 🕜 | #x1f55c | CLOCK FACE ONE                                                                 |
+| 🕝 | #x1f55d | CLOCK FACE TWO                                                                 |
+| 🕞 | #x1f55e | CLOCK FACE THREE                                                               |
+| 🕟 | #x1f55f | CLOCK FACE FOUR                                                                |
+| 🕠 | #x1f560 | CLOCK FACE FIVE                                                                |
+| 🕡 | #x1f561 | CLOCK FACE SIX                                                                 |
+| 🕢 | #x1f562 | CLOCK FACE SEVEN                                                               |
+| 🕣 | #x1f563 | CLOCK FACE EIGHT                                                               |
+| 🕤 | #x1f564 | CLOCK FACE NINE                                                                |
+| 🕥 | #x1f565 | CLOCK FACE TEN                                                                 |
+| 🕦 | #x1f566 | CLOCK FACE ELEVEN                                                              |
+| 🕧 | #x1f567 | CLOCK FACE TWELVE                                                              |
+| 🗻 | #x1f5fb | MOUNT FUJI                                                                     |
+| 🗼 | #x1f5fc | TOKYO TOWER                                                                    |
+| 🗽 | #x1f5fd | STATUE OF LIBERTY                                                              |
+| 🗾 | #x1f5fe | SILHOUETTE OF JAPAN                                                            |
+| 🗿 | #x1f5ff | MOYAI                                                                          |
+| 😀 | #x1f600 | GRINNING FACE                                                                  |
+| 😁 | #x1f601 | GRINNING FACE WITH SMILING EYES                                                |
+| 😂 | #x1f602 | FACE WITH TEARS OF JOY                                                         |
+| 😃 | #x1f603 | SMILING FACE WITH OPEN MOUTH                                                   |
+| 😄 | #x1f604 | SMILING FACE WITH OPEN MOUTH AND SMILING EYES                                  |
+| 😅 | #x1f605 | SMILING FACE WITH OPEN MOUTH AND COLD SWEAT                                    |
+| 😆 | #x1f606 | SMILING FACE WITH OPEN MOUTH AND TIGHTLY                                       |
+| 😇 | #x1f607 | SMILING FACE WITH HALO                                                         |
+| 😈 | #x1f608 | SMILING FACE WITH HORNS                                                        |
+| 😉 | #x1f609 | WINKING FACE                                                                   |
+| 😊 | #x1f60a | SMILING FACE WITH SMILING EYES                                                 |
+| 😋 | #x1f60b | FACE SAVOURING DELICIOUS FOOD                                                  |
+| 😌 | #x1f60c | RELIEVED FACE                                                                  |
+| 😍 | #x1f60d | SMILING FACE WITH HEART                                                        |
+| 😎 | #x1f60e | SMILING FACE WITH SUNGLASSES                                                   |
+| 😏 | #x1f60f | SMIRKING FACE                                                                  |
+| 😐 | #x1f610 | NEUTRAL FACE                                                                   |
+| 😑 | #x1f611 | EXPRESSIONLESS FACE                                                            |
+| 😒 | #x1f612 | UNAMUSED FACE                                                                  |
+| 😓 | #x1f613 | FACE WITH COLD SWEAT                                                           |
+| 😔 | #x1f614 | PENSIVE FACE                                                                   |
+| 😕 | #x1f615 | CONFUSED FACE                                                                  |
+| 😖 | #x1f616 | CONFOUNDED FACE                                                                |
+| 😗 | #x1f617 | KISSING FACE                                                                   |
+| 😘 | #x1f618 | FACE THROWING A KISS                                                           |
+| 😙 | #x1f619 | KISSING FACE WITH SMILING EYES                                                 |
+| 😚 | #x1f61a | KISSING FACE WITH CLOSED EYES                                                  |
+| 😛 | #x1f61b | FACE WITH STUCK                                                                |
+| 😜 | #x1f61c | FACE WITH STUCK                                                                |
+| 😝 | #x1f61d | FACE WITH STUCK                                                                |
+| 😞 | #x1f61e | DISAPPOINTED FACE                                                              |
+| 😟 | #x1f61f | WORRIED FACE                                                                   |
+| 😠 | #x1f620 | ANGRY FACE                                                                     |
+| 😡 | #x1f621 | POUTING FACE                                                                   |
+| 😢 | #x1f622 | CRYING FACE                                                                    |
+| 😣 | #x1f623 | PERSEVERING FACE                                                               |
+| 😤 | #x1f624 | FACE WITH LOOK OF TRIUMPH                                                      |
+| 😥 | #x1f625 | DISAPPOINTED BUT RELIEVED FACE                                                 |
+| 😦 | #x1f626 | FROWNING FACE WITH OPEN MOUTH                                                  |
+| 😧 | #x1f627 | ANGUISHED FACE                                                                 |
+| 😨 | #x1f628 | FEARFUL FACE                                                                   |
+| 😩 | #x1f629 | WEARY FACE                                                                     |
+| 😪 | #x1f62a | SLEEPY FACE                                                                    |
+| 😫 | #x1f62b | TIRED FACE                                                                     |
+| 😬 | #x1f62c | GRIMACING FACE                                                                 |
+| 😭 | #x1f62d | LOUDLY CRYING FACE                                                             |
+| 😮 | #x1f62e | FACE WITH OPEN MOUTH                                                           |
+| 😯 | #x1f62f | HUSHED FACE                                                                    |
+| 😰 | #x1f630 | FACE WITH OPEN MOUTH AND COLD SWEAT                                            |
+| 😱 | #x1f631 | FACE SCREAMING IN FEAR                                                         |
+| 😲 | #x1f632 | ASTONISHED FACE                                                                |
+| 😳 | #x1f633 | FLUSHED FACE                                                                   |
+| 😴 | #x1f634 | SLEEPING FACE                                                                  |
+| 😵 | #x1f635 | DIZZY FACE                                                                     |
+| 😶 | #x1f636 | FACE WITHOUT MOUTH                                                             |
+| 😷 | #x1f637 | FACE WITH MEDICAL MASK                                                         |
+| 😸 | #x1f638 | GRINNING CAT FACE WITH SMILING EYES                                            |
+| 😹 | #x1f639 | CAT FACE WITH TEARS OF JOY                                                     |
+| 😺 | #x1f63a | SMILING CAT FACE WITH OPEN MOUTH                                               |
+| 😻 | #x1f63b | SMILING CAT FACE WITH HEART                                                    |
+| 😼 | #x1f63c | CAT FACE WITH WRY SMILE                                                        |
+| 😽 | #x1f63d | KISSING CAT FACE WITH CLOSED EYES                                              |
+| 😾 | #x1f63e | POUTING CAT FACE                                                               |
+| 😿 | #x1f63f | CRYING CAT FACE                                                                |
+| 🙀 | #x1f640 | WEARY CAT FACE                                                                 |
+| 🙅 | #x1f645 | FACE WITH NO GOOD GESTURE                                                      |
+| 🙆 | #x1f646 | FACE WITH OK GESTURE                                                           |
+| 🙇 | #x1f647 | PERSON BOWING DEEPLY                                                           |
+| 🙈 | #x1f648 | SEE                                                                            |
+| 🙉 | #x1f649 | HEAR                                                                           |
+| 🙊 | #x1f64a | SPEAK                                                                          |
+| 🙋 | #x1f64b | HAPPY PERSON RAISING ONE HAND                                                  |
+| 🙌 | #x1f64c | PERSON RAISING BOTH HANDS IN CELEBRATION                                       |
+| 🙍 | #x1f64d | PERSON FROWNING                                                                |
+| 🙎 | #x1f64e | PERSON WITH POUTING FACE                                                       |
+| 🙏 | #x1f64f | PERSON WITH FOLDED HANDS                                                       |
+| 🚀 | #x1f680 | ROCKET                                                                         |
+| 🚁 | #x1f681 | HELICOPTER                                                                     |
+| 🚂 | #x1f682 | STEAM LOCOMOTIVE                                                               |
+| 🚃 | #x1f683 | RAILWAY CAR                                                                    |
+| 🚄 | #x1f684 | HIGH                                                                           |
+| 🚅 | #x1f685 | HIGH                                                                           |
+| 🚆 | #x1f686 | TRAIN                                                                          |
+| 🚇 | #x1f687 | METRO                                                                          |
+| 🚈 | #x1f688 | LIGHT RAIL                                                                     |
+| 🚉 | #x1f689 | STATION                                                                        |
+| 🚊 | #x1f68a | TRAM                                                                           |
+| 🚋 | #x1f68b | TRAM CAR                                                                       |
+| 🚌 | #x1f68c | BUS                                                                            |
+| 🚍 | #x1f68d | ONCOMING BUS                                                                   |
+| 🚎 | #x1f68e | TROLLEYBUS                                                                     |
+| 🚏 | #x1f68f | BUS STOP                                                                       |
+| 🚐 | #x1f690 | MINIBUS                                                                        |
+| 🚑 | #x1f691 | AMBULANCE                                                                      |
+| 🚒 | #x1f692 | FIRE ENGINE                                                                    |
+| 🚓 | #x1f693 | POLICE CAR                                                                     |
+| 🚔 | #x1f694 | ONCOMING POLICE CAR                                                            |
+| 🚕 | #x1f695 | TAXI                                                                           |
+| 🚖 | #x1f696 | ONCOMING TAXI                                                                  |
+| 🚗 | #x1f697 | AUTOMOBILE                                                                     |
+| 🚘 | #x1f698 | ONCOMING AUTOMOBILE                                                            |
+| 🚙 | #x1f699 | RECREATIONAL VEHICLE                                                           |
+| 🚚 | #x1f69a | DELIVERY TRUCK                                                                 |
+| 🚛 | #x1f69b | ARTICULATED LORRY                                                              |
+| 🚜 | #x1f69c | TRACTOR                                                                        |
+| 🚝 | #x1f69d | MONORAIL                                                                       |
+| 🚞 | #x1f69e | MOUNTAIN RAILWAY                                                               |
+| 🚟 | #x1f69f | SUSPENSION RAILWAY                                                             |
+| 🚠 | #x1f6a0 | MOUNTAIN CABLEWAY                                                              |
+| 🚡 | #x1f6a1 | AERIAL TRAMWAY                                                                 |
+| 🚢 | #x1f6a2 | SHIP                                                                           |
+| 🚣 | #x1f6a3 | ROWBOAT                                                                        |
+| 🚤 | #x1f6a4 | SPEEDBOAT                                                                      |
+| 🚥 | #x1f6a5 | HORIZONTAL TRAFFIC LIGHT                                                       |
+| 🚦 | #x1f6a6 | VERTICAL TRAFFIC LIGHT                                                         |
+| 🚧 | #x1f6a7 | CONSTRUCTION SIGN                                                              |
+| 🚨 | #x1f6a8 | POLICE CARS REVOLVING LIGHT                                                    |
+| 🚩 | #x1f6a9 | TRIANGULAR FLAG ON POST                                                        |
+| 🚪 | #x1f6aa | DOOR                                                                           |
+| 🚫 | #x1f6ab | NO ENTRY SIGN                                                                  |
+| 🚬 | #x1f6ac | SMOKING SYMBOL                                                                 |
+| 🚭 | #x1f6ad | NO SMOKING SYMBOL                                                              |
+| 🚮 | #x1f6ae | PUT LITTER IN ITS PLACE SYMBOL                                                 |
+| 🚯 | #x1f6af | DO NOT LITTER SYMBOL                                                           |
+| 🚰 | #x1f6b0 | POTABLE WATER SYMBOL                                                           |
+| 🚱 | #x1f6b1 | NON                                                                            |
+| 🚲 | #x1f6b2 | BICYCLE                                                                        |
+| 🚳 | #x1f6b3 | NO BICYCLES                                                                    |
+| 🚴 | #x1f6b4 | BICYCLIST                                                                      |
+| 🚵 | #x1f6b5 | MOUNTAIN BICYCLIST                                                             |
+| 🚶 | #x1f6b6 | PEDESTRIAN                                                                     |
+| 🚷 | #x1f6b7 | NO PEDESTRIANS                                                                 |
+| 🚸 | #x1f6b8 | CHILDREN CROSSING                                                              |
+| 🚹 | #x1f6b9 | MENS SYMBOL                                                                    |
+| 🚺 | #x1f6ba | WOMENS SYMBOL                                                                  |
+| 🚻 | #x1f6bb | RESTROOM                                                                       |
+| 🚼 | #x1f6bc | BABY SYMBOL                                                                    |
+| 🚽 | #x1f6bd | TOILET                                                                         |
+| 🚾 | #x1f6be | WATER CLOSET                                                                   |
+| 🚿 | #x1f6bf | SHOWER                                                                         |
+| 🛀 | #x1f6c0 | BATH                                                                           |
+| 🛁 | #x1f6c1 | BATHTUB                                                                        |
+| 🛂 | #x1f6c2 | PASSPORT CONTROL                                                               |
+| 🛃 | #x1f6c3 | CUSTOMS                                                                        |
+| 🛄 | #x1f6c4 | BAGGAGE CLAIM                                                                  |
+| 🛅 | #x1f6c5 | LEFT LUGGAGE                                                                   |
+| ☀  | #x2600  | BLACK SUN WITH RAYS                                                            |
+| ☁  | #x2601  | CLOUD                                                                          |
+| ☂  | #x2602  | UMBRELLA                                                                       |
+| ☃  | #x2603  | SNOWMAN                                                                        |
+| ☄  | #x2604  | COMET                                                                          |
+| ★  | #x2605  | BLACK STAR                                                                     |
+| ☆  | #x2606  | WHITE STAR                                                                     |
+| ☇  | #x2607  | LIGHTNING                                                                      |
+| ☈  | #x2608  | THUNDERSTORM                                                                   |
+| ☉  | #x2609  | SUN                                                                            |
+| ☊  | #x260a  | ASCENDING NODE                                                                 |
+| ☋  | #x260b  | DESCENDING NODE                                                                |
+| ☌  | #x260c  | CONJUNCTION                                                                    |
+| ☍  | #x260d  | OPPOSITION                                                                     |
+| ☎  | #x260e  | BLACK TELEPHONE                                                                |
+| ☏  | #x260f  | WHITE TELEPHONE                                                                |
+| ☐  | #x2610  | BALLOT BOX                                                                     |
+| ☑  | #x2611  | BALLOT BOX WITH CHECK                                                          |
+| ☒  | #x2612  | BALLOT BOX WITH X                                                              |
+| ☓  | #x2613  | SALTIRE                                                                        |
+| ☔ | #x2614  | UMBRELLA WITH RAIN DROPS                                                       |
+| ☕ | #x2615  | HOT BEVERAGE                                                                   |
+| ☖  | #x2616  | WHITE SHOGI PIECE                                                              |
+| ☗  | #x2617  | BLACK SHOGI PIECE                                                              |
+| ☘  | #x2618  | SHAMROCK                                                                       |
+| ☙  | #x2619  | REVERSED ROTATED FLORAL HEART BULLET                                           |
+| ☚  | #x261a  | BLACK LEFT POINTING INDEX                                                      |
+| ☛  | #x261b  | BLACK RIGHT POINTING INDEX                                                     |
+| ☜  | #x261c  | WHITE LEFT POINTING INDEX                                                      |
+| ☝  | #x261d  | WHITE UP POINTING INDEX                                                        |
+| ☞  | #x261e  | WHITE RIGHT POINTING INDEX                                                     |
+| ☟  | #x261f  | WHITE DOWN POINTING INDEX                                                      |
+| ☠  | #x2620  | SKULL AND CROSSBONES                                                           |
+| ☡  | #x2621  | CAUTION SIGN                                                                   |
+| ☢  | #x2622  | RADIOACTIVE SIGN                                                               |
+| ☣  | #x2623  | BIOHAZARD SIGN                                                                 |
+| ☤  | #x2624  | CADUCEUS                                                                       |
+| ☥  | #x2625  | ANKH                                                                           |
+| ☦  | #x2626  | ORTHODOX CROSS                                                                 |
+| ☧  | #x2627  | CHI RHO                                                                        |
+| ☨  | #x2628  | CROSS OF LORRAINE                                                              |
+| ☩  | #x2629  | CROSS OF JERUSALEM                                                             |
+| ☪  | #x262a  | STAR AND CRESCENT                                                              |
+| ☫  | #x262b  | FARSI SYMBOL                                                                   |
+| ☬  | #x262c  | ADI SHAKTI                                                                     |
+| ☭  | #x262d  | HAMMER AND SICKLE                                                              |
+| ☮  | #x262e  | PEACE SYMBOL                                                                   |
+| ☯  | #x262f  | YIN YANG                                                                       |
+| ☰  | #x2630  | TRIGRAM FOR HEAVEN                                                             |
+| ☱  | #x2631  | TRIGRAM FOR LAKE                                                               |
+| ☲  | #x2632  | TRIGRAM FOR FIRE                                                               |
+| ☳  | #x2633  | TRIGRAM FOR THUNDER                                                            |
+| ☴  | #x2634  | TRIGRAM FOR WIND                                                               |
+| ☵  | #x2635  | TRIGRAM FOR WATER                                                              |
+| ☶  | #x2636  | TRIGRAM FOR MOUNTAIN                                                           |
+| ☷  | #x2637  | TRIGRAM FOR EARTH                                                              |
+| ☸  | #x2638  | WHEEL OF DHARMA                                                                |
+| ☹  | #x2639  | WHITE FROWNING FACE                                                            |
+| ☺  | #x263a  | WHITE SMILING FACE                                                             |
+| ☻  | #x263b  | BLACK SMILING FACE                                                             |
+| ☼  | #x263c  | WHITE SUN WITH RAYS                                                            |
+| ☽  | #x263d  | FIRST QUARTER MOON                                                             |
+| ☾  | #x263e  | LAST QUARTER MOON                                                              |
+| ☿  | #x263f  | MERCURY                                                                        |
+| ♀  | #x2640  | FEMALE SIGN                                                                    |
+| ♁  | #x2641  | EARTH                                                                          |
+| ♂  | #x2642  | MALE SIGN                                                                      |
+| ♃  | #x2643  | JUPITER                                                                        |
+| ♄  | #x2644  | SATURN                                                                         |
+| ♅  | #x2645  | URANUS                                                                         |
+| ♆  | #x2646  | NEPTUNE                                                                        |
+| ♇  | #x2647  | PLUTO                                                                          |
+| ♈ | #x2648  | ARIES                                                                          |
+| ♉ | #x2649  | TAURUS                                                                         |
+| ♊ | #x264a  | GEMINI                                                                         |
+| ♋ | #x264b  | CANCER                                                                         |
+| ♌ | #x264c  | LEO                                                                            |
+| ♍ | #x264d  | VIRGO                                                                          |
+| ♎ | #x264e  | LIBRA                                                                          |
+| ♏ | #x264f  | SCORPIUS                                                                       |
+| ♐ | #x2650  | SAGITTARIUS                                                                    |
+| ♑ | #x2651  | CAPRICORN                                                                      |
+| ♒ | #x2652  | AQUARIUS                                                                       |
+| ♓ | #x2653  | PISCES                                                                         |
+| ♔  | #x2654  | WHITE CHESS KING                                                               |
+| ♕  | #x2655  | WHITE CHESS QUEEN                                                              |
+| ♖  | #x2656  | WHITE CHESS ROOK                                                               |
+| ♗  | #x2657  | WHITE CHESS BISHOP                                                             |
+| ♘  | #x2658  | WHITE CHESS KNIGHT                                                             |
+| ♙  | #x2659  | WHITE CHESS PAWN                                                               |
+| ♚  | #x265a  | BLACK CHESS KING                                                               |
+| ♛  | #x265b  | BLACK CHESS QUEEN                                                              |
+| ♜  | #x265c  | BLACK CHESS ROOK                                                               |
+| ♝  | #x265d  | BLACK CHESS BISHOP                                                             |
+| ♞  | #x265e  | BLACK CHESS KNIGHT                                                             |
+| ♟  | #x265f  | BLACK CHESS PAWN                                                               |
+| ♠  | #x2660  | BLACK SPADE SUIT                                                               |
+| ♡  | #x2661  | WHITE HEART SUIT                                                               |
+| ♢  | #x2662  | WHITE DIAMOND SUIT                                                             |
+| ♣  | #x2663  | BLACK CLUB SUIT                                                                |
+| ♤  | #x2664  | WHITE SPADE SUIT                                                               |
+| ♥  | #x2665  | BLACK HEART SUIT                                                               |
+| ♦  | #x2666  | BLACK DIAMOND SUIT                                                             |
+| ♧  | #x2667  | WHITE CLUB SUIT                                                                |
+| ♨  | #x2668  | HOT SPRINGS                                                                    |
+| ♩  | #x2669  | QUARTER NOTE                                                                   |
+| ♪  | #x266a  | EIGHTH NOTE                                                                    |
+| ♫  | #x266b  | BEAMED EIGHTH NOTES                                                            |
+| ♬  | #x266c  | BEAMED SIXTEENTH NOTES                                                         |
+| ♭  | #x266d  | MUSIC FLAT SIGN                                                                |
+| ♮  | #x266e  | MUSIC NATURAL SIGN                                                             |
+| ♯  | #x266f  | MUSIC SHARP SIGN                                                               |
+| ♰  | #x2670  | WEST SYRIAC CROSS                                                              |
+| ♱  | #x2671  | EAST SYRIAC CROSS                                                              |
+| ♲  | #x2672  | UNIVERSAL RECYCLING SYMBOL                                                     |
+| ♳  | #x2673  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♴  | #x2674  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♵  | #x2675  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♶  | #x2676  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♷  | #x2677  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♸  | #x2678  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♹  | #x2679  | RECYCLING SYMBOL FOR TYPE                                                      |
+| ♺  | #x267a  | RECYCLING SYMBOL FOR GENERIC MATERIALS                                         |
+| ♻  | #x267b  | BLACK UNIVERSAL RECYCLING SYMBOL                                               |
+| ♼  | #x267c  | RECYCLED PAPER SYMBOL                                                          |
+| ♽  | #x267d  | PARTIALLY                                                                      |
+| ♾  | #x267e  | PERMANENT PAPER SIGN                                                           |
+| ♿ | #x267f  | WHEELCHAIR SYMBOL                                                              |
+| ⚀  | #x2680  | DIE FACE                                                                       |
+| ⚁  | #x2681  | DIE FACE                                                                       |
+| ⚂  | #x2682  | DIE FACE                                                                       |
+| ⚃  | #x2683  | DIE FACE                                                                       |
+| ⚄  | #x2684  | DIE FACE                                                                       |
+| ⚅  | #x2685  | DIE FACE                                                                       |
+| ⚆  | #x2686  | WHITE CIRCLE WITH DOT RIGHT                                                    |
+| ⚇  | #x2687  | WHITE CIRCLE WITH TWO DOTS                                                     |
+| ⚈  | #x2688  | BLACK CIRCLE WITH WHITE DOT RIGHT                                              |
+| ⚉  | #x2689  | BLACK CIRCLE WITH TWO WHITE DOTS                                               |
+| ⚊  | #x268a  | MONOGRAM FOR YANG                                                              |
+| ⚋  | #x268b  | MONOGRAM FOR YIN                                                               |
+| ⚌  | #x268c  | DIGRAM FOR GREATER YANG                                                        |
+| ⚍  | #x268d  | DIGRAM FOR LESSER YIN                                                          |
+| ⚎  | #x268e  | DIGRAM FOR LESSER YANG                                                         |
+| ⚏  | #x268f  | DIGRAM FOR GREATER YIN                                                         |
+| ⚐  | #x2690  | WHITE FLAG                                                                     |
+| ⚑  | #x2691  | BLACK FLAG                                                                     |
+| ⚒  | #x2692  | HAMMER AND PICK                                                                |
+| ⚓ | #x2693  | ANCHOR                                                                         |
+| ⚔  | #x2694  | CROSSED SWORDS                                                                 |
+| ⚕  | #x2695  | STAFF OF AESCULAPIUS                                                           |
+| ⚖  | #x2696  | SCALES                                                                         |
+| ⚗  | #x2697  | ALEMBIC                                                                        |
+| ⚘  | #x2698  | FLOWER                                                                         |
+| ⚙  | #x2699  | GEAR                                                                           |
+| ⚚  | #x269a  | STAFF OF HERMES                                                                |
+| ⚛  | #x269b  | ATOM SYMBOL                                                                    |
+| ⚜  | #x269c  | FLEUR                                                                          |
+| ⚝  | #x269d  | OUTLINED WHITE STAR                                                            |
+| ⚞  | #x269e  | THREE LINES CONVERGING RIGHT                                                   |
+| ⚟  | #x269f  | THREE LINES CONVERGING LEFT                                                    |
+| ⚠  | #x26a0  | WARNING SIGN                                                                   |
+| ⚡ | #x26a1  | HIGH VOLTAGE SIGN                                                              |
+| ⚢  | #x26a2  | DOUBLED FEMALE SIGN                                                            |
+| ⚣  | #x26a3  | DOUBLED MALE SIGN                                                              |
+| ⚤  | #x26a4  | INTERLOCKED FEMALE AND MALE SIGN                                               |
+| ⚥  | #x26a5  | MALE AND FEMALE SIGN                                                           |
+| ⚦  | #x26a6  | MALE WITH STROKE SIGN                                                          |
+| ⚧  | #x26a7  | MALE WITH STROKE AND MALE AND FEMALE SIGN                                      |
+| ⚨  | #x26a8  | VERTICAL MALE WITH STROKE SIGN                                                 |
+| ⚩  | #x26a9  | HORIZONTAL MALE WITH STROKE SIGN                                               |
+| ⚪ | #x26aa  | MEDIUM WHITE CIRCLE                                                            |
+| ⚫ | #x26ab  | MEDIUM BLACK CIRCLE                                                            |
+| ⚬  | #x26ac  | MEDIUM SMALL WHITE CIRCLE                                                      |
+| ⚭  | #x26ad  | MARRIAGE SYMBOL                                                                |
+| ⚮  | #x26ae  | DIVORCE SYMBOL                                                                 |
+| ⚯  | #x26af  | UNMARRIED PARTNERSHIP SYMBOL                                                   |
+| ⚰  | #x26b0  | COFFIN                                                                         |
+| ⚱  | #x26b1  | FUNERAL URN                                                                    |
+| ⚲  | #x26b2  | NEUTER                                                                         |
+| ⚳  | #x26b3  | CERES                                                                          |
+| ⚴  | #x26b4  | PALLAS                                                                         |
+| ⚵  | #x26b5  | JUNO                                                                           |
+| ⚶  | #x26b6  | VESTA                                                                          |
+| ⚷  | #x26b7  | CHIRON                                                                         |
+| ⚸  | #x26b8  | BLACK MOON LILITH                                                              |
+| ⚹  | #x26b9  | SEXTILE                                                                        |
+| ⚺  | #x26ba  | SEMISEXTILE                                                                    |
+| ⚻  | #x26bb  | QUINCUNX                                                                       |
+| ⚼  | #x26bc  | SESQUIQUADRATE                                                                 |
+| ⚽ | #x26bd  | SOCCER BALL                                                                    |
+| ⚾ | #x26be  | BASEBALL                                                                       |
+| ⚿  | #x26bf  | SQUARED KEY                                                                    |
+| ⛀  | #x26c0  | WHITE DRAUGHTS MAN                                                             |
+| ⛁  | #x26c1  | WHITE DRAUGHTS KING                                                            |
+| ⛂  | #x26c2  | BLACK DRAUGHTS MAN                                                             |
+| ⛃  | #x26c3  | BLACK DRAUGHTS KING                                                            |
+| ⛄ | #x26c4  | SNOWMAN WITHOUT SNOW                                                           |
+| ⛅ | #x26c5  | SUN BEHIND CLOUD                                                               |
+| ⛆  | #x26c6  | RAIN                                                                           |
+| ⛇  | #x26c7  | BLACK SNOWMAN                                                                  |
+| ⛈  | #x26c8  | THUNDER CLOUD AND RAIN                                                         |
+| ⛉  | #x26c9  | TURNED WHITE SHOGI PIECE                                                       |
+| ⛊  | #x26ca  | TURNED BLACK SHOGI PIECE                                                       |
+| ⛋  | #x26cb  | WHITE DIAMOND IN SQUARE                                                        |
+| ⛌  | #x26cc  | CROSSING LANES                                                                 |
+| ⛍  | #x26cd  | DISABLED CAR                                                                   |
+| ⛎ | #x26ce  | OPHIUCHUS                                                                      |
+| ⛏  | #x26cf  | PICK                                                                           |
+| ⛐  | #x26d0  | CAR SLIDING                                                                    |
+| ⛑  | #x26d1  | HELMET WITH WHITE CROSS                                                        |
+| ⛒  | #x26d2  | CIRCLED CROSSING LANES                                                         |
+| ⛓  | #x26d3  | CHAINS                                                                         |
+| ⛔ | #x26d4  | NO ENTRY                                                                       |
+| ⛕  | #x26d5  | ALTERNATE ONE                                                                  |
+| ⛖  | #x26d6  | BLACK TWO                                                                      |
+| ⛗  | #x26d7  | WHITE TWO                                                                      |
+| ⛘  | #x26d8  | BLACK LEFT LANE MERGE                                                          |
+| ⛙  | #x26d9  | WHITE LEFT LANE MERGE                                                          |
+| ⛚  | #x26da  | DRIVE SLOW SIGN                                                                |
+| ⛛  | #x26db  | HEAVY WHITE DOWN                                                               |
+| ⛜  | #x26dc  | LEFT CLOSED ENTRY                                                              |
+| ⛝  | #x26dd  | SQUARED SALTIRE                                                                |
+| ⛞  | #x26de  | FALLING DIAGONAL IN WHITE CIRCLE IN BLACK SQUARE                               |
+| ⛟  | #x26df  | BLACK TRUCK                                                                    |
+| ⛠  | #x26e0  | RESTRICTED LEFT ENTRY                                                          |
+| ⛡  | #x26e1  | RESTRICTED LEFT ENTRY                                                          |
+| ⛢  | #x26e2  | ASTRONOMICAL SYMBOL FOR URANUS                                                 |
+| ⛣  | #x26e3  | HEAVY CIRCLE WITH STROKE AND TWO DOTS ABOVE                                    |
+| ⛤  | #x26e4  | PENTAGRAM                                                                      |
+| ⛥  | #x26e5  | RIGHT                                                                          |
+| ⛦  | #x26e6  | LEFT                                                                           |
+| ⛧  | #x26e7  | INVERTED PENTAGRAM                                                             |
+| ⛨  | #x26e8  | BLACK CROSS ON SHIELD                                                          |
+| ⛩  | #x26e9  | SHINTO SHRINE                                                                  |
+| ⛪ | #x26ea  | CHURCH                                                                         |
+| ⛫  | #x26eb  | CASTLE                                                                         |
+| ⛬  | #x26ec  | HISTORIC SITE                                                                  |
+| ⛭  | #x26ed  | GEAR WITHOUT HUB                                                               |
+| ⛮  | #x26ee  | GEAR WITH HANDLES                                                              |
+| ⛯  | #x26ef  | MAP SYMBOL FOR LIGHTHOUSE                                                      |
+| ⛰  | #x26f0  | MOUNTAIN                                                                       |
+| ⛱  | #x26f1  | UMBRELLA ON GROUND                                                             |
+| ⛲ | #x26f2  | FOUNTAIN                                                                       |
+| ⛳ | #x26f3  | FLAG IN HOLE                                                                   |
+| ⛴  | #x26f4  | FERRY                                                                          |
+| ⛵ | #x26f5  | SAILBOAT                                                                       |
+| ⛶  | #x26f6  | SQUARE FOUR CORNERS                                                            |
+| ⛷  | #x26f7  | SKIER                                                                          |
+| ⛸  | #x26f8  | ICE SKATE                                                                      |
+| ⛹  | #x26f9  | PERSON WITH BALL                                                               |
+| ⛺ | #x26fa  | TENT                                                                           |
+| ⛻  | #x26fb  | JAPANESE BANK SYMBOL                                                           |
+| ⛼  | #x26fc  | HEADSTONE GRAVEYARD SYMBOL                                                     |
+| ⛽ | #x26fd  | FUEL PUMP                                                                      |
+| ⛾  | #x26fe  | CUP ON BLACK SQUARE                                                            |
+| ⛿  | #x26ff  | WHITE FLAG WITH HORIZONTAL MIDDLE BLACK STRIPE                                 |

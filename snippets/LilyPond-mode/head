@@ -1,0 +1,17 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: lilypond header
+# key: h
+# --
+% -*- coding: utf-8; -*-
+
+\version "2.18.2"
+
+\include "global.ly"
+
+\header {
+  title = "${1:title}"
+  subtitle = "${2:subtitle}"
+  composer = "${3:composer}"
+}
+
+$0

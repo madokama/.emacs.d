@@ -1,0 +1,80 @@
+* Git
+#+NAME: git-clean-p
+#+BEGIN_SRC emacs-lisp
+(string= "" (shell-command-to-string "git status --porcelain"))
+#+END_SRC
+
+#+name: git-status
+#+BEGIN_SRC emacs-lisp
+(shell-command-to-string "git status")
+#+END_SRC
+
+#+name: git-remote
+#+BEGIN_SRC emacs-lisp
+(if (string-match-p "upstream" (shell-command-to-string "git remote")) "upstream" "origin")
+#+END_SRC
+
+* Elisp
+#+name: compile-elisp
+#+BEGIN_SRC emacs-lisp :var dummy=(save-some-buffers)
+;;(require 'cl)
+(require 'bytecomp)
+(load (expand-file-name "loaddefs" user-emacs-directory) nil t)
+(let ((ignore-dir (rx "/" (or ".emacs.d/elpa"
+                              "emacs/share"
+                              "slime/contrib")
+                      eow))
+      (ignore-el (rx "/" (or "flycheck-buttercup"
+                             "lispy-test"
+                             "web-file-upload"
+                             "web-test"
+                             "org-install"
+                             "elscreen-gf"
+                             "elscreen-wl"
+                             "company-statistics-cache")
+                     ".el" eos)))
+    (dolist (dir
+              (cl-remove-if
+               (lambda (dir)
+                 (or (not (file-directory-p dir))
+                     (string-match-p ignore-dir dir)))
+               (delete-dups
+                (append load-path
+                        (list
+                         (expand-file-name "private/"
+                                           user-emacs-directory)
+                         user-emacs-directory)))))
+      (dolist (el (directory-files dir t "\\`[^.][[:print:]]*?\\.el\\'"))
+        (unless (string-match-p ignore-el el)
+          (ignore-errors
+            (byte-recompile-file el nil 0))))))
+#+END_SRC
+
+#+NAME: compile-log
+#+BEGIN_SRC elisp
+(require 'subr-x)
+(when-let (log (get-buffer "*Compile-Log*"))
+  (with-current-buffer log
+    (let ((message-log-max nil))
+      (message "%s" (buffer-string)))))
+(with-current-buffer "*Messages*"
+  (let ((inhibit-read-only t))
+    (flush-lines "^\\(?:Checking\\|Done\\) " (point-min) (point-max))
+    (flush-lines "^Compiling .*?-\\(?:pkg\\|tests?\\|version\\|loaddefs\\|autoloads\\|theme\\|examples\\)\\.el[.]+$" (point-min) (point-max))
+    (buffer-string)))
+#+END_SRC
+
+#+name: deploy-init.el
+#+BEGIN_SRC emacs-lisp
+(with-current-buffer (find-file-noselect
+                      (expand-file-name "init.org" user-emacs-directory))
+  (let ((org-confirm-babel-evaluate nil))
+    (org-babel-tangle)
+    (org-babel-goto-named-src-block "autoload")
+    (org-babel-execute-src-block)))
+#+END_SRC
+
+#+name: my-commits
+#+BEGIN_SRC emacs-lisp :var name="Madoka Machitani"
+(thread-first (format "git log --author=%S --pretty=oneline" name) shell-command-to-string (split-string "\n" t) length)
+#+END_SRC

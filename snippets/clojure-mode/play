@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: play
+# key: p
+# --
+(play ${1:s} ${2:pitch} ${3:volume} ${4:dur})

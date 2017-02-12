@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Local Variables
+# key: lv
+# --
+;; Local Variables:
+;; no-byte-compile: t
+;; End:

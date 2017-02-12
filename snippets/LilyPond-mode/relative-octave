@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: relative octave
+# key: rel
+# binding: direct-keybinding
+# --
+${1:var} = \\relative ${2:c} {
+  $0
+}
