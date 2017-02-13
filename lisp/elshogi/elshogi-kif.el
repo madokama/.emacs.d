@@ -238,8 +238,15 @@
                                  :white (expand "left_image")))))
            (kill-buffer buf)))))))
 
+(defun elshogi-kif-parse-url-query (url)
+  (when-let* ((query
+               (cdr (url-path-and-query (url-generic-parse-url url))))
+              (count
+               (elshogi-kif-assoc "te" (url-parse-query-string query))))
+    (list :count (string-to-number (car count)))))
+
 (defun elshogi-kif-parse-url (url callback)
-  (if (string-match-p (rx ".htm" (opt "l") eos) url)
+  (if (string-match-p (rx ".htm" (opt "l") (or eos "?")) url)
       (cond ((string-match-p (rx "mainichi.jp/oshosen-kifu/") url)
              (elshogi-kif-parse-url/mainichi url callback))
             (t
@@ -256,7 +263,9 @@
         (lambda ()
           (when (elshogi-kif-p)
             (let ((game
-                   (elshogi-kif-make-game params (elshogi-kif-parse-header))))
+                   (elshogi-kif-make-game (append (elshogi-kif-parse-url-query url)
+                                                  params)
+                                          (elshogi-kif-parse-header))))
               (with-current-buffer orig-buf
                 (funcall callback game))))))))))
 
@@ -354,7 +363,7 @@
       (cl-loop for move = (elshogi-kif-parse-move)
                while move
                do (elshogi-kif-make-move game move))
-      (elshogi-replay-rewind game))))
+      (elshogi-replay-seek game (plist-get params :count)))))
 
 (provide 'elshogi-kif)
 
