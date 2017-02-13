@@ -176,13 +176,16 @@
       (current-buffer))))
 
 (defun elshogi-images-stand-buffer (game player)
-  (let ((name
+  (let ((bufname
          (format " *elshogi:%s@%s*"
                  (elshogi-player/name player)
                  (elshogi-game/title game))))
-    (or (get-buffer name)
-        (with-current-buffer (generate-new-buffer name)
-          (setq mode-line-format (list " " (elshogi-player/name player)))
+    (or (get-buffer bufname)
+        (with-current-buffer (generate-new-buffer bufname)
+          (setq mode-line-format
+                (list " "
+                      (propertize (elshogi-player/name player)
+                                  'face 'mode-line-buffer-id)))
           (current-buffer)))))
 
 (defun elshogi-images-draw-stands (game)

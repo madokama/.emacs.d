@@ -52,7 +52,11 @@
 
 (defun elshogi-display-note-buffer (game)
   "Return commentary buffer name of GAME."
-  (get-buffer-create (elshogi-display-note-bufname game)))
+  (let ((bufname (elshogi-display-note-bufname game)))
+    (or (get-buffer bufname)
+        (with-current-buffer (generate-new-buffer bufname)
+          (setq mode-line-format nil)
+          (current-buffer)))))
 
 (defun elshogi-display-note (game)
   (when (elshogi-game/watch-p game)
