@@ -22,18 +22,16 @@
     (rename-file tmp recentb-mpv-history t)))
 
 (defun recentb-mpv-truncate-history (history)
-  (let ((savep (> (length history) recentb-max-saved-items)))
-    (setq history
-          (cl-delete-duplicates history
-                                :test (lambda (a b)
-                                        (string= (plist-get a :url)
-                                                 (plist-get b :url)))))
-    (when savep
-      (recentb-mpv-save-history
-       (seq-drop history
-                 (- (length history)
-                    recentb-max-saved-items))))
-    history))
+  (when (> (length history) recentb-max-saved-items)
+    (recentb-mpv-save-history
+     (setq history
+           (seq-drop (cl-delete-duplicates history
+                                           :test (lambda (a b)
+                                                   (string= (plist-get a :url)
+                                                            (plist-get b :url))))
+                     (- (length history)
+                        recentb-max-saved-items)))))
+  history)
 
 (defun recentb-mpv-candidate (item)
   (let ((url (plist-get item :url))
