@@ -9,9 +9,6 @@
 
 (defvar-local elshogi-watch-update-interval 300)
 
-(defun elshogi-watch-buffer (game)
-  (get-buffer-create (format "*elshogi:%s*" (elshogi-game/title game))))
-
 (defun elshogi-watch-minor-mode (game)
   (setq elshogi-current-game game)
   (setq mode-line-format
@@ -36,7 +33,7 @@
              (count #'elshogi-game-final-move)
              (not (elshogi-game/live-p elshogi-current-game))))))
 
-(defun elshogi-watch-game (game &optional update-p)
+(defun elshogi-watch-game (game)
   (with-current-buffer
       (elshogi-display-buffer (elshogi-game-buffer game))
     (elshogi-display-board game)
@@ -45,28 +42,26 @@
 
 (defun elshogi-watch-auto-update (game)
   (when (and (elshogi-game/live-p game)
-             (numberp elshogi-watch-update-interval)
-             (>= elshogi-watch-update-interval 30))
-    (run-with-timer elshogi-watch-update-interval nil
-                    (lambda (frame buf)
-                      (with-selected-frame frame
-                        (with-current-buffer buf
-                          (elshogi-watch-update))))
-                    (selected-frame)
-                    (current-buffer))))
+             elshogi-watch-update-interval)
+    (run-with-timer (max elshogi-watch-update-interval 30) nil
+                    (lambda (buf)
+                      (with-current-buffer buf
+                        (elshogi-watch-update)))
+                    (elshogi-game-buffer game))))
 
 (defun elshogi-watch-update (&rest _)
   (when (derived-mode-p 'elshogi-mode)
     (when-let* (kif (or (elshogi-game/url elshogi-current-game)
                         (elshogi-game/kif elshogi-current-game)))
-      (elshogi-kif-parse kif
-                         (lambda (game)
-                           (elshogi-watch-game
-                            (elshogi-replay-seek
-                             game
-                             (elshogi-mrec/count
-                              (elshogi-game-latest-move elshogi-current-game)))
-                            t))))))
+      (elshogi-kif-parse
+       kif
+       (lambda (game)
+         (with-selected-frame (elshogi-game-frame game)
+           (elshogi-watch-game
+            (elshogi-replay-seek
+             game
+             (elshogi-mrec/count
+              (elshogi-game-latest-move elshogi-current-game))))))))))
 
 (declare-function eww-current-url "eww")
 

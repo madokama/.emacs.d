@@ -13,7 +13,7 @@
 (defvar elshogi-display-handler nil)
 (defvar elshogi-display-use-frame nil)
 (defvar elshogi-display-frame-params nil)
-(defvar elshogi-display-after-hooks nil)
+(defvar elshogi-display-frame-hooks nil)
 
 (defun elshogi-display-register (plist)
   (setq elshogi-display-handler plist))
@@ -133,13 +133,13 @@
     (mapc #'kill-buffer bufs))
   (delete-frame))
 
-(defun elshogi-display-buffer (buf &optional update-p)
+(defun elshogi-display-buffer (buf)
   (with-current-buffer buf
     (elshogi-mode)
-    (if (and elshogi-display-use-frame (not update-p))
-        (elshogi-display-frame)
-      (pop-to-buffer-same-window buf))
-    (run-hooks 'elshogi-display-after-hooks))
+    (if elshogi-display-use-frame
+        (unless (get-buffer-window buf t)
+          (elshogi-display-frame))
+      (pop-to-buffer-same-window buf)))
   buf)
 
 (defun elshogi-display-frame ()
@@ -156,7 +156,8 @@
                    ,@elshogi-display-frame-params)))
     (define-key map [?q] #'elshogi-display-quit-frame)
     (set-keymap-parent map elshogi-mode-map)
-    (use-local-map map)))
+    (use-local-map map)
+    (run-hooks 'elshogi-display-frame-hooks)))
 
 ;; Avoid cyclic require error
 (add-hook 'elshogi-mode-hook #'elshogi-display-initialize)

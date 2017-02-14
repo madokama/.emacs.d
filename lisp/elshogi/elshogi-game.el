@@ -10,6 +10,14 @@
 (defmacro elshogi-game-cursor (game)
   `(elshogi-grec/cursor (elshogi-game/record ,game)))
 
+(defun elshogi-game-buffer (game)
+  (get-buffer-create (format "*elshogi:%s*" (elshogi-game/title game))))
+
+(defun elshogi-game-frame (game)
+  (when-let* (win
+              (get-buffer-window (elshogi-game-buffer game) t))
+    (window-frame win)))
+
 (defsubst elshogi-game-moves (game)
   (elshogi-grec/moves (elshogi-game/record game)))
 
