@@ -19,6 +19,8 @@
 (defmacro elshogi-game-initialize (&rest params)
   (unless (plist-get params :position)
     (plist-put params :position '(elshogi-new-position)))
+  (unless (plist-get params :display)
+    (plist-put params :display '(elshogi-make-display)))
   (let ((gamevar (make-symbol "game")))
     `(let ((,gamevar (elshogi-make-game ,@params)))
        (setf (elshogi-game-cursor ,gamevar)
