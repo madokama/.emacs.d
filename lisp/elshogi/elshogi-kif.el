@@ -181,6 +181,11 @@
     (with-current-buffer (find-file-noselect kif)
       (funcall callback))))
 
+
+
+(defvar elshogi-kif-url/jsa (rx "live.shogi.or.jp/" (1+ (not (any ?/))) "/kifu/"))
+(defvar elshogi-kif-url/mainichi (rx "mainichi.jp/oshosen-kifu/"))
+
 (declare-function url-expand-file-name "url-expand")
 
 (defun elshogi-kif-parse-url/mainichi (url callback)
@@ -208,7 +213,7 @@
                                    :white (expand "left_image")))))))
          (kill-buffer buf))))))
 
-(defun elshogi-kif-parse-url/live (url callback)
+(defun elshogi-kif-parse-url/jsa (url callback)
   (url-retrieve
    url
    (lambda (status)
@@ -245,12 +250,17 @@
                (elshogi-kif-assoc "te" (url-parse-query-string query))))
     (list :count (string-to-number (car count)))))
 
+(defun elshogi-kif-url-p (url)
+  (or (string-match-p elshogi-kif-url/jsa url)
+      (string-match-p elshogi-kif-url/mainichi url)
+      (string-match-p (rx ".kif" eos) url)))
+
 (defun elshogi-kif-parse-url (url callback)
   (if (string-match-p (rx ".htm" (opt "l") (or eos "?")) url)
-      (cond ((string-match-p (rx "mainichi.jp/oshosen-kifu/") url)
+      (cond ((string-match-p elshogi-kif-url/mainichi url)
              (elshogi-kif-parse-url/mainichi url callback))
             (t
-             (elshogi-kif-parse-url/live url callback)))
+             (elshogi-kif-parse-url/jsa url callback)))
     (funcall callback (list :kif url))))
 
 (defun elshogi-kif-parse (url callback)

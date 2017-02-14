@@ -53,10 +53,31 @@
                               (elshogi-game-latest-move elshogi-current-game)))
                             t))))))
 
+(declare-function eww-current-url "eww")
+
+(defun elshogi-watch-candidates ()
+  (cl-reduce (lambda (l r)
+               (or (and l
+                        (let ((url
+                               (replace-regexp-in-string (rx (or (and bos "\"")
+                                                                 (and "\"" eos)))
+                                                         ""
+                                                         l)))
+                          (and (elshogi-kif-url-p url)
+                               (cons url r))))
+                   r))
+             (list (gui-get-selection 'CLIPBOARD)
+                   (car kill-ring)
+                   (get-text-property (point) 'shr-url)
+                   (thing-at-point 'url)
+                   (cond ((derived-mode-p 'eww-mode)
+                          (eww-current-url))))
+             :initial-value nil :from-end t))
+
 ;;;###autoload
 (defun elshogi-watch (kif &optional _new-window)
   "Replay shogi game record KIF."
-  (interactive (list (read-string "KIF: ")))
+  (interactive (list (completing-read "KIF: " (elshogi-watch-candidates))))
   (elshogi-kif-parse kif #'elshogi-watch-game))
 
 (declare-function org-store-link-props "org")
