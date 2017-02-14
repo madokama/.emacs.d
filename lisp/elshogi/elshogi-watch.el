@@ -8,6 +8,7 @@
 (require 'elshogi-kif)
 
 (defvar-local elshogi-watch-update-interval 300)
+(defvar-local elshogi-watch-timer nil)
 
 (defun elshogi-watch-minor-mode (game)
   (setq elshogi-current-game game)
@@ -43,11 +44,16 @@
 (defun elshogi-watch-auto-update (game)
   (when (and (elshogi-game/live-p game)
              elshogi-watch-update-interval)
-    (run-with-timer (max elshogi-watch-update-interval 30) nil
-                    (lambda (buf)
-                      (with-current-buffer buf
-                        (elshogi-watch-update)))
-                    (elshogi-game-buffer game))))
+    ;; Prevent manual updates firing extra timers.
+    (when elshogi-watch-timer
+      (cancel-timer elshogi-watch-timer))
+    (setq elshogi-watch-timer
+          (run-with-timer (max elshogi-watch-update-interval 30) nil
+                          (lambda (buf)
+                            (with-current-buffer buf
+                              (setq elshogi-watch-timer nil)
+                              (elshogi-watch-update)))
+                          (elshogi-game-buffer game)))))
 
 (defun elshogi-watch-update (&rest _)
   (when (derived-mode-p 'elshogi-mode)
