@@ -36,7 +36,6 @@
                   'recentb (list 'recentb-elshogi-watch item)))))
 
 (defvar elshogi-current-game)
-(declare-function dlink/content "ext:dlist")
 (declare-function elshogi-game/url "ext:elshogi-struct")
 (declare-function elshogi-game/kif "ext:elshogi-struct")
 (declare-function elshogi-game/title "ext:elshogi-struct")
