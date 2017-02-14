@@ -50,10 +50,7 @@
   (board (make-vector 81 nil))
   piece-stand/b
   piece-stand/w
-  (pov 'b)
-  title
-  ;; TODO parent-frame
-  )
+  (pov 'b))
 
 (provide 'elshogi-struct)
 ;;; elshogi-struct.el ends here
