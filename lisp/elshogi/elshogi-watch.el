@@ -7,6 +7,8 @@
 (require 'elshogi)
 (require 'elshogi-kif)
 
+(defvar-local elshogi-watch-update-interval 300)
+
 (defun elshogi-watch-buffer (game)
   (get-buffer-create (format "*elshogi:%s*" (elshogi-game/title game))))
 
@@ -36,9 +38,22 @@
 
 (defun elshogi-watch-game (game &optional update-p)
   (with-current-buffer
-      (elshogi-display-buffer (elshogi-watch-buffer game) update-p)
-    (elshogi-watch-minor-mode game)
-    (elshogi-display-board game)))
+      (elshogi-display-buffer (elshogi-game-buffer game))
+    (elshogi-display-board game)
+    (elshogi-watch-mode game)
+    (elshogi-watch-auto-update game)))
+
+(defun elshogi-watch-auto-update (game)
+  (when (and (elshogi-game/live-p game)
+             (numberp elshogi-watch-update-interval)
+             (>= elshogi-watch-update-interval 30))
+    (run-with-timer elshogi-watch-update-interval nil
+                    (lambda (frame buf)
+                      (with-selected-frame frame
+                        (with-current-buffer buf
+                          (elshogi-watch-update))))
+                    (selected-frame)
+                    (current-buffer))))
 
 (defun elshogi-watch-update (&rest _)
   (when (derived-mode-p 'elshogi-mode)
