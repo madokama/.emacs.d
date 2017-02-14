@@ -15,16 +15,19 @@
   :history recentb-elshogi-history
   :candidate recentb-elshogi-candidate)
 
+(defun recentb-elshogi-candidate-url (item)
+  (seq-let (kif _ count) item
+    (if (and (ffap-url-p kif) count)
+        (let ((urlobj (url-generic-parse-url kif)))
+          (setf (url-filename urlobj)
+                (format "%s?te=%d"
+                        (car (url-path-and-query urlobj))
+                        count))
+          (url-recreate-url urlobj))
+      kif)))
+
 (defun recentb-elshogi-watch (item)
-  (elshogi-watch (seq-let (kif _ count) item
-                   (if (and (ffap-url-p kif) count)
-                       (let ((urlobj (url-generic-parse-url kif)))
-                         (setf (url-filename urlobj)
-                               (format "%s?te=%d"
-                                       (car (url-path-and-query urlobj))
-                                       count))
-                         (url-recreate-url urlobj))
-                     kif))))
+  (elshogi-watch (recentb-elshogi-candidate-url item)))
 
 (defun recentb-elshogi-candidate (item)
   (let ((title (format "*elshogi:%s*" (cadr item))))
@@ -41,26 +44,30 @@
 
 (defun recentb-elshogi-normalize-url (url)
   "Strip query parameters from URL."
-  (if (ffap-url-p url)
-      (let ((urlobj (url-generic-parse-url url)))
-        (setf (url-filename urlobj)
-              (car (url-path-and-query urlobj)))
-        (url-recreate-url urlobj))
-    url))
+  (cond ((ffap-url-p url)
+         (let ((urlobj (url-generic-parse-url url)))
+           (setf (url-filename urlobj)
+                 (car (url-path-and-query urlobj)))
+           (url-recreate-url urlobj)))
+        ((file-exists-p url)
+         url)))
+
+(defsubst recentb-elshogi-history-item (game)
+  (when-let* (url (recentb-elshogi-normalize-url
+                   (or (elshogi-game/url game) (elshogi-game/kif game))))
+    (list url
+          (elshogi-game/title game)
+          (elshogi-mrec/count (elshogi-game-latest-move game)))))
 
 (defun recentb-elshogi-history ()
   (when (derived-mode-p 'elshogi-mode)
-    (when-let* (url (or (elshogi-game/url elshogi-current-game)
-                        (elshogi-game/kif elshogi-current-game)))
-      (cl-delete-duplicates
-       (cons (list (recentb-elshogi-normalize-url url)
-                   (elshogi-game/title elshogi-current-game)
-                   (elshogi-mrec/count
-                    (elshogi-game-latest-move elshogi-current-game)))
-             recentb-elshogi)
-       :test (lambda (a b)
-               (string= (car a) (car b)))
-       :from-end t))))
+    (when-let* (item (recentb-elshogi-history-item elshogi-current-game))
+      (cons item
+            (cl-delete-if-not (pcase-lambda (`(,kif . _))
+                                (and (not (string= kif (car item)))
+                                     (or (ffap-url-p kif)
+                                         (file-exists-p kif))))
+                              recentb-elshogi)))))
 
 (provide 'recentb-elshogi)
 ;;; recentb-elshogi.el ends here
