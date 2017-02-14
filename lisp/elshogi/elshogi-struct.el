@@ -27,9 +27,6 @@
   (side 'b)
   (count 1))
 
-(elshogi-defstruct engine
-  name side process)
-
 (elshogi-defstruct player
   name side image engine)
 
