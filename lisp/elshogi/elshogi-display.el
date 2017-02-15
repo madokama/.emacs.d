@@ -120,8 +120,8 @@
 
 
 (defvar elshogi-mode-map)
-(declare-function elshogi-mode "ext:elshogi")
-(declare-function elshogi-quit "ext:elshogi")
+(declare-function elshogi-mode "elshogi")
+(declare-function elshogi-quit "elshogi")
 
 (defun elshogi-display-quit-frame ()
   "Quit elshogi game frame."
