@@ -61,16 +61,16 @@ Preferring webm for cleaner cuts at keyframes.")
  ;; for playlists
  _type entries)
 
-;; (defmacro ytdl--define-extractors (&rest extractors)
-;;   `(progn
-;;      ,@(mapcar (lambda (extractor)
-;;                  (let ((funsym (intern (format "ytdl-%s-p" extractor)))
-;;                        (extstr (symbol-name extractor)))
-;;                    `(defun ,funsym (json)
-;;                       (string= (ytdl-json/extractor json) ,extstr))))
-;;                extractors)))
+(defmacro ytdl--define-extractors (&rest extractors)
+  `(progn
+     ,@(mapcar (lambda (extractor)
+                 (let ((funsym (intern (format "ytdl-%s-p" extractor)))
+                       (extstr (symbol-name extractor)))
+                   `(defun ,funsym (json)
+                      (string= (ytdl-json/extractor json) ,extstr))))
+               extractors)))
 
-;; (ytdl--define-extractors youtube twitter dailymotion)
+(ytdl--define-extractors youtube twitter)
 
 (defun ytdl-requested-formats (json)
   (or (let-alist json

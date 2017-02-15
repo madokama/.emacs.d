@@ -30,9 +30,9 @@
 
 (defun org-ytdl--thumb-url (json)
   (when-let* (thumb-url (ytdl-json/thumbnail json))
-    (pcase (ytdl-json/extractor json)
-      ("youtube" (replace-regexp-in-string "maxres" "hq" thumb-url))
-      (_ thumb-url))))
+    (if (ytdl-youtube-p json)
+        (replace-regexp-in-string "maxres" "hq" thumb-url)
+      thumb-url)))
 
 (defun org-ytdl--thumb-ext (json)
   (let ((thumb-url (ytdl-json/thumbnail json)))
