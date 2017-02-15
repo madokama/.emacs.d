@@ -1,0 +1,29 @@
+* Welcome to my emacs.d repository
+
+Honestly, I can't help feeling that my Emacs is great. Here are some
+of the highlights.
+
+** elshogi
+
+Watching professional [[https://en.wikipedia.org/wiki/Shogi][shogi]] games live is of great fun.
+
+[[file:images/elshogi.png]]
+
+You can also play against engines of course.
+
+** org-ytdl
+
+Auto generate previews when org-capturing videos.
+
+[[file:images/org-ytdl.png]]
+
+Also note the graphical system monitors on the bottom right.
+
+** recentb
+
+Extend the concept of file history so that it encompasses eww, elfeed,
+info, man, you name it.
+
+[[file:images/recentb.png]]
+
+And yes, they are persistent.
