@@ -332,9 +332,9 @@
     (suppress-keymap map)
     (define-key map [mouse-1] #'elshogi-mouse-select-square)
     (define-key map [?q] #'elshogi-quit)
-    (define-key map [left] #'elshogi-game-replay-prev)
-    (define-key map [right] #'elshogi-game-replay-next)
-    (define-key map [down] #'elshogi-game-rewind)
+    (define-key map [remap backward-char] #'elshogi-game-replay-prev)
+    (define-key map [remap forward-char] #'elshogi-game-replay-next)
+    (define-key map [remap move-beginning-of-line] #'elshogi-game-rewind)
     (define-key map [?N] #'elshogi-game-start)
     (define-key map [?R] #'elshogi-game-resign)
     (define-key map [?G] #'elshogi-game-resume)
@@ -345,6 +345,7 @@
     (define-key map [?x] #'elshogi-key-capture-back)
     (define-key map [remap scroll-down-command] #'elshogi-display-note-scroll-down)
     (define-key map [remap scroll-up-command] #'elshogi-display-note-scroll-up)
+    (define-key map [? ] #'elshogi-display-note-scroll-next)
     map))
 
 (define-derived-mode elshogi-mode special-mode "ElShogi"

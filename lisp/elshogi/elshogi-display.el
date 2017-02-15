@@ -108,14 +108,25 @@
       (call-interactively cmd))))
 
 (defun elshogi-display-note-scroll-up ()
-  "Scroll up Kif commentary buffer."
+  "Scroll Kif commentary window forward."
   (interactive)
   (elshogi-display-note-scroll #'scroll-up-command))
 
 (defun elshogi-display-note-scroll-down ()
-  "Scroll down Kif commentary buffer."
+  "Scroll Kif commentary window backward."
   (interactive)
   (elshogi-display-note-scroll #'scroll-down-command))
+
+(declare-function elshogi-game-replay-next "elshogi")
+
+(defun elshogi-display-note-scroll-next ()
+  "Scroll Kif commentary window forward.
+Go to next position if the bottom of the window is visible."
+  (interactive)
+  (condition-case nil
+      (elshogi-display-note-scroll-up)
+    (end-of-buffer
+     (elshogi-game-replay-next))))
 
 
 
