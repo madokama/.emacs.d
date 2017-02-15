@@ -343,9 +343,6 @@
              do (define-key map (vector (+ ?1 i)) #'elshogi-key-move-piece))
     (define-key map [?*] #'elshogi-key-drop-piece)
     (define-key map [?x] #'elshogi-key-capture-back)
-    (define-key map [remap scroll-down-command] #'elshogi-display-note-scroll-down)
-    (define-key map [remap scroll-up-command] #'elshogi-display-note-scroll-up)
-    (define-key map [? ] #'elshogi-display-note-scroll-next)
     map))
 
 (define-derived-mode elshogi-mode special-mode "ElShogi"

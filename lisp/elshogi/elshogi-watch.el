@@ -1,4 +1,4 @@
-;;; elshogi-watch --- description -*- lexical-binding: t; -*-
+;;; elshogi-watch --- minor mode for watching shogi games -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
@@ -7,16 +7,23 @@
 (require 'elshogi)
 (require 'elshogi-kif)
 
+(defvar-local elshogi-watch-mode nil)
 (defvar-local elshogi-watch-update-interval 300)
 (defvar-local elshogi-watch-timer nil)
 
-(defun elshogi-watch-minor-mode (game)
+(defun elshogi-watch-mode (game)
   (setq elshogi-current-game game)
-  (setq mode-line-format
-        (list " " '(:eval (elshogi-watch-move-count))
-              " " (propertize (elshogi-game/title game)
-                              'face 'mode-line-buffer-id)))
-  (setq-local revert-buffer-function #'elshogi-watch-update))
+  (unless elshogi-watch-mode
+    (let ((map (current-local-map)))
+      (define-key map [remap scroll-down-command] #'elshogi-display-note-scroll-down)
+      (define-key map [remap scroll-up-command] #'elshogi-display-note-scroll-up)
+      (define-key map [? ] #'elshogi-display-note-scroll-next))
+    (setq mode-line-format
+          (list " " '(:eval (elshogi-watch-move-count))
+                " " (propertize (elshogi-game/title game)
+                                'face 'mode-line-buffer-id)))
+    (setq-local revert-buffer-function #'elshogi-watch-update)
+    (setq elshogi-watch-mode t)))
 
 (defsubst elshogi-watch-may-amb-count (n amb-p)
   ;; To avoid revealing the winner.
