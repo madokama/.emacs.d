@@ -120,7 +120,8 @@
                                    (line-end-position))))
 
 (defsubst elshogi-kif-read-next-line ()
-  (forward-line 1)
+  (goto-char (line-end-position))
+  (skip-syntax-forward " ")
   (unless (eobp)
     (elshogi-kif-read-line)))
 
@@ -183,10 +184,17 @@
 
 
 
-(defvar elshogi-kif-url/jsa (rx "live.shogi.or.jp/" (1+ (not (any ?/))) "/kifu/"))
-(defvar elshogi-kif-url/mainichi (rx "mainichi.jp/oshosen-kifu/"))
+(defvar elshogi-kif-url/jsa
+  (rx bow "live.shogi.or.jp/" (1+ (not (any ?/))) "/kifu/"))
+(defvar elshogi-kif-url/mainichi
+  (rx bow "mainichi.jp/oshosen-kifu/"))
+(defvar elshogi-kif-url/mynavy
+  (rx bow "book.mynavi.jp/shogi/mynavi-open/result/"))
 
 (declare-function url-expand-file-name "url-expand")
+
+(defun elshogi-kif-gunzip-url (url)
+  (replace-regexp-in-string (rx ".Z" eos) "" url))
 
 (defun elshogi-kif-parse-url/mainichi (url callback)
   (url-retrieve
@@ -218,7 +226,7 @@
    url
    (lambda (status)
      (if (plist-get status :error)
-         (error "Couldn't obtain kif: %S" status)
+         (error "Couldn't obtain kif: %s %S" url status)
        (let ((buf (current-buffer)))
          (unwind-protect
               (let ((params
@@ -232,15 +240,15 @@
                             (split-string-and-unquote (match-string 1 line)
                                                       ", ")))))))
                 (cl-flet ((expand (k)
-                            (url-expand-file-name
-                             (car (elshogi-kif-assoc k params))
-                             url)))
-                  (funcall callback
-                           (list :url url
-                                 :kif (replace-regexp-in-string (rx ".Z" eos) ""
-                                                                (expand "kifu"))
-                                 :black (expand "right_image")
-                                 :white (expand "left_image")))))
+                            (when-let* (val (elshogi-kif-assoc k params))
+                              (url-expand-file-name (car val) url))))
+                  (if-let* (kif (expand "kifu"))
+                      (funcall callback
+                               (list :url url
+                                     :kif (elshogi-kif-gunzip-url kif)
+                                     :black (expand "right_image")
+                                     :white (expand "left_image")))
+                    (error "Parse failed: %s" url))))
            (kill-buffer buf)))))))
 
 (defun elshogi-kif-parse-url-query (url)
@@ -253,6 +261,7 @@
 (defun elshogi-kif-url-p (url)
   (or (string-match-p elshogi-kif-url/jsa url)
       (string-match-p elshogi-kif-url/mainichi url)
+      (string-match-p elshogi-kif-url/mynavy url)
       (string-match-p (rx ".kif" eos) url)))
 
 (defun elshogi-kif-parse-url (url callback)
