@@ -146,7 +146,7 @@
   (not (elshogi-kif-assoc "終了日時" header)))
 
 (defun elshogi-kif-coding-system (url)
-  (if (string-match-p (rx "_utf8.kif" eos) url)
+  (if (string-match-p (rx "_utf8" eow) url)
       'utf-8
     (save-excursion
       (goto-char (point-min))
