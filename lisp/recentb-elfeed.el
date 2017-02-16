@@ -13,7 +13,8 @@
 
 (defvar elfeed-show-entry)
 (declare-function elfeed-entry-id "ext:elfeed-db")
-(declare-function elfeed-entry-tags "ext:elfeed-db")
+;; (declare-function elfeed-entry-tags "ext:elfeed-db")
+(autoload 'elfeed-entry-tags "elfeed-db")
 (autoload 'elfeed-show-entry "elfeed-show")
 (autoload 'elfeed-entry-title "elfeed-db")
 
