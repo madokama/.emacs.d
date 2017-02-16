@@ -135,25 +135,29 @@
                                  nil nil :margin 1)))))
   (elshogi-images-draw-stands game))
 
-(defun elshogi-images-insert-player (image buf)
-  (with-current-buffer buf
-    (save-excursion
-      (goto-char (point-min))
-      (insert-image (create-image image))
-      (insert ?\n))))
+(defun elshogi-images-insert-cache (url buf)
+  (let ((cache (url-cache-create-filename url)))
+    (when (file-readable-p cache)
+      (condition-case nil
+          (with-current-buffer buf
+            (save-excursion
+              (goto-char (point-min))
+              (insert-image (create-image cache))
+              (insert ?\n))
+            t)
+        (error (delete-file cache)
+               nil)))))
 
 (defun elshogi-images-draw-player (player)
-  (when-let* (image (elshogi-player/image player))
-    (let ((cache (url-cache-create-filename image)))
-      (if (file-readable-p cache)
-          (elshogi-images-insert-player cache (current-buffer))
-        (url-retrieve image
-                      (lambda (status stand-buf)
-                        (let ((url-buf (current-buffer)))
-                          (unless (plist-get status :error)
-                            (elshogi-images-insert-player cache stand-buf))
-                          (kill-buffer url-buf)))
-                      (list (current-buffer)))))))
+  (when-let* (url (elshogi-player/image player))
+    (unless (elshogi-images-insert-cache url (current-buffer))
+      (url-retrieve url
+                    (lambda (status stand-buf)
+                      (let ((url-buf (current-buffer)))
+                        (unless (plist-get status :error)
+                          (elshogi-images-insert-cache url stand-buf))
+                        (kill-buffer url-buf)))
+                    (list (current-buffer))))))
 
 (defun elshogi-images-draw-stand (game player)
   (with-current-buffer (elshogi-images-stand-buffer game player)
