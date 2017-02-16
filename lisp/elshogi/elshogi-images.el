@@ -187,7 +187,9 @@
     (or (get-buffer bufname)
         (with-current-buffer (generate-new-buffer bufname)
           (setq mode-line-format
-                (list " "
+                (list (format " %c"
+                              (if (elshogi-black-p (elshogi-player/side player))
+                                  #x25b2 #x25b3))
                       (propertize (elshogi-player/name player)
                                   'face 'mode-line-buffer-id)))
           (current-buffer)))))

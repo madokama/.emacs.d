@@ -376,7 +376,7 @@
              :live-p (elshogi-kif-live-p header)
              :url (plist-get params :url)
              :kif (plist-get params :kif)
-             :title (format "先:%s 後:%s | %s"
+             :title (format "▲%s △%s | %s"
                             black white
                             (elshogi-kif-assoc "棋戦" header)))))
       (cl-loop for move = (elshogi-kif-parse-move)
