@@ -171,6 +171,7 @@
         lispy-cursor-down
         lispy-iedit
         mouse-buffer-menu
+        save-some-buffers
         swiper-mc
         wdired-finish-edit
         wdired-previous-line
