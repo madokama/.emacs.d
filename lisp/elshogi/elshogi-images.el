@@ -27,6 +27,7 @@
 
 (defvar elshogi-images-coord-alphabet-size "18x48")
 (defvar elshogi-images-coord-number-size "43x30")
+(defvar elshogi-images-coord-char-font nil)
 
 (defsubst elshogi-images-file (name)
   (expand-file-name (format "%s.png" name) elshogi-images-directory))
@@ -34,16 +35,27 @@
 (defsubst elshogi-images-char-file (char)
   (elshogi-images-file (string char)))
 
+(defun elshogi-images-coord-char-font ()
+  "Compute font name acceptable to convert."
+  (or elshogi-images-coord-char-font
+      (when (executable-find "fc-match")
+        (setq elshogi-images-coord-char-font
+              (with-temp-buffer
+                (call-process "fc-match" nil t nil
+                              "-f" "%{fullname}"
+                              (face-attribute 'default :family))
+                (subst-char-in-string ?  ?- (buffer-string) t))))))
+
 (defun elshogi-images-generate-coord-char (char)
   (cl-flet ((generate (size)
               (apply #'call-process "convert"
                      nil nil nil
                      (list "-background" "transparent"
                            "-fill" (face-attribute 'default :foreground)
+                           "-font" (or (elshogi-images-coord-char-font) "Courier")
                            "-size" size
                            "-gravity" "center"
                            (format "label:%c" char)
-                           "-font" "Arial"
                            (elshogi-images-char-file char)))))
     (cond ((<= ?1 char ?9)
            (generate elshogi-images-coord-number-size))
