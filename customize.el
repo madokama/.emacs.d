@@ -185,6 +185,7 @@
     (pdf-history-minor-mode pdf-isearch-minor-mode pdf-links-minor-mode pdf-outline-minor-mode pdf-cache-prefetch-minor-mode pdf-view-auto-slice-minor-mode pdf-occur-global-minor-mode)))
  '(pdf-tools-handle-upgrades nil)
  '(pdf-view-use-imagemagick t)
+ '(persistent-scratch-backup-directory "~/Dropbox/emacs/.persistent-scratch")
  '(persistent-scratch-what-to-save (quote (major-mode point)))
  '(powerline-default-separator (quote chamfer))
  '(proced-auto-update-flag t)
