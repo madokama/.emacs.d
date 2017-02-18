@@ -5,7 +5,6 @@
  ;; If there is more than one, they won't work right.
  '(async-bytecomp-allowed-packages (quote (all)))
  '(blink-cursor-mode nil)
- '(browse-url-browser-function (quote (("." . eww-browse-url))))
  '(byte-compile-verbose nil)
  '(checkdoc-force-docstrings-flag nil)
  '(checkdoc-permit-comma-termination-flag t)
