@@ -188,7 +188,7 @@
   (rx bow "live.shogi.or.jp/" (1+ (not (any ?/))) "/kifu/"))
 (defvar elshogi-kif-url/mainichi
   (rx bow "mainichi.jp/oshosen-kifu/"))
-(defvar elshogi-kif-url/mynavy
+(defvar elshogi-kif-url/mynavi
   (rx bow "book.mynavi.jp/shogi/mynavi-open/result/"))
 
 (declare-function url-expand-file-name "url-expand")
@@ -261,7 +261,7 @@
 (defun elshogi-kif-url-p (url)
   (or (string-match-p elshogi-kif-url/jsa url)
       (string-match-p elshogi-kif-url/mainichi url)
-      (string-match-p elshogi-kif-url/mynavy url)
+      (string-match-p elshogi-kif-url/mynavi url)
       (string-match-p (rx ".kif" eos) url)))
 
 (defun elshogi-kif-parse-url (url callback)
