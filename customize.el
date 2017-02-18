@@ -102,6 +102,12 @@
  '(initial-buffer-choice t)
  '(initial-frame-alist nil)
  '(initial-scratch-message nil)
+ '(ivy-completing-read-handlers-alist
+   (quote
+    ((tmm-menubar . completing-read-default)
+     (tmm-shortcut . completing-read-default)
+     (image-save . completing-read-default)
+     (open-junk-file . completing-read-default))))
  '(ivy-extra-directories (quote ("./")))
  '(ivy-fixed-height-minibuffer nil)
  '(ivy-format-function (quote ivy-format-function-arrow))
