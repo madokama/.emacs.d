@@ -34,6 +34,7 @@
       (when (cl-equalp (cdr (assq :async params)) "yes")
         (let ((file buffer-file-name)  ;TODO handle case when it's nil
               (sid (md5 (pp-to-string info)))
+              (frame (window-frame))
               (ov (org-babel--make-source-overlay (org-element-context))))
           (overlay-put ov 'face 'secondary-selection)
           (message "Executing async %s code block%s..."
@@ -61,17 +62,18 @@
                               (buffer-string))))))))
            (pcase-lambda (`(,result . ,error))
              (unwind-protect
-                  (if error
-                      (org-babel-eval-error-notify nil error)
-                    (display-buffer
-                     (with-current-buffer
-                         (generate-new-buffer (format "*ob-result:%s*" sid))
-                       (insert (if (stringp result)
-                                   result
-                                 (pp-to-string result)))
-                       (special-mode)
-                       (current-buffer))
-                     '(display-buffer-in-side-window)))
+                  (with-selected-frame frame
+                    (if error
+                        (org-babel-eval-error-notify nil error)
+                      (display-buffer
+                       (with-current-buffer
+                           (generate-new-buffer (format "*ob-result:%s*" sid))
+                         (insert (if (stringp result)
+                                     result
+                                   (pp-to-string result)))
+                         (special-mode)
+                         (current-buffer))
+                       '(display-buffer-in-side-window))))
                (delete-overlay ov)))))
         t))))
 
