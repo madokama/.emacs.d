@@ -45,7 +45,7 @@
      ,@body))
 
 (defun page2feed-recode-buffer (beg end)
-  (when (search-forward-regexp "<meta[^>]*?charset=\\([-_[:alnum:]]+\\)" nil t)
+  (when (search-forward-regexp "<meta[^>]*?charset=\"?\\([-_[:alnum:]]+\\)" nil t)
     (let ((cs (intern-soft (downcase (match-string 1)))))
       (when (ignore-errors (check-coding-system cs))
         (recode-region beg end cs 'raw-text)))))
