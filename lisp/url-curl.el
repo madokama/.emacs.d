@@ -94,7 +94,31 @@
         ((derived-mode-p 'elfeed-show-mode)
          (elfeed-entry-link elfeed-show-entry))))
 
-;; TODO sync ver
+(defun url-curl-sync (url &optional callback)
+  (let ((referer (url-curl-referer)))
+    (with-temp-buffer
+      (setq-local url-request-method (or url-request-method "GET"))
+      (apply #'call-process "curl" nil t nil
+             `(,@(url-curl--args url referer)
+                 ,(if (url-p url)
+                      (url-recreate-url url)
+                    url)))
+      (let ((cache (url-cache-create-filename url))
+            (status (url-curl-parse-headers nil))
+            (inhibit-message t))
+        (when (plist-get status :error)
+          ;; noop
+          )
+        (unless (= url-http-response-status 304)
+          (write-region (point-min) (point-max) (concat cache ".h")))
+        (when (file-exists-p cache)
+          (with-current-buffer (find-file-noselect cache)
+            (prog1 (if callback
+                       (progn
+                         (goto-char (point-min))
+                         (funcall callback))
+                       (buffer-string))
+              (kill-buffer))))))))
 
 (defun url-curl (url callback cbargs &rest _)
   (let ((referer (url-curl-referer))
