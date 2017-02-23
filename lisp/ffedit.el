@@ -73,8 +73,8 @@
         (match-string 1)))))
 
 (defun ffedit--update-timebase (time-base)
-  ;; Ffprobe may report contradicting values on `time_base' with the
-  ;; one by ffmpeg's video filter. Prefer the latter.
+  ;; Ffprobe and ffmpeg may report different values on `time_base'.
+  ;; Prefer the latter.
   (unless (string= time-base (cdr (assq 'time_base ffedit-video-info)))
     (message "[FF]%S" (cons time-base (assq 'time_base ffedit-video-info)))
     (setq ffedit-video-info
