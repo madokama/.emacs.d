@@ -96,16 +96,17 @@
                                                (file-attributes canon)))))
               ffedit-sess-file (expand-file-name ffedit--session-name))))))
 
-(defun ffedit--thumbs-post (thumbs-buf)
-  (with-current-buffer thumbs-buf
-    (ffedit--update-timebase (ffedit--parse-timebase))
-    (unless (file-exists-p ffedit-sess-file)
-      (ffedit-save-session))
-    (setq buffer-undo-list nil
-          ffedit--editable t)
-    (when (= (point) (point-max))
-      (goto-char (point-min)))
-    (pop-to-buffer thumbs-buf)))
+(defun ffedit--thumbs-post (thumbs-buf frame)
+  (with-selected-frame frame
+    (with-current-buffer thumbs-buf
+      (ffedit--update-timebase (ffedit--parse-timebase))
+      (unless (file-exists-p ffedit-sess-file)
+        (ffedit-save-session))
+      (setq buffer-undo-list nil
+            ffedit--editable t)
+      (when (= (point) (point-max))
+        (goto-char (point-min)))
+      (pop-to-buffer thumbs-buf))))
 
 (defun ffedit--add-thumb (thumbs-buf thumb pts)
   (with-current-buffer thumbs-buf
@@ -134,12 +135,13 @@
 
 (defun ffedit-generate-thumbs (video &optional refresh)
   (let-alist video
-    (let ((thumbs-buf (generate-new-buffer (format "*%s*" .title))))
+    (let ((thumbs-buf (generate-new-buffer (format "*%s*" .title)))
+          (frame (window-frame)))
       (ffedit--thumbs-pre video thumbs-buf)
       (if (and (not refresh)
                (or (ffedit-load-session thumbs-buf)
                    (ffedit-load-cache thumbs-buf)))
-          (ffedit--thumbs-post thumbs-buf)
+          (ffedit--thumbs-post thumbs-buf frame)
         (let ((default-directory
                (buffer-local-value 'default-directory thumbs-buf)))
           (make-process :name "ffmpeg-iframes"
@@ -172,7 +174,7 @@
                                    (point-min) (point-max)
                                    (buffer-local-value 'ffedit-ffmpeg-log
                                                        thumbs-buf))
-                                  (ffedit--thumbs-post thumbs-buf))
+                                  (ffedit--thumbs-post thumbs-buf frame))
                                 (kill-buffer (process-buffer proc)))
                             (pop-to-buffer (process-buffer proc))
                             (error "FFMpeg thumbs failed")))))))))
