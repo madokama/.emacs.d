@@ -43,13 +43,14 @@
 
 (defun recentb-elshogi-normalize-url (url)
   "Strip query parameters from URL."
-  (cond ((ffap-url-p url)
-         (let ((urlobj (url-generic-parse-url url)))
-           (setf (url-filename urlobj)
-                 (car (url-path-and-query urlobj)))
-           (url-recreate-url urlobj)))
-        ((file-exists-p url)
-         url)))
+  (when url
+    (cond ((ffap-url-p url)
+           (let ((urlobj (url-generic-parse-url url)))
+             (setf (url-filename urlobj)
+                   (car (url-path-and-query urlobj)))
+             (url-recreate-url urlobj)))
+          ((file-exists-p url)
+           url))))
 
 (defsubst recentb-elshogi-history-item (game)
   (when-let* (url (recentb-elshogi-normalize-url
