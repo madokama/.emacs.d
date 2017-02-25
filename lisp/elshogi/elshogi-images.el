@@ -221,11 +221,11 @@
 (defun elshogi-images-install ()
   (elshogi-images-prepare-coord-chars)
   (elshogi-display-register
-   '(:board elshogi-images-draw-board
-     :squares elshogi-images-draw-board
-     :stand ignore
-     ;; TODO :hl-sel :hl-cands
-     )))
+   `(:board elshogi-images-draw-board
+            :squares ,(lambda (game &rest _) (elshogi-images-draw-board game))
+            :stand ignore
+            ;; TODO :hl-sel :hl-cands
+            )))
 
 (elshogi-images-install)
 

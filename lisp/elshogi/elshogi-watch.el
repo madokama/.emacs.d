@@ -42,8 +42,7 @@
              (not (elshogi-game/live-p elshogi-current-game))))))
 
 (defun elshogi-watch-game (game)
-  (with-current-buffer
-      (elshogi-display-buffer (elshogi-game-buffer game))
+  (with-current-buffer (elshogi-display-buffer game)
     (elshogi-display-board game)
     (elshogi-watch-mode game)
     (elshogi-watch-auto-update game)))

@@ -150,8 +150,9 @@
 (defun elshogi-candidates-origin (file)
   (cl-loop for rank below 9
            for index = (elshogi-calc-index file rank)
-           when (and (elshogi-piece-players-side-p
-                      (elshogi-piece-at elshogi-current-game index))
+           when (and (elshogi-piece-of-side-p
+                      (elshogi-piece-at elshogi-current-game index)
+                      (elshogi-players-side elshogi-current-game))
                      (elshogi-candidates-target index))
              collect index))
 

@@ -21,8 +21,17 @@
 (defsubst elshogi-game-moves (game)
   (elshogi-grec/moves (elshogi-game/record game)))
 
-(defsubst elshogi-game-pov (game)
-  (elshogi-display/pov (elshogi-game/display game)))
+(defalias 'elshogi-game-pov #'elshogi-players-side)
+
+(defun elshogi-game-player (game)
+  (if (elshogi-black-p (elshogi-game-pov game))
+      (elshogi-game/black game)
+    (elshogi-game/white game)))
+
+(defun elshogi-game-engine (game)
+  (if (elshogi-black-p (elshogi-game-pov game))
+      (elshogi-game/white game)
+    (elshogi-game/black game)))
 
 (defmacro elshogi-game-initialize (&rest params)
   (unless (plist-get params :position)
@@ -31,6 +40,12 @@
     (plist-put params :display '(elshogi-make-display)))
   (let ((gamevar (make-symbol "game")))
     `(let ((,gamevar (elshogi-make-game ,@params)))
+       (unless (elshogi-game/title ,gamevar)
+         (setf (elshogi-game/title ,gamevar)
+               (format "▲%s △%s  %s"
+                       (elshogi-player/name (elshogi-game/black ,gamevar))
+                       (elshogi-player/name (elshogi-game/white ,gamevar))
+                       (format-time-string "%c" (current-time)))))
        (setf (elshogi-game-cursor ,gamevar)
              (dlist/head (elshogi-game-moves ,gamevar)))
        ,gamevar)))

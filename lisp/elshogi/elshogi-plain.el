@@ -46,7 +46,6 @@
                       (elshogi-plain-border-type 'horz-bar)))
         (square-points (elshogi-current-position-on-display))
         (pov (elshogi-game-pov game))
-        ;; (watch-p (elshogi-game/watch-p game))
         (inhibit-read-only t))
     (erase-buffer)
     (insert ?\n)
@@ -66,13 +65,7 @@
     (insert ?\n
             (elshogi-plain-border-type 'vert-bar))
 
-    (setf (elshogi-point-of-piece-stand
-           game
-           (elshogi-negate-side pov)
-           ;; (if watch-p
-           ;;     'w
-           ;;   (elshogi-negate-side (elshogi-players-side)))
-           )
+    (setf (elshogi-point-of-piece-stand game (elshogi-negate-side pov))
           (point))
 
     (insert "    "
@@ -85,11 +78,7 @@
             " "
             (elshogi-plain-border-type 'vert-bar))
 
-    (setf (elshogi-point-of-piece-stand game
-                                        pov
-                                        ;; (if watch-p 'b (elshogi-players-side))
-                                        )
-          (point))
+    (setf (elshogi-point-of-piece-stand game pov) (point))
     (insert "    " (elshogi-plain-border-type 'vert-bar))
 
     (let ((map-coord (elshogi-pov-coord pov)))
@@ -141,14 +130,12 @@
   (mapc (apply-partially #'elshogi-plain-draw-stand game) '(b w))
   (elshogi-plain-highlight-latest game))
 
-(defun elshogi-plain-fontify-piece (piece watch-p)
-  (let ((str (elshogi-piece-text piece)))
-    (propertize str
-                'face
-                (let ((side (elshogi-piece/side piece)))
-                  (if (or (and watch-p (elshogi-black-p side))
-                          (elshogi-players-side-p side))
-                      'elshogi-pov-face)))))
+(defun elshogi-plain-fontify-piece (piece game)
+  (propertize (elshogi-piece-text piece)
+              'face
+              (when (eq (elshogi-piece/side piece)
+                        (elshogi-game-pov game))
+                'elshogi-pov-face)))
 
 (defun elshogi-plain-draw-stand (game side)
   (save-excursion
@@ -168,9 +155,7 @@
                  (and group
                       (format "%2d%s"
                               (length group)
-                              (elshogi-plain-fontify-piece
-                               (car group)
-                               (elshogi-game/watch-p game))))
+                              (elshogi-plain-fontify-piece (car group) game)))
                  'elshogi-index
                  (and group
                       `((piece . ,(car group))
@@ -196,14 +181,11 @@
      point (+ point 2)
      (list 'display
            (and (elshogi-piece-p piece)
-                (format "%2s"
-                        (elshogi-plain-fontify-piece piece
-                                                     (elshogi-game/watch-p game))))
+                (format "%2s" (elshogi-plain-fontify-piece piece game)))
            'elshogi-index index
            'mouse-face
            (and (elshogi-piece-p piece)
-                (elshogi-players-side-p
-                 (elshogi-piece/side piece))
+                (elshogi-players-side-p game (elshogi-piece/side piece))
                 'highlight)))))
 
 ;;;###autoload

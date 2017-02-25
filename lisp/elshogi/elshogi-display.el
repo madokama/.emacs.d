@@ -144,16 +144,17 @@ Go to next position if the bottom of the window is visible."
     (mapc #'kill-buffer bufs))
   (delete-frame))
 
-(defun elshogi-display-buffer (buf)
-  (with-current-buffer buf
-    (elshogi-mode)
-    (if elshogi-display-use-frame
-        (unless (get-buffer-window buf t)
-          (elshogi-display-frame))
-      (pop-to-buffer-same-window buf)))
-  buf)
+(defun elshogi-display-buffer (game)
+  (let ((buf (elshogi-game-buffer game)))
+    (with-current-buffer buf
+      (elshogi-mode)
+      (if elshogi-display-use-frame
+          (unless (get-buffer-window buf t)
+            (elshogi-display-frame game))
+        (pop-to-buffer-same-window buf)))
+    buf))
 
-(defun elshogi-display-frame ()
+(defun elshogi-display-frame (game)
   (let ((map (make-sparse-keymap))
         (after-make-frame-functions nil) ; Avoid interference by elscreen
         )
@@ -162,7 +163,7 @@ Go to next position if the bottom of the window is visible."
                    (menu-bar-lines . 0)
                    ;; Make new frames minibufferless so they can refer
                    ;; the parent frame with `default-minibuffer-frame'.
-                   (minibuffer . nil)
+                   (minibuffer . ,(not (elshogi-game/watch-p game)))
                    (vertical-scroll-bars . nil)
                    ,@elshogi-display-frame-params)))
     (define-key map [?q] #'elshogi-display-quit-frame)

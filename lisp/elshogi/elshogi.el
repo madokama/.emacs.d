@@ -86,8 +86,8 @@
 (defun elshogi-engine-sentinel (_process event)
   (message "USI [exit]: %S" event))
 
-(defun elshogi-engine-setup (side)
-  (let* ((path (cdr (assq 'path elshogi-engine-conf)))
+(defun elshogi-engine-setup (conf side)
+  (let* ((path (cdr (assq 'path conf)))
          (default-directory (file-name-directory path)))
     (elshogi-make-player :name (file-name-base path)
                          :engine
@@ -228,38 +228,40 @@
 
 ;;; Game
 
-(defun elshogi-game-setup (black-p &optional sfen)
-  (setq elshogi-game-player (elshogi-make-player :name user-login-name
-                                                 :side (if black-p 'b 'w))
-        elshogi-game-engine (elshogi-engine-setup (if black-p 'w 'b))
-        elshogi-current-game
-        (elshogi-game-initialize
-         :position (if sfen
-                       (elshogi-sfen->position sfen)
-                     (elshogi-new-position))
-         :black (if black-p
-                    elshogi-game-player
-                  elshogi-game-engine)
-         :white (if black-p
-                    elshogi-game-engine
-                  elshogi-game-player)
-         :record (elshogi-make-grec :startpos (or sfen 'startpos))
-         :display (elshogi-make-display :pov (if black-p 'b 'w))))
-  (elshogi-display-board elshogi-current-game)
-  (elshogi-usi-send-command "usi"))
+(defun elshogi-game-setup (conf black-p &optional sfen)
+  (let* ((player
+          (elshogi-make-player :name user-login-name
+                               :side (if black-p 'b 'w)))
+         (engine (elshogi-engine-setup conf (if black-p 'w 'b)))
+         (game
+          (elshogi-game-initialize
+           :position (if sfen
+                         (elshogi-sfen->position sfen)
+                       (elshogi-new-position))
+           :black (if black-p player engine)
+           :white (if black-p engine player)
+           :record (elshogi-make-grec :startpos (or sfen 'startpos))
+           :display (elshogi-make-display :pov (if black-p 'b 'w)))))
+    (with-current-buffer (elshogi-display-buffer game)
+      (setq mode-line-format
+            (list " " (propertize (elshogi-game/title game)
+                                  'face 'mode-line-buffer-id)))
+      (setq elshogi-current-game game
+            elshogi-game-engine engine
+            elshogi-engine-conf conf)
+      (elshogi-display-board elshogi-current-game)
+      (elshogi-usi-send-command "usi"))))
 
-(defun elshogi-game-start ()
-  "Start new game."
-  (interactive)
-  (unless (elshogi-engine-active)
-    (elshogi-game-setup
-     (or (cdr (assq 'white-p elshogi-engine-conf))
-         (zerop (random 2))))))
+(defun elshogi-game-start (conf)
+  (elshogi-game-setup conf
+                      (or (cdr (assq 'white-p conf))
+                          (zerop (random 2)))))
 
 (defun elshogi-game-resume ()
   "Resume the game."
   (interactive)
-  (elshogi-game-setup (elshogi-players-side-p 'b)
+  (elshogi-game-setup elshogi-engine-conf
+                      (elshogi-players-side-p elshogi-current-game 'b)
                       (elshogi-position->sfen
                        (elshogi-current-position elshogi-current-game))))
 
@@ -283,7 +285,7 @@
 
 (defun elshogi-game-usi-result (result)
   (cond ((elshogi-game-draw-p result) "draw")
-        ((elshogi-players-side-p result) "lose")
+        ((elshogi-players-side-p elshogi-current-game result) "lose")
         (t "win")))
 
 (defun elshogi-game-draw-p (result)
@@ -335,7 +337,7 @@
     (define-key map [remap backward-char] #'elshogi-game-replay-prev)
     (define-key map [remap forward-char] #'elshogi-game-replay-next)
     (define-key map [remap move-beginning-of-line] #'elshogi-game-rewind)
-    (define-key map [?N] #'elshogi-game-start)
+    (define-key map [?N] #'elshogi)
     (define-key map [?R] #'elshogi-game-resign)
     (define-key map [?G] #'elshogi-game-resume)
     ;; (define-key map "\C-c" #'elshogi-game-export)
@@ -415,9 +417,7 @@ Specify the engine settings with CONF."
                       elshogi-engines))))
   (unless conf
     (user-error "Engine not specified.  Exiting"))
-  (with-current-buffer (elshogi-display-buffer (generate-new-buffer "*elshogi*"))
-    (setq elshogi-engine-conf (append conf elshogi-engine-default-conf))
-    (elshogi-game-start)))
+  (elshogi-game-start (append conf elshogi-engine-default-conf)))
 
 (defun elshogi-set-last-selected (index)
   (elshogi-display-highlight-selected index)

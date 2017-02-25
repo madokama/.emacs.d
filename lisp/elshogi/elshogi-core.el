@@ -21,7 +21,7 @@
     (p . 1)))
 
 (defvar-local elshogi-current-game nil)
-(defvar-local elshogi-game-player nil)
+;; (defvar-local elshogi-game-player nil)
 (defvar-local elshogi-game-engine nil)
 
 (defun elshogi-make-piece-or-space (name side)
@@ -123,21 +123,17 @@
   (setf (elshogi-current-side game)
         (elshogi-negate-side (elshogi-current-side game))))
 
-(defsubst elshogi-players-side ()
-  (when elshogi-game-player
-    (elshogi-player/side elshogi-game-player)))
+(defsubst elshogi-players-side (game)
+  (elshogi-display/pov (elshogi-game/display game)))
 
-(defsubst elshogi-players-side-p (side)
-  (eq side (elshogi-players-side)))
+(defsubst elshogi-players-side-p (game side)
+  (eq side (elshogi-players-side game)))
 
 (defsubst elshogi-players-turn-p (game)
-  (elshogi-players-side-p (elshogi-current-side game)))
+  (elshogi-players-side-p game (elshogi-current-side game)))
 
 (defsubst elshogi-black-p (side)
   (eq side 'b))
-
-;; (defun elshogi-hifumin-eye-p ()
-;;   (not (elshogi-black-p (elshogi-players-side))))
 
 (defun elshogi-pov-coord (pov)
   (if (elshogi-black-p pov)
@@ -161,9 +157,6 @@
      (if (eq ,side 'b)
          (elshogi-position/on-black-stand position)
        (elshogi-position/on-white-stand position))))
-
-(defun elshogi-piece-players-side-p (piece)
-  (elshogi-piece-of-side-p piece (elshogi-players-side)))
 
 (defun elshogi-piece-black-p (piece)
   (elshogi-piece-of-side-p piece 'b))
