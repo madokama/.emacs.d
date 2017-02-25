@@ -142,7 +142,7 @@
 
 (defun elshogi-candidates-target (index)
   (if (consp index)
-      (elshogi-drop-candidates (assoc-default 'piece index))
+      (elshogi-drop-candidates (cdr (assq 'piece index)))
     (elshogi-move-candidates--legal (elshogi-piece-at elshogi-current-game
                                                       index)
                                     (elshogi-move-candidates--raw index))))

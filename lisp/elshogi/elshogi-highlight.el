@@ -15,7 +15,7 @@
 
 (defun elshogi-highlight-index->region (index)
   (if (consp index)
-      (when-let* (pt (assoc-default 'point index))
+      (when-let* (pt (cdr (assq 'point index)))
         (list pt (1+ pt)))
     (when-let* (pt (elshogi-index->point index))
       (list pt (+ pt 2)))))

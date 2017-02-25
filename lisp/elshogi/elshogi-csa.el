@@ -51,7 +51,7 @@
 
 (defun elshogi-csa-piece-name (piece)
   (let ((name
-         (assoc-default (elshogi-piece/name piece) elshogi-csa-piece-names)))
+         (cdr (assq (elshogi-piece/name piece) elshogi-csa-piece-names))))
     (if (elshogi-piece/promoted piece)
         (cadr name)
       (car name))))
@@ -73,9 +73,8 @@
              (elshogi-csa-side side)
              (mapconcat (lambda (piece)
                           (format "00%s"
-                                  (car
-                                   (assoc-default (elshogi-piece/name piece)
-                                                  elshogi-csa-piece-names))))
+                                  (cadr (assq (elshogi-piece/name piece)
+                                              elshogi-csa-piece-names))))
                         pieces
                         "")))))
 
