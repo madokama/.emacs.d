@@ -6,7 +6,7 @@
 
 (require 'seq)
 (require 'elshogi-core)
-(require 'elshogi-directions)
+(require 'elshogi-direction)
 (require 'dash-functional)
 
 (defun elshogi-candidates-move-pawn (index piece)
