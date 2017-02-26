@@ -10,7 +10,7 @@
 (require 'dash-functional)
 
 (defun elshogi-candidates-move-pawn (index piece)
-  (list (elshogi-upward-index index piece)))
+  (list (elshogi-direction-upward-index index piece)))
 
 (defun elshogi-candidates-move-directions (index piece directions)
   (mapcar (lambda (direction)
@@ -19,24 +19,25 @@
 
 (defun elshogi-candidates-move-knight (index piece)
   (elshogi-candidates-move-directions
-   (elshogi-upward-index index piece)
+   (elshogi-direction-upward-index index piece)
    piece
-   '(elshogi-upleft-index elshogi-upright-index)))
+   '(elshogi-direction-upleft-index elshogi-direction-upright-index)))
 
 (defun elshogi-candidates-move-silver (index piece)
   (elshogi-candidates-move-directions
    index piece
-   (cons 'elshogi-upward-index elshogi-directions-x)))
+   (cons 'elshogi-direction-upward-index elshogi-direction-x)))
 
 (defun elshogi-candidates-move-gold (index piece)
   (elshogi-candidates-move-directions
    index piece
-   (append elshogi-directions-+ '(elshogi-upleft-index elshogi-upright-index))))
+   (append elshogi-direction-+
+           '(elshogi-direction-upleft-index elshogi-direction-upright-index))))
 
 (defun elshogi-candidates-move-king (index piece)
   (elshogi-candidates-move-directions
    index piece
-   (append elshogi-directions-+ elshogi-directions-x)))
+   (append elshogi-direction-+ elshogi-direction-x)))
 
 (defun elshogi-candidates-move--ranging (index piece dir)
   (cl-loop for index~ = (funcall dir index piece) then (funcall dir index~ piece)
@@ -47,21 +48,21 @@
            finally return candidates))
 
 (defun elshogi-candidates-move-lance (index piece)
-  (elshogi-candidates-move--ranging index piece #'elshogi-upward-index))
+  (elshogi-candidates-move--ranging index piece #'elshogi-direction-upward-index))
 
 (defun elshogi-candidates-move-rook (index piece)
   (append (cl-mapcan (apply-partially #'elshogi-candidates-move--ranging
                                       index piece)
-                     elshogi-directions-+)
+                     elshogi-direction-+)
           (when (elshogi-piece/promoted piece)
-            (elshogi-candidates-move-directions index piece elshogi-directions-x))))
+            (elshogi-candidates-move-directions index piece elshogi-direction-x))))
 
 (defun elshogi-candidates-move-bishop (index piece)
   (append (cl-mapcan (apply-partially #'elshogi-candidates-move--ranging
                                       index piece)
-                     elshogi-directions-x)
+                     elshogi-direction-x)
           (when (elshogi-piece/promoted piece)
-            (elshogi-candidates-move-directions index piece elshogi-directions-+))))
+            (elshogi-candidates-move-directions index piece elshogi-direction-+))))
 
 (defun elshogi-candidates-file-with-pawn-p (file piece)
   (cl-loop for rank below 9
