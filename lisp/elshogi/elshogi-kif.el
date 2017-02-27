@@ -324,7 +324,7 @@
 
 (defsubst elshogi-kif-parse-side (move)
   (if (cl-oddp (plist-get move :count))
-      'b 'w))
+      elshogi-black elshogi-white))
 
 
 
@@ -357,10 +357,10 @@
             (elshogi-game-initialize
              :position (elshogi-new-position)
              :black (elshogi-make-player :name black
-                                         :side 'b
+                                         :side elshogi-black
                                          :image (plist-get params :black))
              :white (elshogi-make-player :name white
-                                         :side 'w
+                                         :side elshogi-white
                                          :image (plist-get params :white))
              :record (elshogi-make-grec
                       :startpos 'startpos

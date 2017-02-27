@@ -83,8 +83,8 @@
    (-map-indexed (lambda (index rank)
                    (format "P%d%s" (1+ index) (elshogi-csa-rank rank)))
                  (seq-partition (elshogi-position/on-board position) 9))
-   (elshogi-csa-pieces-in-hand (elshogi-position/on-black-stand position) 'b)
-   (elshogi-csa-pieces-in-hand (elshogi-position/on-white-stand position) 'w)))
+   (elshogi-csa-pieces-in-hand (elshogi-position/on-black-stand position) elshogi-black)
+   (elshogi-csa-pieces-in-hand (elshogi-position/on-white-stand position) elshogi-white)))
 
 (defun elshogi-csa-coord (index)
   (format "%s%s"

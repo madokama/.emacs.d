@@ -6,6 +6,9 @@
 
 (require 'dlist)
 
+(defconst elshogi-black 'b)
+(defconst elshogi-white 'w)
+
 (defmacro elshogi-defstruct (name &rest slots)
   (declare (indent 1))
   (let ((struct-name (intern (format "elshogi-%s" name)))
@@ -24,7 +27,7 @@
   on-board
   on-black-stand
   on-white-stand
-  (side 'b)
+  (side elshogi-black)
   (count 1))
 
 (elshogi-defstruct player
@@ -47,7 +50,7 @@
   (board (make-vector 81 nil))
   piece-stand/b
   piece-stand/w
-  (pov 'b))
+  (pov elshogi-black))
 
 (provide 'elshogi-struct)
 ;;; elshogi-struct.el ends here

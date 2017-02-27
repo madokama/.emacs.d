@@ -117,7 +117,7 @@
                              index))
 
 (defsubst elshogi-negate-side (side)
-  (if (eq side 'b) 'w 'b))
+  (if (eq side elshogi-black) elshogi-white elshogi-black))
 
 (defun elshogi-toggle-side (game)
   (setf (elshogi-current-side game)
@@ -133,7 +133,7 @@
   (elshogi-players-side-p game (elshogi-current-side game)))
 
 (defsubst elshogi-black-p (side)
-  (eq side 'b))
+  (eq side elshogi-black))
 
 (defun elshogi-pov-coord (pov)
   (if (elshogi-black-p pov)
@@ -154,12 +154,12 @@
 
 (defmacro elshogi-pieces-on-stand (game side)
   `(let ((position (elshogi-current-position ,game)))
-     (if (eq ,side 'b)
+     (if (eq ,side elshogi-black)
          (elshogi-position/on-black-stand position)
        (elshogi-position/on-white-stand position))))
 
 (defun elshogi-piece-black-p (piece)
-  (elshogi-piece-of-side-p piece 'b))
+  (elshogi-piece-of-side-p piece elshogi-black))
 
 (defun elshogi-collect-indices (pred)
   (cl-loop for index below 81
@@ -179,7 +179,7 @@
 
 (defmacro elshogi-point-of-piece-stand (game side)
   `(let ((display (elshogi-game/display ,game)))
-     (if (eq ,side 'b)
+     (if (eq ,side elshogi-black)
          (elshogi-display/piece-stand/b display)
        (elshogi-display/piece-stand/w display))))
 

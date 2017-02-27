@@ -30,8 +30,8 @@
                (not (string-empty-p promoted))
                (if (let ((case-fold-search nil))
                      (string-match-p "[[:upper:]]" name))
-                   'b
-                 'w)))))
+                   elshogi-black
+                 elshogi-white)))))
 
 (defun elshogi-sfen-piece-on-square (sfen)
   (if (string-match-p "[1-9]" sfen)
@@ -81,8 +81,8 @@
         (cdr (split-string sfen " "))
       (elshogi-make-position
        :on-board (elshogi-sfen-pieces-on-board board)
-       :on-black-stand (elshogi-sfen-pieces-on-stand stand 'b)
-       :on-white-stand (elshogi-sfen-pieces-on-stand stand 'w)
+       :on-black-stand (elshogi-sfen-pieces-on-stand stand elshogi-black)
+       :on-white-stand (elshogi-sfen-pieces-on-stand stand elshogi-white)
        :side (intern side)
        :count (string-to-number count)))))
 

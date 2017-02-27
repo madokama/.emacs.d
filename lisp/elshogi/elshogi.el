@@ -231,8 +231,8 @@
 (defun elshogi-game-setup (conf black-p &optional sfen)
   (let* ((player
           (elshogi-make-player :name user-login-name
-                               :side (if black-p 'b 'w)))
-         (engine (elshogi-engine-setup conf (if black-p 'w 'b)))
+                               :side (if black-p elshogi-black elshogi-white)))
+         (engine (elshogi-engine-setup conf (if black-p elshogi-white elshogi-black)))
          (game
           (elshogi-game-initialize
            :position (if sfen
@@ -241,7 +241,7 @@
            :black (if black-p player engine)
            :white (if black-p engine player)
            :record (elshogi-make-grec :startpos (or sfen 'startpos))
-           :display (elshogi-make-display :pov (if black-p 'b 'w)))))
+           :display (elshogi-make-display :pov (if black-p elshogi-black elshogi-white)))))
     (with-current-buffer (elshogi-display-buffer game)
       (setq mode-line-format
             (list " " (propertize (elshogi-game/title game)
@@ -261,7 +261,7 @@
   "Resume the game."
   (interactive)
   (elshogi-game-setup elshogi-engine-conf
-                      (elshogi-players-side-p elshogi-current-game 'b)
+                      (elshogi-players-side-p elshogi-current-game elshogi-black)
                       (elshogi-position->sfen
                        (elshogi-current-position elshogi-current-game))))
 
