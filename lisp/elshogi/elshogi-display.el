@@ -83,7 +83,7 @@
       (with-selected-frame default-minibuffer-frame
         (browse-url url)))))
 
-(defvar org-link-parameters nil)
+(defvar org-link-parameters)
 (autoload 'org-activate-plain-links "org")
 
 (defun elshogi-display-note-urlify ()
@@ -92,8 +92,7 @@
       (define-key map [mouse-2] #'elshogi-display-follow-link)
       (define-key map [follow-link] 'mouse-face)
       (let ((org-link-parameters
-             (append `(("http" :keymap ,map) ("https" :keymap ,map))
-                     org-link-parameters)))
+             `(("http" :keymap ,map) ("https" :keymap ,map))))
         (goto-char (point-min))
         ;; Copied from org-agenda.el
         (while (org-activate-plain-links (point-max))
