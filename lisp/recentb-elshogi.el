@@ -61,13 +61,18 @@
 
 (defun recentb-elshogi-history ()
   (when (derived-mode-p 'elshogi-mode)
-    (when-let* (item (recentb-elshogi-history-item elshogi-current-game))
-      (cons item
-            (cl-delete-if-not (pcase-lambda (`(,kif . _))
-                                (and (not (string= kif (car item)))
-                                     (or (ffap-url-p kif)
-                                         (file-exists-p kif))))
-                              recentb-elshogi)))))
+    (let ((hist
+           (cl-delete-if-not (pcase-lambda (`(,kif . _))
+                               (or (ffap-url-p kif)
+                                   (file-exists-p kif)))
+                             recentb-elshogi)))
+      (cl-delete-duplicates
+       (if-let* (item (recentb-elshogi-history-item elshogi-current-game))
+           (cons item hist)
+         hist)
+       :test (lambda (a b)
+               (string= (car a) (car b)))
+       :from-end t))))
 
 (provide 'recentb-elshogi)
 ;;; recentb-elshogi.el ends here
