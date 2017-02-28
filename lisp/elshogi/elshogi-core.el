@@ -125,7 +125,8 @@
   (elshogi-display/pov (elshogi-game/display game)))
 
 (defsubst elshogi-players-side-p (game side)
-  (eq side (elshogi-players-side game)))
+  (and (not (elshogi-game/watch-p game))
+       (eq side (elshogi-players-side game))))
 
 (defsubst elshogi-players-turn-p (game)
   (elshogi-players-side-p game (elshogi-current-side game)))

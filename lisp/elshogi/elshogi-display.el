@@ -67,37 +67,42 @@
           (when-let* (note (elshogi-mrec/note mrec))
             (save-excursion
               (insert note)
-              (elshogi-display-note-urlify))
+              (elshogi-display-note-urlify game))
             (display-buffer (current-buffer)
                             '(display-buffer-in-side-window))))))))
 
 (defun elshogi-display-follow-link (ev)
-  "Follow link with mouse event EV."
+  "Follow link on mouse event EV."
   (interactive "e")
-  (with-current-buffer (window-buffer (posn-window (event-end ev)))
-    (let ((url
-           (plist-get (get-text-property (posn-point (event-end ev))
-                                         'htmlize-link)
-                      :uri)))
-      ;; Not to open links in a shogi-dedicated frame.
-      (with-selected-frame default-minibuffer-frame
-        (browse-url url)))))
+  (let ((posn (event-start ev)))
+    (with-current-buffer (window-buffer (posn-window posn))
+      (let ((game (get-text-property (posn-point posn) 'game))
+            (url
+             (plist-get (get-text-property (posn-point posn) 'htmlize-link)
+                        :uri)))
+        ;; Not to open links in a shogi-dedicated frame.
+        (with-selected-frame default-minibuffer-frame
+          (browse-url url))
+        (elshogi-game-focus game)))))
 
 (defvar org-link-parameters)
 (autoload 'org-activate-plain-links "org")
 
-(defun elshogi-display-note-urlify ()
+(defvar elshogi-display-link-params
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map)
+    (define-key map [mouse-2] #'elshogi-display-follow-link)
+    (define-key map [follow-link] 'mouse-face)
+    `(("http" :keymap ,map) ("https" :keymap ,map))))
+
+(defun elshogi-display-note-urlify (game)
   (save-match-data
-    (let ((map (make-sparse-keymap)))
-      (define-key map [mouse-2] #'elshogi-display-follow-link)
-      (define-key map [follow-link] 'mouse-face)
-      (let ((org-link-parameters
-             `(("http" :keymap ,map) ("https" :keymap ,map))))
-        (goto-char (point-min))
-        ;; Copied from org-agenda.el
-        (while (org-activate-plain-links (point-max))
-          (add-text-properties (match-beginning 0) (match-end 0)
-                               '(face org-link)))))))
+    (let ((org-link-parameters elshogi-display-link-params))
+      (goto-char (point-min))
+      ;; Copied from org-agenda.el
+      (while (org-activate-plain-links (point-max))
+        (add-text-properties (match-beginning 0) (match-end 0)
+                             `(game ,game))))))
 
 (defun elshogi-display-note-scroll (cmd)
   (when-let* (win

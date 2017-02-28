@@ -9,6 +9,7 @@
 (require 'seq)
 (require 'elshogi-game)
 (require 'elshogi-display)
+(require 'elshogi-mouse)
 (require 'url-cache)
 
 (defvar elshogi-images-name-alist
@@ -134,10 +135,18 @@
                   (elshogi-calc-index (funcall map-coord file)
                                       (funcall map-coord rank)))
                  (piece (elshogi-piece-at game index)))
-            (insert-image
-             (if piece
-                 (elshogi-images-piece piece pov t (and latest (= index latest)))
-               empty))))
+            (insert
+             (apply #'propertize " "
+                    'display
+                    (if piece
+                        (elshogi-images-piece piece pov t
+                                              (and latest (= index latest)))
+                      (cons 'image (cdr empty)))
+                    'elshogi-index index
+                    ;; Hackish way to support mouse even when
+                    ;; `disable-mouse-mode' is enabled.
+                    (list 'mouse-face 'highlight
+                          'keymap elshogi-mouse-map)))))
         (insert ?\n)))
     (unless (elshogi-black-p pov)
       (insert-image empty1)
@@ -177,6 +186,7 @@
       (erase-buffer)
       (elshogi-images-draw-player player)
       (let* ((side (elshogi-player/side player))
+             (side-p (elshogi-players-side-p game side))
              (pieces
               (seq-sort-by (pcase-lambda (`(,name . _))
                              (cdr (assq name elshogi-piece-values)))
@@ -186,8 +196,16 @@
         (cl-loop for (_ . pieces) in pieces
                  do
                     (goto-char (point-max))
-                    (insert-image
-                     (elshogi-images-piece (car pieces) (elshogi-game-pov game)))
+                    (insert
+                     (apply #'propertize " "
+                            'display
+                            (elshogi-images-piece (car pieces)
+                                                  (elshogi-game-pov game))
+                            'elshogi-index `((piece . ,(car pieces))
+                                             (game . ,game))
+                            (when side-p
+                              (list 'mouse-face 'highlight
+                                    'keymap elshogi-mouse-map))))
                     (insert (format "x%d\n" (length pieces)))))
       (current-buffer))))
 

@@ -460,13 +460,16 @@ Specify the engine settings with CONF."
             ((elshogi-selectable-origin-p index)
              (elshogi-set-last-selected index))))))
 
-(defun elshogi-mouse-select-square (event)
-  "Select the square with mouse.
-
-\(fn EVENT)"
+(defun elshogi-mouse-select-square (ev)
+  "Select the square on mouse event EV."
   (interactive "e")
-  (when-let* (idx (get-text-property (posn-point (event-start event)) 'elshogi-index))
-    (elshogi-select-square idx t)))
+  (let ((posn (event-start ev)))
+    (when-let* (index
+                (with-current-buffer (window-buffer (posn-window posn))
+                  (get-text-property (posn-point posn) 'elshogi-index)))
+      (elshogi-game-focus (or elshogi-current-game
+                              (cdr (assq 'game index))))
+      (elshogi-select-square index t))))
 
 (defun elshogi-piece-algebraic (index)
   (if (consp index)
@@ -503,13 +506,22 @@ Specify the engine settings with CONF."
           elshogi-query-selection
           elshogi-select-square)))))
 
+(defun elshogi-key-drop-candidates (game)
+  (mapcar (lambda (p)
+            `((piece . ,p)))
+          (seq-sort-by (lambda (p)
+                         (cdr (assq (elshogi-piece/name p) elshogi-piece-values)))
+                       #'>
+                       (cl-delete-duplicates
+                        (elshogi-pieces-on-stand game (elshogi-current-side game))
+                        :test (lambda (a b)
+                                (eq (elshogi-piece/name a)
+                                    (elshogi-piece/name b)))))))
+
 (defun elshogi-key-drop-piece ()
   "Select the piece to drop with keyboard."
   (interactive)
-  (when-let* ((pieces
-               (elshogi-indices-on-piece-stand
-                elshogi-current-game
-                (elshogi-current-side elshogi-current-game)))
+  (when-let* ((pieces (elshogi-key-drop-candidates elshogi-current-game))
               (index (elshogi-query-selection pieces)))
     (when (elshogi-select-square index)
       (thread-first index

@@ -13,6 +13,10 @@
 (defun elshogi-game-buffer (game)
   (get-buffer-create (format "*elshogi:%s*" (elshogi-game/title game))))
 
+(defun elshogi-game-focus (game)
+  (thread-first game
+    elshogi-game-buffer get-buffer-window select-window))
+
 (defun elshogi-game-frame (game)
   (when-let* (win
               (get-buffer-window (elshogi-game-buffer game) t))
