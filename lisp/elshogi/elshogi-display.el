@@ -36,14 +36,14 @@
 (defun elshogi-display-piece-stand (game side)
   (elshogi-display-generic :stand game side))
 
-(defun elshogi-display-update-squares (&rest indice)
-  (apply #'elshogi-display-generic :squares indice))
+(defun elshogi-display-update-squares (&rest indices)
+  (apply #'elshogi-display-generic :squares indices))
 
 (defun elshogi-display-highlight-selected (index)
   (elshogi-display-generic :hl-sel index))
 
-(defun elshogi-display-highlight-candidates (indice)
-  (elshogi-display-generic :hl-cands indice))
+(defun elshogi-display-highlight-candidates (indices)
+  (elshogi-display-generic :hl-cands indices))
 
 
 

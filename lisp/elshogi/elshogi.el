@@ -521,8 +521,7 @@ Specify the engine settings with CONF."
   "Capture back the last opponent piece."
   (interactive)
   (let ((target
-         (elshogi-mrec/target
-          (elshogi-game-final-move elshogi-current-game))))
+         (elshogi-mrec/target (elshogi-game-final-move elshogi-current-game))))
     (when-let* (candidates
                 (seq-filter (lambda (index)
                               (memq target (elshogi-candidates-target index)))

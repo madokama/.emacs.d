@@ -54,9 +54,7 @@
 
 ;; Defining as macros so as to be `seetf'able.
 (defmacro elshogi-current-position (game)
-  `(elshogi-game/position ,game
-                          ;; elshogi-current-game
-                          ))
+  `(elshogi-game/position ,game))
 
 (defmacro elshogi-current-side (game)
   `(elshogi-position/side (elshogi-current-position ,game)))
@@ -205,11 +203,6 @@
 
 (defsubst elshogi-mrec-drop-p (mrec)
   (eq (elshogi-mrec/origin mrec) '*))
-
-(defmacro elshogi-with-current-game (&rest args)
-  (declare (indent 0))
-  `(when elshogi-current-game
-     (thread-first elshogi-current-game ,@args)))
 
 (defsubst elshogi-dlist-head (dlist)
   (dlink/content (dlist/head dlist)))
