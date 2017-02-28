@@ -101,7 +101,7 @@
            (insert "\". c none s background\",\n")
            (insert "/* pixels */\n")
            (dotimes (_ height)
-             (insert ?\" (make-string height ?.) ?\" ?, ?\n))
+             (insert ?\" (make-string width ?.) ?\" ?, ?\n))
            (delete-char -2)
            (insert "\n};\n")
            (buffer-string))
