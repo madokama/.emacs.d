@@ -33,6 +33,12 @@
   (declare (indent 0))
   `(progn ,side ,center ,side))
 
+(defmacro elshogi-plain--stand-point (game side)
+  `(let ((display (elshogi-game/display ,game)))
+     (if (eq ,side elshogi-black)
+         (elshogi-display/piece-stand/b display)
+       (elshogi-display/piece-stand/w display))))
+
 (defun elshogi-plain-border-type (type)
   (assoc-default type elshogi-plain-border-chars #'eq ? ))
 
@@ -65,7 +71,7 @@
     (insert ?\n
             (elshogi-plain-border-type 'vert-bar))
 
-    (setf (elshogi-point-of-piece-stand game (elshogi-negate-side pov))
+    (setf (elshogi-plain--stand-point game (elshogi-negate-side pov))
           (point))
 
     (insert "    "
@@ -78,7 +84,7 @@
             " "
             (elshogi-plain-border-type 'vert-bar))
 
-    (setf (elshogi-point-of-piece-stand game pov) (point))
+    (setf (elshogi-plain--stand-point game pov) (point))
     (insert "    " (elshogi-plain-border-type 'vert-bar))
 
     (let ((map-coord (elshogi-pov-coord pov)))
@@ -139,7 +145,7 @@
 
 (defun elshogi-plain-draw-stand (game side)
   (save-excursion
-    (goto-char (elshogi-point-of-piece-stand game side))
+    (goto-char (elshogi-plain--stand-point game side))
     (let ((pieces
            (seq-group-by #'elshogi-piece/name
                          (elshogi-pieces-on-stand game side)))
@@ -158,8 +164,7 @@
                               (elshogi-plain-fontify-piece (car group) game)))
                  'elshogi-index
                  (and group
-                      `((piece . ,(car group))
-                        (point . ,(point)))))))
+                      (elshogi-piece-index game (car group))))))
         (forward-line)))))
 
 (defun elshogi-plain-highlight-latest (game)
@@ -182,7 +187,7 @@
      (list 'display
            (and (elshogi-piece-p piece)
                 (format "%2s" (elshogi-plain-fontify-piece piece game)))
-           'elshogi-index index
+           'elshogi-index (elshogi-piece-index game index)
            'mouse-face
            (and (elshogi-piece-p piece)
                 (elshogi-players-side-p game (elshogi-piece/side piece))

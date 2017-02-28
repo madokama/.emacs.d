@@ -40,11 +40,11 @@
 (defun elshogi-display-update-squares (&rest indices)
   (apply #'elshogi-display-generic :squares indices))
 
-(defun elshogi-display-highlight-selected (index)
-  (elshogi-display-generic :hl-sel index))
+(defun elshogi-display-highlight-selected (plst)
+  (elshogi-display-generic :hl-sel plst))
 
-(defun elshogi-display-highlight-candidates (indices)
-  (elshogi-display-generic :hl-cands indices))
+(defun elshogi-display-highlight-candidates (cands)
+  (elshogi-display-generic :hl-cands cands))
 
 
 

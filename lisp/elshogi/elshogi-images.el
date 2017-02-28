@@ -141,7 +141,7 @@
                         (elshogi-images-piece piece pov t
                                               (and latest (= index latest)))
                       (cons 'image (cdr empty)))
-                    'elshogi-index index
+                    'elshogi-index (elshogi-piece-index game index)
                     ;; Hackish way to support mouse even when
                     ;; `disable-mouse-mode' is enabled.
                     (list 'mouse-face 'highlight
@@ -200,8 +200,7 @@
                             'display
                             (elshogi-images-piece (car pieces)
                                                   (elshogi-game-pov game))
-                            'elshogi-index `((piece . ,(car pieces))
-                                             (game . ,game))
+                            'elshogi-index (elshogi-piece-index game (car pieces))
                             (when side-p
                               (list 'mouse-face 'highlight
                                     'keymap elshogi-mouse-map))))

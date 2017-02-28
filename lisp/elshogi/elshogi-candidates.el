@@ -144,21 +144,27 @@
                  (k #'elshogi-candidates-move-king)))
              index piece)))
 
-(defun elshogi-candidates-target (index)
-  (if (consp index)
-      (elshogi-candidates-drop (cdr (assq 'piece index)))
-    (elshogi-candidates-move--legal (elshogi-piece-at elshogi-current-game
-                                                      index)
-                                    (elshogi-candidates-move--raw index))))
+(defun elshogi-candidates--raw-target (index)
+  (if (elshogi-piece-p index)
+      (elshogi-candidates-drop index)
+    (elshogi-candidates-move--legal
+     (elshogi-piece-at elshogi-current-game index)
+     (elshogi-candidates-move--raw index))))
 
-(defun elshogi-candidates-origin (file)
+(defun elshogi-candidates-target (plst)
+  (mapcar (apply-partially #'elshogi-piece-index (elshogi-plst:game plst))
+          (elshogi-candidates--raw-target (or (elshogi-plst:index plst)
+                                              (elshogi-plst:piece plst)))))
+
+(defun elshogi-candidates-origin (game file)
   (cl-loop for rank below 9
            for index = (elshogi-calc-index file rank)
-           when (and (elshogi-piece-of-side-p
-                      (elshogi-piece-at elshogi-current-game index)
-                      (elshogi-players-side elshogi-current-game))
-                     (elshogi-candidates-target index))
-             collect index))
+           for plst = (elshogi-piece-index game index)
+           with side = (elshogi-players-side game)
+           when (and (elshogi-piece-of-side-p (elshogi-piece-at game index)
+                                              side)
+                     (elshogi-candidates-target plst))
+             collect plst))
 
 (provide 'elshogi-candidates)
 ;;; elshogi-candidates.el ends here

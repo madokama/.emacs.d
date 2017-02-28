@@ -176,11 +176,30 @@
                               (elshogi-piece-at game index)
                               side))))
 
-(defmacro elshogi-point-of-piece-stand (game side)
-  `(let ((display (elshogi-game/display ,game)))
-     (if (eq ,side elshogi-black)
-         (elshogi-display/piece-stand/b display)
-       (elshogi-display/piece-stand/w display))))
+(defun elshogi-piece-index (game index)
+  (append (list :game game)
+          (if (elshogi-piece-p index)
+              (list :piece index)
+            (list :index index))))
+
+(defmacro elshogi-define-plist-getter (&rest syms)
+  `(progn
+     ,@(mapcar (lambda (sym)
+                 `(defsubst ,(intern (format "elshogi-plst:%s" sym)) (plst)
+                    (plist-get plst ,(intern (format ":%s" sym)))))
+                syms)))
+
+(elshogi-define-plist-getter game index piece)
+
+(defsubst elshogi-piece= (p1 p2)
+  (and (eq (elshogi-piece/side p1) (elshogi-piece/side p2))
+       (eq (elshogi-piece/name p1) (elshogi-piece/name p2))))
+
+(defun elshogi-plst= (p1 p2)
+  (if-let* ((p1 (elshogi-plst:piece p1))
+            (p2 (elshogi-plst:piece p2)))
+      (elshogi-piece= p1 p2)
+    (eq (elshogi-plst:index p1) (elshogi-plst:index p2))))
 
 (defun elshogi-piece-text (piece)
   (format "%s%s"
