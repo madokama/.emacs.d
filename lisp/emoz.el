@@ -125,7 +125,10 @@ repl.print(recentWindow.gBrowser.currentURI.spec);")
 (defvar url-cookie-file)
 (declare-function url-do-setup "url")
 
+;;;###autoload
 (defun emoz-sync-cookies ()
+  "Sync cookies with firefox."
+  (interactive)
   (emoz-query
    (emoz--wrap-js "let truth = function(p) { return p ? 'TRUE' : 'FALSE' };
 let iter = Services.cookies.enumerator;
