@@ -8,6 +8,7 @@
   (require 'subr-x))
 (require 'seq)
 (require 'elshogi-game)
+(require 'elshogi-mouse)
 
 (defvar elshogi-display-style 'plain)
 (defvar elshogi-display-handler nil)
@@ -74,16 +75,11 @@
 (defun elshogi-display-follow-link (ev)
   "Follow link on mouse event EV."
   (interactive "e")
-  (let ((posn (event-start ev)))
-    (with-current-buffer (window-buffer (posn-window posn))
-      (let ((game (get-text-property (posn-point posn) 'game))
-            (url
-             (plist-get (get-text-property (posn-point posn) 'htmlize-link)
-                        :uri)))
-        ;; Not to open links in a shogi-dedicated frame.
-        (with-selected-frame default-minibuffer-frame
-          (browse-url url))
-        (elshogi-game-focus game)))))
+  (seq-let (game link) (elshogi-mouse-read-props ev 'game 'htmlize-link)
+    ;; Not to open links in a shogi-dedicated frame.
+    (with-selected-frame default-minibuffer-frame
+      (browse-url (plist-get link :uri)))
+    (elshogi-game-focus game)))
 
 (defvar org-link-parameters)
 (autoload 'org-activate-plain-links "org")

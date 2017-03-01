@@ -9,7 +9,6 @@
 (require 'seq)
 (require 'elshogi-game)
 (require 'elshogi-display)
-(require 'elshogi-mouse)
 (require 'url-cache)
 
 (defvar elshogi-images-name-alist

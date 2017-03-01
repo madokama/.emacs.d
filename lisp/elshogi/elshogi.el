@@ -14,6 +14,7 @@
 (require 'elshogi-candidates)
 (require 'elshogi-replay)
 (require 'elshogi-display)
+(require 'elshogi-mouse)
 (require 'elshogi-sfen)
 (require 'elshogi-csa)
 
@@ -463,13 +464,10 @@ Specify the engine settings with CONF."
 (defun elshogi-mouse-select-square (ev)
   "Select the square on mouse event EV."
   (interactive "e")
-  (let ((posn (event-start ev)))
-    (when-let* (index
-                (with-current-buffer (window-buffer (posn-window posn))
-                  (get-text-property (posn-point posn) 'elshogi-index)))
-      (elshogi-game-focus (or elshogi-current-game
-                              (cdr (assq 'game index))))
-      (elshogi-select-square index t))))
+  (when-let* (index (elshogi-mouse-read-prop ev 'elshogi-index))
+    (elshogi-game-focus (or elshogi-current-game
+                            (cdr (assq 'game index))))
+    (elshogi-select-square index t)))
 
 (defun elshogi-piece-algebraic (index)
   (if (consp index)
