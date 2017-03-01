@@ -187,7 +187,8 @@
 (defvar elshogi-kif-url/jsa
   (rx bow "live.shogi.or.jp/" (1+ (not (any ?/))) "/kifu/"))
 (defvar elshogi-kif-url/mainichi
-  (rx bow "mainichi.jp/oshosen-kifu/"))
+  (rx bow "mainichi.jp/"
+      (or "oshosen-kifu/" "feature/shougi/ohsho/etc/")))
 (defvar elshogi-kif-url/mynavi
   (rx bow "book.mynavi.jp/shogi/mynavi-open/result/"))
 
