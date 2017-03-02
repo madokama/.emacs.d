@@ -182,18 +182,6 @@
          (elshogi-display/piece-stand/b display)
        (elshogi-display/piece-stand/w display))))
 
-(defun elshogi-indices-on-piece-stand (game side)
-  (save-excursion
-    (goto-char (elshogi-point-of-piece-stand game side))
-    (let ((column (current-column))
-          (pieces nil))
-      (dolist (p elshogi-piece-values)  ; FIXME use dotimes?
-        (forward-line)
-        (when-let* (index (get-text-property (+ (point) column) 'elshogi-index))
-          (push index pieces))
-        (forward-line))
-      (nreverse pieces))))
-
 (defun elshogi-piece-text (piece)
   (format "%s%s"
           (if (elshogi-piece/promoted piece)

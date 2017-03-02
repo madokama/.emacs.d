@@ -27,11 +27,6 @@
 (defvar-local elshogi-last-selected nil)
 (defvar-local elshogi-last-selected-file nil)
 
-;; (defvar elshogi-piece-images-dir
-;;   (expand-file-name "pieces/"
-;;                     (file-name-directory
-;;                      (or load-file-name buffer-file-name))))
-
 ;; Allow 角厨 vs 飛車厨
 ;; See: http://www.nicovideo.jp/watch/sm25567679
 (defvar elshogi-allow-double-rook nil)
@@ -375,14 +370,6 @@
             (elshogi-pieces-on-stand elshogi-current-game
                                      (elshogi-current-side elshogi-current-game))))
 
-;; (defun elshogi-add-piece-on-stand (game piece side)
-;;   (elshogi-move-capture-internal game piece side)
-;;   (elshogi-display-piece-stand game side))
-
-;; (defun elshogi-del-piece-on-stand (game piece side)
-;;   (elshogi-move-drop-internal game piece side)
-;;   (elshogi-display-piece-stand game side))
-
 (defun elshogi-move-piece (game origin target promoted)
   (let ((mrec
          (elshogi-move-make-move game origin target promoted)))
@@ -396,12 +383,6 @@
     (elshogi-display-update-squares game index)
     (elshogi-display-piece-stand game (elshogi-mrec/side mrec))
     (elshogi-game-turn game mrec)))
-
-;;; Display
-
-;; (defun elshogi-set-square (game index piece)
-;;   (elshogi-move-set-index game index piece)
-;;   (elshogi-display-update-squares game index))
 
 ;;; User Interface
 
