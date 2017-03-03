@@ -4,8 +4,6 @@
 
 ;;; Code:
 
-;; (eval-when-compile (require 'cl))
-                                        ;for lexical-let
 (require 'subr-x)
 (require 'seq)
 (require 'org-capture)
@@ -172,21 +170,6 @@
            (with-current-buffer ,bufvar
              ,@body
              (org-display-inline-images nil t ,begvar ,endvar)))))))
-
-;; (defmacro org-ytdl-display-thumbnail (&rest body)
-;;   `(lexical-let ((begin
-;;                   (marker-position
-;;                    (org-capture-get :begin-marker 'local)))
-;;                  (end
-;;                   (marker-position
-;;                    (org-capture-get :end-marker 'local)))
-;;                  (buf
-;;                   (org-capture-target-buffer (cadr (org-capture-get :target)))))
-;;      (lambda (proc signal)
-;;        (when (zerop (process-exit-status proc))
-;;          (with-current-buffer buf
-;;            ,@body
-;;            (org-display-inline-images nil t begin end))))))
 
 ;; Entry point
 ;;;###autoload
