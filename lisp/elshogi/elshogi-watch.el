@@ -63,17 +63,16 @@
 
 (defun elshogi-watch-update (&rest _)
   (when (derived-mode-p 'elshogi-mode)
-    (when-let* (kif (or (elshogi-game/url elshogi-current-game)
-                        (elshogi-game/kif elshogi-current-game)))
+    (when-let* ((game elshogi-current-game)
+                (kif (or (elshogi-game/url game) (elshogi-game/kif game))))
       (elshogi-kif-parse
        kif
-       (lambda (game)
+       (lambda (new-game)
          (with-selected-frame (elshogi-game-frame game)
            (elshogi-watch-game
             (elshogi-replay-seek
-             game
-             (elshogi-mrec/count
-              (elshogi-game-latest-move elshogi-current-game))))))))))
+             new-game
+             (elshogi-mrec/count (elshogi-game-latest-move game))))))))))
 
 (declare-function eww-current-url "eww")
 
