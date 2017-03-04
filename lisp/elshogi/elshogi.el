@@ -401,6 +401,10 @@ Specify the engine settings with CONF."
     (user-error "Engine not specified.  Exiting"))
   (elshogi-game-start (append conf elshogi-engine-default-conf)))
 
+(defun elshogi-clear-last-selected (game)
+  (elshogi-display-board game)
+  (setq elshogi-last-selected nil))
+
 (defun elshogi-set-last-selected (plst)
   (elshogi-display-highlight-selected plst)
   (setq elshogi-last-selected plst))
@@ -437,12 +441,12 @@ Specify the engine settings with CONF."
                             (elshogi-move-piece
                              game origin target
                              (elshogi-may-promote-p game origin target))))
-                        (elshogi-set-last-selected nil))
+                        (elshogi-clear-last-selected game))
                        ;; Cancel the previous selection
                        ((not (elshogi-plst= plst elshogi-last-selected))
                         (elshogi-set-last-selected plst))
                        (t
-                        (elshogi-set-last-selected nil))))
+                        (elshogi-clear-last-selected game))))
                 ((elshogi-selectable-origin-p plst)
                  (elshogi-set-last-selected plst))))))))
 

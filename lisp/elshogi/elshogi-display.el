@@ -37,8 +37,8 @@
 (defun elshogi-display-piece-stand (game side)
   (elshogi-display-generic :stand game side))
 
-(defun elshogi-display-update-squares (&rest indices)
-  (apply #'elshogi-display-generic :squares indices))
+(defun elshogi-display-update-squares (game &rest indices)
+  (elshogi-display-generic :squares game indices))
 
 (defun elshogi-display-highlight-selected (plst)
   (elshogi-display-generic :hl-sel plst))

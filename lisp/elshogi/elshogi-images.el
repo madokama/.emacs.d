@@ -4,10 +4,8 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'subr-x))
-(require 'seq)
 (require 'elshogi-game)
+(require 'elshogi-candidates)
 (require 'elshogi-display)
 (require 'url-cache)
 
@@ -74,44 +72,47 @@
                unless (test n)
                  do (elshogi-images-generate-coord-char n)))))
 
-(defun elshogi-images-piece (piece pov &optional relief-p hl-p)
+(defun elshogi-images-piece (piece pov &optional relief-p color)
   (let ((name
          (cdr (assq (elshogi-piece/name piece) elshogi-images-name-alist))))
-    (apply #'create-image
-           (elshogi-images-file
-            (concat (if (eq pov (elshogi-piece/side piece)) "S" "G")
-                    (if (elshogi-piece/promoted piece)
-                        (if (memq (elshogi-piece/name piece) '(p b r))
-                            (cadr name)
-                          (concat "n" (car name)))
-                      (car name))))
-           nil nil :relief (if relief-p 1 0)
-           (when hl-p `(:background ,(face-attribute 'default :foreground))))))
+    (create-image (elshogi-images-file
+                   (concat (if (eq pov (elshogi-piece/side piece)) "S" "G")
+                           (if (elshogi-piece/promoted piece)
+                               (if (memq (elshogi-piece/name piece) '(p b r))
+                                   (cadr name)
+                                 (concat "n" (car name)))
+                             (car name))))
+                  'imagemagick nil
+                  :relief (if relief-p 1 0)
+                  :background color)))
 
-(defun elshogi-images-empty-square (width height &optional relief-p)
+(defun elshogi-images-empty-square-xpm (width height)
   ;; From chess-images.el at https://github.com/jwiegley/emacs-chess.git
-  (apply #'create-image
-         (with-temp-buffer
-           (insert "/* XPM */\n")
-           (insert "static char *chessdotel[] = {\n")
-           (insert "/* columns rows colors chars-per-pixel */\n")
-           (insert (format "\"%d %d 2 1\",\n" width height))
-           (insert "\"  c none s void\",\n")
-           (insert "\". c none s background\",\n")
-           (insert "/* pixels */\n")
-           (dotimes (_ height)
-             (insert ?\" (make-string width ?.) ?\" ?, ?\n))
-           (delete-char -2)
-           (insert "\n};\n")
-           (buffer-string))
-         'xpm t (if relief-p '(:relief 1) '(:margin 1))))
+  (with-temp-buffer
+    (insert "/* XPM */\n")
+    (insert "static char *chessdotel[] = {\n")
+    (insert "/* columns rows colors chars-per-pixel */\n")
+    (insert (format "\"%d %d 2 1\",\n" width height))
+    (insert "\"  c none s void\",\n")
+    (insert "\". c none s background\",\n")
+    (insert "/* pixels */\n")
+    (dotimes (_ height)
+      (insert ?\" (make-string width ?.) ?\" ?, ?\n))
+    (delete-char -2)
+    (insert "\n};\n")
+    (buffer-string)))
 
-(defun elshogi-images-draw-board (game)
+(defun elshogi-images-empty-square (width height)
+  (create-image (elshogi-images-empty-square-xpm width height)
+                'xpm t))
+
+(defun elshogi-images-draw-board (game &optional hl)
   (let ((pov (elshogi-game-pov game))
         (empty1
          (apply #'elshogi-images-empty-square
                 (mapcar #'string-to-number
                         (split-string elshogi-images-coord-alphabet-size "x"))))
+        (hl (or hl #'ignore))
         (inhibit-read-only t))
     (erase-buffer)
     (when (elshogi-black-p pov)
@@ -119,11 +120,10 @@
       (cl-loop for file from ?9 downto ?1
                do (insert-image
                    (create-image (elshogi-images-char-file file)
-                                 nil nil :margin 1)))
-      (insert ?\n))
+                                 nil nil :margin 1))))
+    (insert ?\n)
     (let ((map-coord (elshogi-pov-coord pov))
-          (latest (elshogi-mrec/target (elshogi-game-latest-move game)))
-          (empty (elshogi-images-empty-square 43 48 t)))
+          (empty (elshogi-images-empty-square-xpm 43 48)))
       (dotimes (rank 9)
         (insert-image
          (create-image
@@ -133,14 +133,15 @@
           (let* ((index
                   (elshogi-calc-index (funcall map-coord file)
                                       (funcall map-coord rank)))
-                 (piece (elshogi-piece-at game index)))
+                 (piece (elshogi-piece-at game index))
+                 (color (funcall hl index)))
             (insert
              (apply #'propertize " "
                     'display
                     (if piece
-                        (elshogi-images-piece piece pov t
-                                              (and latest (= index latest)))
-                      (cons 'image (cdr empty)))
+                        (elshogi-images-piece piece pov t color)
+                      (create-image empty 'imagemagick t
+                                    :relief 1 :background color))
                     'elshogi-index (elshogi-piece-index game index)
                     ;; Hackish way to support mouse even when
                     ;; `disable-mouse-mode' is enabled.
@@ -152,8 +153,7 @@
       (cl-loop for file from ?1 upto ?9
                do (insert-image
                    (create-image (elshogi-images-char-file file)
-                                 nil nil :margin 1)))))
-  (elshogi-images-draw-stands game))
+                                 nil nil :margin 1))))))
 
 (defun elshogi-images-insert-cache (url buf)
   (let ((cache (url-cache-create-filename url)))
@@ -179,7 +179,7 @@
                         (kill-buffer url-buf)))
                     (list (current-buffer))))))
 
-(defun elshogi-images-draw-stand (game player)
+(defun elshogi-images-draw-stand (game player hl)
   (with-current-buffer (elshogi-images-stand-buffer game player)
     (let ((inhibit-read-only t))
       (erase-buffer)
@@ -199,7 +199,9 @@
                      (apply #'propertize " "
                             'display
                             (elshogi-images-piece (car pieces)
-                                                  (elshogi-game-pov game))
+                                                  (elshogi-game-pov game)
+                                                  nil
+                                                  (funcall hl (car pieces)))
                             'elshogi-index (elshogi-piece-index game (car pieces))
                             (when side-p
                               (list 'mouse-face 'highlight
@@ -222,26 +224,80 @@
                                   'face 'mode-line-buffer-id)))
           (current-buffer)))))
 
-(defun elshogi-images-draw-stands (game)
+(defun elshogi-images-draw-stands (game &optional hl)
   (let ((pov (elshogi-game-pov game))
+        (hl (or hl #'ignore))
         (params '((window-width . 16))))
-    (display-buffer (elshogi-images-draw-stand game (elshogi-game/black game))
+    (display-buffer (elshogi-images-draw-stand game (elshogi-game/black game) hl)
                     `(display-buffer-in-side-window
                       ,@params
                       (side . ,(if (elshogi-black-p pov) 'right 'left))))
-    (display-buffer (elshogi-images-draw-stand game (elshogi-game/white game))
+    (display-buffer (elshogi-images-draw-stand game (elshogi-game/white game) hl)
                     `(display-buffer-in-side-window
                       ,@params
                       (side . ,(if (elshogi-black-p pov) 'left 'right))))))
 
+
+
+;;; Highlight functions
+
+(defun elshogi-images-color (type)
+  (cl-case type
+    ((latest sel) (face-attribute 'default :foreground))
+    (cands (face-attribute 'highlight :background))))
+
+(defun elshogi-images-hl-latest (game &optional indices)
+  (let ((prev (car indices))
+        (latest (or (cadr indices) (car indices)
+                    (elshogi-mrec/target (elshogi-game-latest-move game))))
+        (clr-prev (elshogi-images-color 'cands))
+        (clr-latest (elshogi-images-color 'latest)))
+    (elshogi-images-draw-board game
+                               (lambda (index)
+                                 (cond ((eq index latest) clr-latest)
+                                       ((eq index prev) clr-prev))))
+    (elshogi-images-draw-stands game)))
+
+(defun elshogi-images-hl-sel (plst)
+  (let* ((game (elshogi-plst:game plst))
+         (sel (or (elshogi-plst:index plst) (elshogi-plst:piece plst)))
+         (cands (elshogi-candidates--raw-target sel))
+         (clr-sel (elshogi-images-color 'sel))
+         (clr-cands (elshogi-images-color 'cands)))
+    (elshogi-images-draw-board game
+                               (if (elshogi-piece-p sel)
+                                   (lambda (index)
+                                     (when (memq index cands)
+                                       clr-cands))
+                                 (lambda (index)
+                                   (cond ((= index sel) clr-sel)
+                                         ((memq index cands) clr-cands)))))
+    (elshogi-images-draw-stands game
+                                (when (elshogi-piece-p sel)
+                                  (lambda (piece)
+                                    (when (elshogi-piece= piece sel)
+                                      clr-sel))))))
+
+(defun elshogi-images-hl-cands (cands)
+  (let ((game (elshogi-plst:game (car cands)))
+        (cands (mapcar #'elshogi-plst:index cands))
+        (clr-cands (elshogi-images-color 'sel)))
+    (elshogi-images-draw-board game
+                               (lambda (index)
+                                 (when (memq index cands)
+                                   clr-cands)))
+    (elshogi-images-draw-stands game)))
+
+
+
 (defun elshogi-images-install ()
   (elshogi-images-prepare-coord-chars)
   (elshogi-display-register
-   `(:board elshogi-images-draw-board
-            :squares ,(lambda (game &rest _) (elshogi-images-draw-board game))
-            :stand ignore
-            ;; TODO :hl-sel :hl-cands
-            )))
+   '(:board elshogi-images-hl-latest
+     :squares elshogi-images-hl-latest
+     :stand ignore
+     :hl-sel elshogi-images-hl-sel
+     :hl-cands elshogi-images-hl-cands)))
 
 (elshogi-images-install)
 
