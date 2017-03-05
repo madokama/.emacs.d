@@ -5,7 +5,6 @@
 ;;; Code:
 
 (require 'elshogi-game)
-(require 'elshogi-candidates)
 (require 'elshogi-display)
 (require 'url-cache)
 
@@ -106,13 +105,12 @@
   (create-image (elshogi-images-empty-square-xpm width height)
                 'xpm t))
 
-(defun elshogi-images-draw-board (game &optional hl)
+(defun elshogi-images-draw-board (game hl)
   (let ((pov (elshogi-game-pov game))
         (empty1
          (apply #'elshogi-images-empty-square
                 (mapcar #'string-to-number
                         (split-string elshogi-images-coord-alphabet-size "x"))))
-        (hl (or hl #'ignore))
         (inhibit-read-only t))
     (erase-buffer)
     (when (elshogi-black-p pov)
@@ -224,9 +222,8 @@
                                   'face 'mode-line-buffer-id)))
           (current-buffer)))))
 
-(defun elshogi-images-draw-stands (game &optional hl)
+(defun elshogi-images-draw-stands (game hl)
   (let ((pov (elshogi-game-pov game))
-        (hl (or hl #'ignore))
         (params '((window-width . 16))))
     (display-buffer (elshogi-images-draw-stand game (elshogi-game/black game) hl)
                     `(display-buffer-in-side-window
@@ -241,62 +238,19 @@
 
 ;;; Highlight functions
 
-(defun elshogi-images-color (type)
+(defun elshogi-images-hl-color (type)
   (cl-case type
     ((latest sel) (face-attribute 'default :foreground))
-    (cands (face-attribute 'highlight :background))))
-
-(defun elshogi-images-hl-latest (game &optional indices)
-  (let ((prev (car indices))
-        (latest (or (cadr indices) (car indices)
-                    (elshogi-mrec/target (elshogi-game-latest-move game))))
-        (clr-prev (elshogi-images-color 'cands))
-        (clr-latest (elshogi-images-color 'latest)))
-    (elshogi-images-draw-board game
-                               (lambda (index)
-                                 (cond ((eq index latest) clr-latest)
-                                       ((eq index prev) clr-prev))))
-    (elshogi-images-draw-stands game)))
-
-(defun elshogi-images-hl-sel (plst)
-  (let* ((game (elshogi-plst:game plst))
-         (sel (or (elshogi-plst:index plst) (elshogi-plst:piece plst)))
-         (cands (elshogi-candidates--raw-target sel))
-         (clr-sel (elshogi-images-color 'sel))
-         (clr-cands (elshogi-images-color 'cands)))
-    (elshogi-images-draw-board game
-                               (if (elshogi-piece-p sel)
-                                   (lambda (index)
-                                     (when (memq index cands)
-                                       clr-cands))
-                                 (lambda (index)
-                                   (cond ((= index sel) clr-sel)
-                                         ((memq index cands) clr-cands)))))
-    (elshogi-images-draw-stands game
-                                (when (elshogi-piece-p sel)
-                                  (lambda (piece)
-                                    (when (elshogi-piece= piece sel)
-                                      clr-sel))))))
-
-(defun elshogi-images-hl-cands (cands)
-  (let ((game (elshogi-plst:game (car cands)))
-        (cands (mapcar #'elshogi-plst:index cands))
-        (clr-cands (elshogi-images-color 'sel)))
-    (elshogi-images-draw-board game
-                               (lambda (index)
-                                 (when (memq index cands)
-                                   clr-cands)))
-    (elshogi-images-draw-stands game)))
+    ((prev cands) (face-attribute 'highlight :background))))
 
 
 
 (defun elshogi-images-install ()
   (elshogi-images-prepare-coord-chars)
   (elshogi-display-register
-   '(:board elshogi-images-hl-latest
-     :squares elshogi-images-hl-latest
-     :hl-sel elshogi-images-hl-sel
-     :hl-cands elshogi-images-hl-cands)))
+   '(:board elshogi-images-draw-board
+     :stands elshogi-images-draw-stands
+     :hl elshogi-images-hl-color)))
 
 (elshogi-images-install)
 

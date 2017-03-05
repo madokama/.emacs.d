@@ -5,7 +5,6 @@
 ;;; Code:
 
 (require 'elshogi-game)
-(require 'elshogi-candidates)
 (require 'elshogi-display)
 
 (defface elshogi-pov-face
@@ -40,7 +39,7 @@
 (defun elshogi-plain-border-type (type)
   (assoc-default type elshogi-plain-border-chars #'eq ? ))
 
-(defun elshogi-plain-draw-board (game &optional hl)
+(defun elshogi-plain-draw-board (game hl)
   (let ((horz-bars
          (make-list 9
                     (make-string 2
@@ -48,7 +47,6 @@
         (horz-short
          (make-string 4 (elshogi-plain-border-type 'horz-bar)))
         (pov (elshogi-game-pov game))
-        (hl (or hl #'ignore))
         (inhibit-read-only t))
     (erase-buffer)
     (insert ?\n)
@@ -171,68 +169,24 @@
                  'keymap elshogi-mouse-map)))
         (forward-line)))))
 
-(defun elshogi-plain-draw-stands (game &optional hl)
-  (mapc (apply-partially #'elshogi-plain-draw-stand game (or hl #'ignore))
+(defun elshogi-plain-draw-stands (game hl)
+  (mapc (apply-partially #'elshogi-plain-draw-stand game hl)
         '(b w)))
 
-;;; Draw interface
+
 
-(defun elshogi-plain-face (type)
+(defun elshogi-plain-hl-face (type)
   (cl-case type
     ((latest sel) '(:inverse-video t))
-    (cands 'highlight)))
-
-(defun elshogi-plain-hl-latest (game &optional indices)
-  (let ((prev (car indices))
-        (latest (or (cadr indices) (car indices)
-                    (elshogi-mrec/target (elshogi-game-latest-move game))))
-        (face-prev (elshogi-plain-face 'cands))
-        (face-latest (elshogi-plain-face 'latest)))
-    (elshogi-plain-draw-board game
-                              (lambda (index)
-                                (cond ((eq index latest) face-latest)
-                                      ;; using `eq' since `prev' may be nil
-                                      ((eq index prev) face-prev))))
-    (elshogi-plain-draw-stands game)))
-
-(defun elshogi-plain-hl-sel (plst)
-  (let* ((game (elshogi-plst:game plst))
-         (sel (or (elshogi-plst:index plst) (elshogi-plst:piece plst)))
-         (cands (elshogi-candidates--raw-target sel))
-         (face-sel (elshogi-plain-face 'sel))
-         (face-cands (elshogi-plain-face 'cands)))
-    (elshogi-plain-draw-board game
-                              (if (elshogi-piece-p sel)
-                                  (lambda (index)
-                                    (when (memq index cands)
-                                      face-cands))
-                                (lambda (index)
-                                  (cond ((= index sel) face-sel)
-                                        ((memq index cands) face-cands)))))
-    (elshogi-plain-draw-stands game
-                               (when (elshogi-piece-p sel)
-                                 (lambda (piece)
-                                   (when (elshogi-piece= piece sel)
-                                     face-sel))))))
-
-(defun elshogi-plain-hl-cands (cands)
-  (let ((game (elshogi-plst:game (car cands)))
-        (cands (mapcar #'elshogi-plst:index cands))
-        (face-cands (elshogi-plain-face 'cands)))
-    (elshogi-plain-draw-board game
-                              (lambda (index)
-                                (when (memq index cands)
-                                  face-cands)))
-    (elshogi-plain-draw-stands game)))
+    ((prev cands) 'highlight)))
 
 (defun elshogi-plain-install ()
   "Install textual elshogi display handler."
   (interactive)
   (elshogi-display-register
-   '(:board elshogi-plain-hl-latest
-     :squares elshogi-plain-hl-latest
-     :hl-sel elshogi-plain-hl-sel
-     :hl-cands elshogi-plain-hl-cands)))
+   '(:board elshogi-plain-draw-board
+     :stands elshogi-plain-draw-stands
+     :hl elshogi-plain-hl-face)))
 
 (elshogi-plain-install)
 

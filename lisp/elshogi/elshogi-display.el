@@ -8,6 +8,7 @@
   (require 'subr-x))
 (require 'seq)
 (require 'elshogi-game)
+(require 'elshogi-candidates)
 (require 'elshogi-mouse)
 
 (defvar elshogi-display-style 'plain)
@@ -30,18 +31,56 @@
     (message "Operation %s on %S not defined for %s"
              op args elshogi-display-style)))
 
+(defun elshogi-display-hl-latest (game &optional indices)
+  (let ((prev (car indices))
+        (latest (or (cadr indices) (car indices)
+                    (elshogi-mrec/target (elshogi-game-latest-move game))))
+        (hl-prev (elshogi-display-generic :hl 'prev))
+        (hl-latest (elshogi-display-generic :hl 'latest)))
+    (elshogi-display-generic :board game
+                             (lambda (index)
+                               (cond ((eq index latest) hl-latest)
+                                     ;; using `eq' since `prev' may be nil
+                                     ((eq index prev) hl-prev))))
+    (elshogi-display-generic :stands game #'ignore)))
+
 (defun elshogi-display-board (game)
-  (elshogi-display-generic :board game)
+  (elshogi-display-hl-latest game)
   (elshogi-display-note game))
 
 (defun elshogi-display-update-squares (game &rest indices)
-  (elshogi-display-generic :squares game indices))
+  (elshogi-display-hl-latest game indices))
 
 (defun elshogi-display-highlight-selected (plst)
-  (elshogi-display-generic :hl-sel plst))
+  (let* ((game (elshogi-plst:game plst))
+         (sel (or (elshogi-plst:index plst) (elshogi-plst:piece plst)))
+         (cands (elshogi-candidates--raw-target sel))
+         (hl-sel (elshogi-display-generic :hl 'sel))
+         (hl-cands (elshogi-display-generic :hl 'cands)))
+    (elshogi-display-generic :board game
+                             (if (elshogi-piece-p sel)
+                                 (lambda (index)
+                                   (when (memq index cands)
+                                     hl-cands))
+                               (lambda (index)
+                                 (cond ((= index sel) hl-sel)
+                                       ((memq index cands) hl-cands)))))
+    (elshogi-display-generic :stands game
+                             (if (elshogi-piece-p sel)
+                                 (lambda (piece)
+                                   (when (elshogi-piece= piece sel)
+                                     hl-sel))
+                               #'ignore))))
 
 (defun elshogi-display-highlight-candidates (cands)
-  (elshogi-display-generic :hl-cands cands))
+  (let ((game (elshogi-plst:game (car cands)))
+        (cands (mapcar #'elshogi-plst:index cands))
+        (hl-cands (elshogi-display-generic :hl 'sel)))
+    (elshogi-display-generic :board game
+                             (lambda (index)
+                               (when (memq index cands)
+                                 hl-cands)))
+    (elshogi-display-generic :stands game #'ignore)))
 
 
 
