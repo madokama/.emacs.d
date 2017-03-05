@@ -107,12 +107,8 @@
 (defun elshogi-index->point (index)
   (aref (elshogi-current-position-on-display) index))
 
-(defsubst elshogi-piece-at-position (board index)
-  (aref board index))
-
 (defun elshogi-piece-at (game index)
-  (elshogi-piece-at-position (elshogi-current-position-on-board game)
-                             index))
+  (aref (elshogi-current-position-on-board game) index))
 
 (defsubst elshogi-negate-side (side)
   (if (eq side elshogi-black) elshogi-white elshogi-black))
