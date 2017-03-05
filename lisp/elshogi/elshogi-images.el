@@ -295,7 +295,6 @@
   (elshogi-display-register
    '(:board elshogi-images-hl-latest
      :squares elshogi-images-hl-latest
-     :stand ignore
      :hl-sel elshogi-images-hl-sel
      :hl-cands elshogi-images-hl-cands)))
 

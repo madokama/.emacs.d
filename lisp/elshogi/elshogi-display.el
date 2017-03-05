@@ -34,9 +34,6 @@
   (elshogi-display-generic :board game)
   (elshogi-display-note game))
 
-(defun elshogi-display-piece-stand (game side)
-  (elshogi-display-generic :stand game side))
-
 (defun elshogi-display-update-squares (game &rest indices)
   (elshogi-display-generic :squares game indices))
 

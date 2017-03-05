@@ -101,12 +101,6 @@
 (defsubst elshogi-current-position-on-board (game)
   (elshogi-position/on-board (elshogi-current-position game)))
 
-(defsubst elshogi-current-position-on-display ()
-  (elshogi-display/board (elshogi-game/display elshogi-current-game)))
-
-(defun elshogi-index->point (index)
-  (aref (elshogi-current-position-on-display) index))
-
 (defun elshogi-piece-at (game index)
   (aref (elshogi-current-position-on-board game) index))
 

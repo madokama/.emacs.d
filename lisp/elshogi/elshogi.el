@@ -374,14 +374,11 @@
   (let ((mrec
          (elshogi-move-make-move game origin target promoted)))
     (elshogi-display-update-squares game origin target)
-    (when (elshogi-mrec/capture mrec)
-      (elshogi-display-piece-stand game (elshogi-mrec/side mrec)))
     (elshogi-game-turn game mrec)))
 
 (defun elshogi-drop-piece (game index piece)
   (let ((mrec (elshogi-move-make-drop game index piece)))
     (elshogi-display-update-squares game index)
-    (elshogi-display-piece-stand game (elshogi-mrec/side mrec))
     (elshogi-game-turn game mrec)))
 
 ;;; User Interface

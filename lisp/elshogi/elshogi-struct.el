@@ -47,7 +47,6 @@
   position black white record display result watch-p live-p url kif title)
 
 (elshogi-defstruct display
-  (board (make-vector 81 nil))
   piece-stand/b
   piece-stand/w
   (pov elshogi-black))

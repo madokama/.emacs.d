@@ -4,11 +4,9 @@
 
 ;;; Code:
 
-(require 'seq)
-(require 'subr-x)
 (require 'elshogi-game)
+(require 'elshogi-candidates)
 (require 'elshogi-display)
-(require 'elshogi-highlight)
 
 (defface elshogi-pov-face
   '((((class color) (background dark)) (:foreground "Cyan"))
@@ -42,16 +40,15 @@
 (defun elshogi-plain-border-type (type)
   (assoc-default type elshogi-plain-border-chars #'eq ? ))
 
-(defun elshogi-plain-draw-board (game)
+(defun elshogi-plain-draw-board (game &optional hl)
   (let ((horz-bars
          (make-list 9
                     (make-string 2
                                  (elshogi-plain-border-type 'horz-bar))))
         (horz-short
-         (make-string 4
-                      (elshogi-plain-border-type 'horz-bar)))
-        (square-points (elshogi-current-position-on-display))
+         (make-string 4 (elshogi-plain-border-type 'horz-bar)))
         (pov (elshogi-game-pov game))
+        (hl (or hl #'ignore))
         (inhibit-read-only t))
     (erase-buffer)
     (insert ?\n)
@@ -96,13 +93,22 @@
                    (elshogi-rank->char (funcall map-coord rank))
                    (elshogi-plain-border-type 'vert-bar))
            (dotimes (file 9)
-             (let ((index
-                    (elshogi-calc-index (funcall map-coord file)
-                                        (funcall map-coord rank))))
-               (aset square-points index (point))
+             (let* ((index
+                     (elshogi-calc-index (funcall map-coord file)
+                                         (funcall map-coord rank)))
+                    (piece (elshogi-piece-at game index)))
                ;; NOTE: It takes two spaces to draw a single piece
-               (insert "  " (elshogi-plain-border-type 'vert-bar))
-               (elshogi-plain-draw-piece game index)))
+               (insert
+                (propertize "  "
+                            'display
+                            (when piece
+                              (format "%2s"
+                                      (elshogi-plain-fontify-piece piece game)))
+                            'face (funcall hl index)
+                            'elshogi-index (elshogi-piece-index game index)
+                            'mouse-face 'highlight
+                            'keymap elshogi-mouse-map)
+                (elshogi-plain-border-type 'vert-bar))))
            (insert ? ))
          (cond ((< rank 7)
                 (insert (elshogi-plain-border-type 'vert-bar)
@@ -132,9 +138,7 @@
                 (insert (elshogi-plain-border-type 'vert-bar)
                         "    "
                         (elshogi-plain-border-type 'vert-bar)))
-               (t (insert (make-string 6 ? ))))))))
-  (mapc (apply-partially #'elshogi-plain-draw-stand game) '(b w))
-  (elshogi-plain-highlight-latest game))
+               (t (insert (make-string 6 ? )))))))))
 
 (defun elshogi-plain-fontify-piece (piece game)
   (propertize (elshogi-piece-text piece)
@@ -143,7 +147,7 @@
                         (elshogi-game-pov game))
                 'elshogi-pov-face)))
 
-(defun elshogi-plain-draw-stand (game side)
+(defun elshogi-plain-draw-stand (game hl side)
   (save-excursion
     (goto-char (elshogi-plain--stand-point game side))
     (let ((pieces
@@ -156,55 +160,79 @@
         (goto-char (+ (point) column))
         (add-text-properties
          (point) (+ (point) 3)
-         (let ((group (cdr (assq p pieces))))
+         (when-let* (group (cdr (assq p pieces)))
            (list 'display
-                 (and group
-                      (format "%2d%s"
-                              (length group)
-                              (elshogi-plain-fontify-piece (car group) game)))
-                 'elshogi-index
-                 (and group
-                      (elshogi-piece-index game (car group))))))
+                 (format "%2d%s"
+                         (length group)
+                         (elshogi-plain-fontify-piece (car group) game))
+                 'face (funcall hl (car group))
+                 'elshogi-index (elshogi-piece-index game (car group))
+                 'mouse-face 'highlight
+                 'keymap elshogi-mouse-map)))
         (forward-line)))))
 
-(defun elshogi-plain-highlight-latest (game)
-  (when-let* ((mrec (elshogi-game-latest-move game))
-              (index (elshogi-mrec/target mrec)))
-    (elshogi-highlight-move index)))
+(defun elshogi-plain-draw-stands (game &optional hl)
+  (mapc (apply-partially #'elshogi-plain-draw-stand game (or hl #'ignore))
+        '(b w)))
 
-(defun elshogi-plain-update-squares (game &rest indices)
-  (let ((inhibit-read-only t))
-    (cl-loop for index in indices
-             do (elshogi-plain-draw-piece game index)
-             if (elshogi-piece-at game index)
-               do (elshogi-highlight-move index))))
+;;; Draw interface
 
-(defun elshogi-plain-draw-piece (game index)
-  (let ((piece (elshogi-piece-at game index))
-        (point (elshogi-index->point index)))
-    (add-text-properties
-     point (+ point 2)
-     (list 'display
-           (and (elshogi-piece-p piece)
-                (format "%2s" (elshogi-plain-fontify-piece piece game)))
-           'elshogi-index (elshogi-piece-index game index)
-           'mouse-face
-           (and (elshogi-piece-p piece)
-                (elshogi-players-side-p game (elshogi-piece/side piece))
-                'highlight)))))
+(defun elshogi-plain-face (type)
+  (cl-case type
+    ((latest sel) '(:inverse-video t))
+    (cands 'highlight)))
 
-;;;###autoload
+(defun elshogi-plain-hl-latest (game &optional indices)
+  (let ((prev (car indices))
+        (latest (or (cadr indices) (car indices)
+                    (elshogi-mrec/target (elshogi-game-latest-move game))))
+        (face-prev (elshogi-plain-face 'cands))
+        (face-latest (elshogi-plain-face 'latest)))
+    (elshogi-plain-draw-board game
+                              (lambda (index)
+                                (cond ((eq index latest) face-latest)
+                                      ;; using `eq' since `prev' may be nil
+                                      ((eq index prev) face-prev))))
+    (elshogi-plain-draw-stands game)))
+
+(defun elshogi-plain-hl-sel (plst)
+  (let* ((game (elshogi-plst:game plst))
+         (sel (or (elshogi-plst:index plst) (elshogi-plst:piece plst)))
+         (cands (elshogi-candidates--raw-target sel))
+         (face-sel (elshogi-plain-face 'sel))
+         (face-cands (elshogi-plain-face 'cands)))
+    (elshogi-plain-draw-board game
+                              (if (elshogi-piece-p sel)
+                                  (lambda (index)
+                                    (when (memq index cands)
+                                      face-cands))
+                                (lambda (index)
+                                  (cond ((= index sel) face-sel)
+                                        ((memq index cands) face-cands)))))
+    (elshogi-plain-draw-stands game
+                               (when (elshogi-piece-p sel)
+                                 (lambda (piece)
+                                   (when (elshogi-piece= piece sel)
+                                     face-sel))))))
+
+(defun elshogi-plain-hl-cands (cands)
+  (let ((game (elshogi-plst:game (car cands)))
+        (cands (mapcar #'elshogi-plst:index cands))
+        (face-cands (elshogi-plain-face 'cands)))
+    (elshogi-plain-draw-board game
+                              (lambda (index)
+                                (when (memq index cands)
+                                  face-cands)))
+    (elshogi-plain-draw-stands game)))
+
 (defun elshogi-plain-install ()
   "Install textual elshogi display handler."
   (interactive)
   (elshogi-display-register
-   '(:board elshogi-plain-draw-board
-     :square elshogi-plain-draw-piece
-     :squares elshogi-plain-update-squares
-     :stand elshogi-plain-draw-stand
-     ;; :hl-move elshogi-highlight-move
-     :hl-sel elshogi-highlight-selected
-     :hl-cands elshogi-highlight-candidates)))
+   '(:board elshogi-plain-hl-latest
+     :squares elshogi-plain-hl-latest
+     :hl-sel elshogi-plain-hl-sel
+     :hl-cands elshogi-plain-hl-cands)))
 
 (elshogi-plain-install)
 
