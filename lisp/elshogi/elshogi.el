@@ -407,13 +407,11 @@ Specify the engine settings with CONF."
   (setq elshogi-last-selected plst))
 
 (defun elshogi-selectable-origin-p (plst)
-  (let ((piece
-         (or (elshogi-plst:piece plst)
-             (elshogi-piece-at (elshogi-plst:game plst)
-                               (elshogi-plst:index plst)))))
-    (and (elshogi-piece-p piece)
-         (eq (elshogi-piece/side piece)
-             (elshogi-current-side elshogi-current-game)))))
+  (when-let* ((game (elshogi-plst:game plst))
+              (piece (or (elshogi-plst:piece plst)
+                         (elshogi-piece-at game (elshogi-plst:index plst)))))
+    (eq (elshogi-piece/side piece)
+        (elshogi-current-side game))))
 
 (defun elshogi-selectable-target-p (plst)
   (not (elshogi-selectable-origin-p plst)))
@@ -476,6 +474,12 @@ Specify the engine settings with CONF."
                                     cands)
                    cands)))
 
+(defun elshogi-select-target (plst)
+  (thread-first plst
+    elshogi-candidates-target
+    elshogi-query-selection
+    elshogi-select-square))
+
 (defun elshogi-key-move-piece ()
   "Select the piece to move with keyboard."
   (interactive)
@@ -485,10 +489,7 @@ Specify the engine settings with CONF."
     (elshogi-display-highlight-candidates cands)
     (let ((plst (elshogi-query-selection cands)))
       (when (elshogi-select-square plst)
-        (thread-first plst
-          elshogi-candidates-target
-          elshogi-query-selection
-          elshogi-select-square)))))
+        (elshogi-select-target plst)))))
 
 (defun elshogi-key-drop-candidates (game)
   (mapcar (apply-partially #'elshogi-piece-index game)
@@ -507,28 +508,23 @@ Specify the engine settings with CONF."
   (when-let* ((pieces (elshogi-key-drop-candidates elshogi-current-game))
               (plst (elshogi-query-selection pieces)))
     (when (elshogi-select-square plst)
-      (thread-first plst
-        elshogi-candidates-target
-        elshogi-query-selection
-        elshogi-select-square))))
+      (elshogi-select-target plst))))
 
 (defun elshogi-key-capture-back ()
   "Capture back the last opponent piece."
   (interactive)
-  (let* ((game elshogi-current-game)
-         (target (elshogi-mrec/target (elshogi-game-final-move game))))
-    (when-let* (cands
-                (mapcar
-                 (apply-partially #'elshogi-piece-index game)
-                 (seq-filter (lambda (index)
-                               (memq target
-                                     (elshogi-candidates--raw-target index)))
-                             (elshogi-indices-on-board
-                              game
-                              (elshogi-current-side game)))))
-      (when (elshogi-select-square (elshogi-query-selection cands))
-        (elshogi-select-square
-         (elshogi-piece-index game target))))))
+  (when-let* ((game elshogi-current-game)
+              (target (elshogi-mrec/target (elshogi-game-final-move game)))
+              (cands
+               (mapcar (apply-partially #'elshogi-piece-index game)
+                       (seq-filter (lambda (index)
+                                     (memq target
+                                           (elshogi-candidates--raw-target index)))
+                                   (elshogi-indices-on-board
+                                    game
+                                    (elshogi-current-side game))))))
+    (when (elshogi-select-square (elshogi-query-selection cands))
+      (elshogi-select-square (elshogi-piece-index game target)))))
 
 (defun elshogi-quit ()
   "Quit the game."
