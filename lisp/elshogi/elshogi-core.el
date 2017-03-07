@@ -4,8 +4,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'subr-x))
 (require 'elshogi-struct)
 (require 'dlist)
 
@@ -31,14 +29,14 @@
 (defmacro elshogi-make-piece-set (side &rest pieces)
   (declare (indent 1))
   `(vector
-    ,@(cl-mapcan (lambda (piece)
-                   (if (consp piece)
-                       (make-list (car piece)
-                                  `(elshogi-make-piece-or-space ',(cadr piece)
-                                                                ',side))
-                     (list
-                      `(elshogi-make-piece-or-space ',piece ',side))))
-                 pieces)))
+    ,@(mapcan (lambda (piece)
+                (if (consp piece)
+                    (make-list (car piece)
+                               `(elshogi-make-piece-or-space ',(cadr piece)
+                                                             ',side))
+                  (list
+                   `(elshogi-make-piece-or-space ',piece ',side))))
+              pieces)))
 
 (defun elshogi-new-position (&optional handicap)
   (elshogi-make-position :on-board

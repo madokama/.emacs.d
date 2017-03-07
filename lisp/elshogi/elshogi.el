@@ -4,9 +4,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl)
-  (require 'subr-x))
 (require 'seq)
 (require 'dash)
 (require 'elshogi-game)

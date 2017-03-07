@@ -109,7 +109,6 @@ repl.print(recentWindow.gBrowser.currentURI.spec);")
 (declare-function url-host "url-parse")
 (declare-function url-generic-parse-url "url-parse")
 
-;; TODO sync firefox cookies with (concat url-cookie-file ".curl")
 ;; https://developer.mozilla.org/en-US/Add-ons/Code_snippets/Cookies
 ;; https://curl.haxx.se/docs/
 

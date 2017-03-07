@@ -9,7 +9,6 @@
 
 (recentb-define-mode firefox-mode
   :var recentb-firefox
-  ;; :history recentb-firefox-history
   :candidate recentb-firefox-candidate)
 
 (defun recentb-firefox-fetch-tabs ()

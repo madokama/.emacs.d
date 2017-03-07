@@ -6,7 +6,6 @@
 
 (require 'seq)
 (require 'dash)
-(require 'subr-x)
 (require 'elshogi-core)
 
 ;; Since s-match-strings-all of s.el is not what I want here
