@@ -7,7 +7,7 @@
 (require 'recentb)
 
 (recentb-define-mode mpv
-  :history recentb-mpv-history
+  :var recentb-mpv
   :candidate recentb-mpv-candidate)
 
 (defvar recentb-mpv-history
@@ -42,20 +42,42 @@
                                    url
                                  (format "ytdl://%s" url))))))
 
-(defun recentb-mpv-history ()
+
+
+(require 'filenotify)
+
+(defvar recentb-mpv-watch-desc nil)
+
+(defun recentb-mpv-history-watcher (event)
+  (pcase event
+    (`(,_ changed ,_) (recentb-mpv-read-history))
+    (`(,_ stopped ,_) (recentb-mpv-watch-history))))
+
+(defun recentb-mpv-watch-history ()
+  (unless (file-notify-valid-p recentb-mpv-watch-desc)
+    (setq recentb-mpv-watch-desc
+          (file-notify-add-watch recentb-mpv-history '(change)
+                                 #'recentb-mpv-history-watcher))))
+
+(defun recentb-mpv-read-history ()
   (when (file-exists-p recentb-mpv-history)
     (let ((visitedp (get-file-buffer recentb-mpv-history)))
       (with-current-buffer (find-file-noselect recentb-mpv-history)
         (when visitedp
           (revert-buffer t t t))
         (goto-char (point-min))
-        (let ((history
+        (setq recentb-mpv
+              (nreverse
                (recentb-mpv-truncate-history
                 (cl-loop for item = (ignore-errors (read (current-buffer)))
                          while item collect item))))
-          (unless visitedp
-            (kill-buffer (current-buffer)))
-          (nreverse history))))))
+        (unless visitedp
+          (kill-buffer (current-buffer)))))))
+
+(run-with-idle-timer 8 nil
+                     (lambda ()
+                       (recentb-mpv-read-history)
+                       (recentb-mpv-watch-history)))
 
 (provide 'recentb-mpv)
 ;;; recentb-mpv.el ends here
