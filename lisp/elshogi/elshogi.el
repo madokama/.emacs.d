@@ -427,13 +427,16 @@ Specify the engine settings with CONF."
                  (cond ((elshogi-selectable-target-p plst)
                         (let ((origin (elshogi-plst:index elshogi-last-selected))
                               (target (elshogi-plst:index plst)))
-                          (if-let* (piece
-                                    (elshogi-plst:piece elshogi-last-selected))
-                              (elshogi-drop-piece game target piece)
-                            (elshogi-move-piece
-                             game origin target
-                             (elshogi-may-promote-p game origin target))))
-                        (elshogi-clear-last-selected game))
+                          ;; Prevent simple mis-clicks, in which case
+                          ;; do not clear the last selection.
+                          (when (elshogi-move-legal-p elshogi-last-selected target)
+                            (if-let* (piece
+                                      (elshogi-plst:piece elshogi-last-selected))
+                                (elshogi-drop-piece game target piece)
+                              (elshogi-move-piece
+                               game origin target
+                               (elshogi-may-promote-p game origin target)))
+                            (elshogi-clear-last-selected game))))
                        ;; Cancel the previous selection
                        ((not (elshogi-plst= plst elshogi-last-selected))
                         (elshogi-set-last-selected plst))

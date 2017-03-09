@@ -7,6 +7,7 @@
 (eval-when-compile
   (require 'elshogi-struct))
 (require 'elshogi-game)
+(require 'elshogi-candidates)
 (require 'elshogi-sfen)
 (require 'dlist)
 
@@ -69,6 +70,11 @@
       (elshogi-move-set-index game index piece)
       (elshogi-move-add game mrec)
       mrec)))
+
+(defun elshogi-move-legal-p (move target)
+  (memq target
+        (elshogi-candidates--raw-target (or (elshogi-plst:piece move)
+                                            (elshogi-plst:index move)))))
 
 (provide 'elshogi-move)
 ;;; elshogi-move.el ends here
