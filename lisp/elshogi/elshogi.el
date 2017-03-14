@@ -404,9 +404,9 @@ Specify the engine settings with CONF."
   (setq elshogi-last-selected plst))
 
 (defun elshogi-selectable-origin-p (plst)
-  (when-let* ((game (elshogi-plst:game plst))
-              (piece (or (elshogi-plst:piece plst)
-                         (elshogi-piece-at game (elshogi-plst:index plst)))))
+  (when-let* ((game (elshogi-pack:game plst))
+              (piece (or (elshogi-pack:piece plst)
+                         (elshogi-piece-at game (elshogi-pack:index plst)))))
     (eq (elshogi-piece/side piece)
         (elshogi-current-side game))))
 
@@ -419,26 +419,26 @@ Specify the engine settings with CONF."
      ,@body))
 
 (defun elshogi-select-square (plst &optional mouse-p)
-  (let ((game (elshogi-plst:game plst)))
+  (let ((game (elshogi-pack:game plst)))
     (elshogi-with-game-buffer game
       (when (elshogi-usi-ready-p)
         (let ((use-dialog-box mouse-p))
           (cond (elshogi-last-selected
                  (cond ((elshogi-selectable-target-p plst)
-                        (let ((origin (elshogi-plst:index elshogi-last-selected))
-                              (target (elshogi-plst:index plst)))
+                        (let ((origin (elshogi-pack:index elshogi-last-selected))
+                              (target (elshogi-pack:index plst)))
                           ;; Prevent simple mis-clicks, in which case
                           ;; do not clear the last selection.
                           (when (elshogi-move-legal-p elshogi-last-selected target)
                             (if-let* (piece
-                                      (elshogi-plst:piece elshogi-last-selected))
+                                      (elshogi-pack:piece elshogi-last-selected))
                                 (elshogi-drop-piece game target piece)
                               (elshogi-move-piece
                                game origin target
                                (elshogi-may-promote-p game origin target)))
                             (elshogi-clear-last-selected game))))
                        ;; Cancel the previous selection
-                       ((not (elshogi-plst= plst elshogi-last-selected))
+                       ((not (elshogi-pack= plst elshogi-last-selected))
                         (elshogi-set-last-selected plst))
                        (t
                         (elshogi-clear-last-selected game))))
@@ -452,10 +452,10 @@ Specify the engine settings with CONF."
     (elshogi-select-square plst t)))
 
 (defun elshogi-piece-algebraic (plst)
-  (if-let* (piece (elshogi-plst:piece plst))
+  (if-let* (piece (elshogi-pack:piece plst))
       (format "%s*" (elshogi-piece-text piece))
-    (let* ((index (elshogi-plst:index plst))
-           (piece (elshogi-piece-at (elshogi-plst:game plst) index)))
+    (let* ((index (elshogi-pack:index plst))
+           (piece (elshogi-piece-at (elshogi-pack:game plst) index)))
       (format "%s%s"
               (if piece
                   (elshogi-piece-text piece)
@@ -492,7 +492,7 @@ Specify the engine settings with CONF."
         (elshogi-select-target plst)))))
 
 (defun elshogi-key-drop-candidates (game)
-  (mapcar (apply-partially #'elshogi-piece-index game)
+  (mapcar (apply-partially #'elshogi-pack-index game)
           (seq-sort-by (lambda (p)
                          (cdr (assq (elshogi-piece/name p) elshogi-piece-values)))
                        #'>
@@ -516,7 +516,7 @@ Specify the engine settings with CONF."
   (when-let* ((game elshogi-current-game)
               (target (elshogi-mrec/target (elshogi-game-final-move game)))
               (cands
-               (mapcar (apply-partially #'elshogi-piece-index game)
+               (mapcar (apply-partially #'elshogi-pack-index game)
                        (seq-filter (lambda (index)
                                      (memq target
                                            (elshogi-candidates--raw-target index)))
@@ -524,7 +524,7 @@ Specify the engine settings with CONF."
                                     game
                                     (elshogi-current-side game))))))
     (when (elshogi-select-square (elshogi-query-selection cands))
-      (elshogi-select-square (elshogi-piece-index game target)))))
+      (elshogi-select-square (elshogi-pack-index game target)))))
 
 (defun elshogi-quit ()
   "Quit the game."

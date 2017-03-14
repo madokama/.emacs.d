@@ -73,8 +73,7 @@
 
 (defun elshogi-move-legal-p (move target)
   (memq target
-        (elshogi-candidates--raw-target (or (elshogi-plst:piece move)
-                                            (elshogi-plst:index move)))))
+        (elshogi-candidates--raw-target (elshogi-pack-unpack move))))
 
 (provide 'elshogi-move)
 ;;; elshogi-move.el ends here

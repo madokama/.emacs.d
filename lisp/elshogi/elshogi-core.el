@@ -164,30 +164,33 @@
                               (elshogi-piece-at game index)
                               side))))
 
-(defun elshogi-piece-index (game index)
+(defun elshogi-pack-index (game index)
   (append (list :game game)
           (if (elshogi-piece-p index)
               (list :piece index)
             (list :index index))))
 
-(defmacro elshogi-define-plist-getter (&rest syms)
+(defmacro elshogi-define-pack-getter (&rest syms)
   `(progn
      ,@(mapcar (lambda (sym)
-                 `(defsubst ,(intern (format "elshogi-plst:%s" sym)) (plst)
+                 `(defsubst ,(intern (format "elshogi-pack:%s" sym)) (plst)
                     (plist-get plst ,(intern (format ":%s" sym)))))
                 syms)))
 
-(elshogi-define-plist-getter game index piece)
+(elshogi-define-pack-getter game index piece)
+
+(defsubst elshogi-pack-unpack (pack)
+  (or (elshogi-pack:index pack) (elshogi-pack:piece pack)))
 
 (defsubst elshogi-piece= (p1 p2)
   (and (eq (elshogi-piece/side p1) (elshogi-piece/side p2))
        (eq (elshogi-piece/name p1) (elshogi-piece/name p2))))
 
-(defun elshogi-plst= (p1 p2)
-  (if-let* ((p1 (elshogi-plst:piece p1))
-            (p2 (elshogi-plst:piece p2)))
+(defun elshogi-pack= (p1 p2)
+  (if-let* ((p1 (elshogi-pack:piece p1))
+            (p2 (elshogi-pack:piece p2)))
       (elshogi-piece= p1 p2)
-    (eq (elshogi-plst:index p1) (elshogi-plst:index p2))))
+    (eq (elshogi-pack:index p1) (elshogi-pack:index p2))))
 
 (defun elshogi-piece-text (piece)
   (format "%s%s"

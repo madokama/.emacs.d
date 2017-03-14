@@ -152,14 +152,13 @@
      (elshogi-candidates-move--raw index))))
 
 (defun elshogi-candidates-target (plst)
-  (mapcar (apply-partially #'elshogi-piece-index (elshogi-plst:game plst))
-          (elshogi-candidates--raw-target (or (elshogi-plst:index plst)
-                                              (elshogi-plst:piece plst)))))
+  (mapcar (apply-partially #'elshogi-pack-index (elshogi-pack:game plst))
+          (elshogi-candidates--raw-target (elshogi-pack-unpack plst))))
 
 (defun elshogi-candidates-origin (game file)
   (cl-loop for rank below 9
            for index = (elshogi-calc-index file rank)
-           for plst = (elshogi-piece-index game index)
+           for plst = (elshogi-pack-index game index)
            with side = (elshogi-players-side game)
            when (and (elshogi-piece-of-side-p (elshogi-piece-at game index)
                                               side)

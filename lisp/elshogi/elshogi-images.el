@@ -140,7 +140,7 @@
                         (elshogi-images-piece piece pov t color)
                       (create-image empty 'imagemagick t
                                     :relief 1 :background color))
-                    'elshogi-index (elshogi-piece-index game index)
+                    'elshogi-index (elshogi-pack-index game index)
                     ;; Hackish way to support mouse even when
                     ;; `disable-mouse-mode' is enabled.
                     (list 'mouse-face 'highlight
@@ -200,7 +200,7 @@
                                                   (elshogi-game-pov game)
                                                   nil
                                                   (funcall hl (car pieces)))
-                            'elshogi-index (elshogi-piece-index game (car pieces))
+                            'elshogi-index (elshogi-pack-index game (car pieces))
                             (when side-p
                               (list 'mouse-face 'highlight
                                     'keymap elshogi-mouse-map))))

@@ -50,8 +50,8 @@
   (elshogi-display-hl-latest game indices))
 
 (defun elshogi-display-highlight-selected (plst)
-  (let* ((game (elshogi-plst:game plst))
-         (sel (or (elshogi-plst:index plst) (elshogi-plst:piece plst)))
+  (let* ((game (elshogi-pack:game plst))
+         (sel (elshogi-pack-unpack plst))
          (cands (elshogi-candidates--raw-target sel))
          (hl-sel (elshogi-display-generic :hl 'sel))
          (hl-cands (elshogi-display-generic :hl 'cands)))
@@ -71,8 +71,8 @@
                                #'ignore))))
 
 (defun elshogi-display-highlight-candidates (cands)
-  (let ((game (elshogi-plst:game (car cands)))
-        (cands (mapcar #'elshogi-plst:index cands))
+  (let ((game (elshogi-pack:game (car cands)))
+        (cands (mapcar #'elshogi-pack:index cands))
         (hl-cands (elshogi-display-generic :hl 'sel)))
     (elshogi-display-generic :board game
                              (lambda (index)

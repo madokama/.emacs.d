@@ -103,7 +103,7 @@
                               (format "%2s"
                                       (elshogi-plain-fontify-piece piece game)))
                             'face (funcall hl index)
-                            'elshogi-index (elshogi-piece-index game index)
+                            'elshogi-index (elshogi-pack-index game index)
                             'mouse-face 'highlight
                             'keymap elshogi-mouse-map)
                 (elshogi-plain-border-type 'vert-bar))))
@@ -164,7 +164,7 @@
                          (length group)
                          (elshogi-plain-fontify-piece (car group) game))
                  'face (funcall hl (car group))
-                 'elshogi-index (elshogi-piece-index game (car group))
+                 'elshogi-index (elshogi-pack-index game (car group))
                  'mouse-face 'highlight
                  'keymap elshogi-mouse-map)))
         (forward-line)))))
