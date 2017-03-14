@@ -190,7 +190,7 @@
   (if-let* ((p1 (elshogi-pack:piece p1))
             (p2 (elshogi-pack:piece p2)))
       (elshogi-piece= p1 p2)
-    (eq (elshogi-pack:index p1) (elshogi-pack:index p2))))
+    (= (elshogi-pack:index p1) (elshogi-pack:index p2))))
 
 (defun elshogi-piece-text (piece)
   (format "%s%s"
