@@ -4,7 +4,8 @@
 
 ;;; Code:
 
-(require 'subr-x)
+(eval-when-compile
+  (require 'subr-x))
 (require 'url-http)
 (require 'url-cache)
 
@@ -28,17 +29,17 @@
            ,@(unless (string= url-request-method "HEAD")
                (when (url-cache-prepare cache)
                  (list "-o" cache)))
-           ,@(when-let* (cookie (url-curl-cookie))
+           ,@(when-let* (cookie (expand-file-name (url-curl-cookie)))
                (list "-b" cookie "-c" cookie))
            ,@(mapcan (pcase-lambda (`(,name . ,value))
                        (list "-H" (format "%s: %s" name value)))
                      url-request-extra-headers)
-           ,@(when (string= url-request-method "GET")
-               (list "-z" cache))
            ,@(when url-request-data
-               (list "-d" url-request-data
-                     "-H" (format "Content-Length: %d"
-                                  (string-bytes url-request-data)))))))
+               (list "-H" (format "Content-Length: %d"
+                                  (string-bytes url-request-data))
+                     "-d" url-request-data))
+           ,@(when (string= url-request-method "GET")
+               (list "-z" cache)))))
 
 (defun url-curl--clean-header ()
   (goto-char (point-min))
