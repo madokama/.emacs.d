@@ -1,9 +1,11 @@
-;; -*- lexical-binding: nil; byte-compile-warnings: nil; -*-
+;;; progchar --- globalized spinner -*- lexical-binding: t; -*-
+
+;;; Commentary:
+
+;;; Code:
 
 ;; https://github.com/Bruce-Connor/spinner.el
 (require 'spinner)
-
-(defvar progchar-repeat-interval 1)
 
 (defun progchar (&optional msg)
   (let ((count (cl-gensym "pc-count"))
@@ -14,7 +16,7 @@
         ;; s-exp as a quoted symbol.
         (defvar ,count 0)
         (defvar ,timer
-          (run-with-timer 0.1 progchar-repeat-interval
+          (run-with-timer 0.1 (/ 1.0 spinner-frames-per-second)
                           (lambda ()
                             (setq ,count (+ 1 ,count))
                             (force-mode-line-update))))
@@ -43,3 +45,4 @@
                   ,timer nil)))))))
 
 (provide 'progchar)
+;;; progchar.el ends here

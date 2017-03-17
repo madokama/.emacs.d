@@ -1093,7 +1093,7 @@ Just to suppress lighter
   :load-path "site-lisp/spinner"
   :defer t
   :config
-  )
+  (setq spinner-frames-per-second 1))
 #+END_SRC
 
 *** symon
