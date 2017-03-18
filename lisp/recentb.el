@@ -8,8 +8,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'subr-x))
 (require 'seq)
 (require 'savehist)
 (require 'ivy)
@@ -80,10 +78,15 @@
 
 (defun recentb-ivy-sources ()
   (mapcan (pcase-lambda (`(,_mode . ,plst))
-            (delq nil
-                  (mapcar (or (symbol-function (recentb-mode-ref :candidate plst))
-                              #'identity)
-                          (recentb-history plst))))
+            (let ((cand (or (symbol-function (recentb-mode-ref :candidate plst))
+                            #'identity)))
+              (cl-reduce (lambda (item acc)
+                           (if-let* (item (funcall cand item))
+                               (cons (propertize item 'face 'ivy-virtual)
+                                     acc)
+                             acc))
+                         (recentb-history plst)
+                         :initial-value nil :from-end t)))
           recentb-mode-alist))
 
 (defun recentb-ivy-action (str)
