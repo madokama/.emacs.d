@@ -4,10 +4,12 @@
 
 ;;; Code:
 
-(require 'subr-x)
+(eval-when-compile
+  (require 'subr-x))
 (require 'seq)
 (require 'org-capture)
 (require 'org-element)
+(require 'async)
 (require 'ytdl-lib)
 (require 'youtube-dl)
 (require 'ffmpeg)
@@ -119,6 +121,7 @@
                                 (org-element-restriction 'headline))))
 ;;;###autoload
 (defun org-ytdl-update-thumbnail ()
+  "Regenerate video preview image."
   (interactive)
   (when-let* ((ctx (org-ytdl-current-content))
               (ytdl-link (org-ytdl--find-link ctx "ytdl"))
@@ -229,13 +232,13 @@
                         (json-readtable-error nil))
                    finally return (cons infile
                                         (mapcar #'expand-file-name temps))))))
-   `(lambda (temps)
-      (call-process "ffmpeg" nil nil nil
-                    "-y" "-f" "concat" "-i" (car temps)
-                    "-vf" "fps=10" "-pix_fmt" "yuv420p"
-                    ,video-file)
-      (mapc #'delete-file temps)
-      (ffmpeg-preview ,video-file ,thumb-file ,callback))))
+   (lambda (temps)
+     (call-process "ffmpeg" nil nil nil
+                   "-y" "-f" "concat" "-i" (car temps)
+                   "-vf" "fps=10" "-pix_fmt" "yuv420p"
+                   video-file)
+     (mapc #'delete-file temps)
+     (ffmpeg-preview video-file thumb-file callback))))
 
 (defun org-ytdl--video-file (origin ext)
   (expand-file-name
@@ -243,14 +246,12 @@
            "." ext)
    temporary-file-directory))
 
-
 (defun org-ytdl-generate-preview (json thumb-file &optional start end callback)
   ;; Generate preview pic a la Dailymotion:
   ;; https://static2-ssl.dmcdn.net/static/video/655/848/180848556:jpeg_preview_contact.jpg?20150729182120
   (let ((start (or start (ytdl-json/start_time json)))
         (end (or end (ytdl-json/end_time json)))
-        (callback
-         (or callback (org-ytdl-display-thumbnail))))
+        (callback (or callback (org-ytdl-display-thumbnail))))
     (ytdl-download-video
      json
      (lambda (video)
