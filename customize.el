@@ -138,24 +138,24 @@
  '(org-capture-templates
    (quote
     (("l" "Link" entry
-          (file+datetree "")
+          (file+olp+datetree "")
           "* %:description  %^g
 %(org-capture--quote)%?Source: %:link
 %U")
      ("y" "YouTube" entry
-          (file+datetree "vids.org")
+          (file+olp+datetree "vids.org")
           "* %(org-ytdl-capture)  %^g
 %(org-ytdl-run-template-hook)
 %?
 %U")
      ("t" "Todo" entry
-          (file+datetree "todo.org")
+          (file+olp+datetree "todo.org")
           "* TODO %?
 %i
 %a
 %U")
      ("n" "Note" entry
-          (file+datetree "")
+          (file+olp+datetree "")
           "* %?
 %i
 %a
