@@ -239,29 +239,24 @@ Font samples [[file:etc/org/emojis.org][emojis.org]] which contains:
  - [[file:~/Documents/junk/2016-04-22-185254.org][Segoe UI Emoji]]
 
 #+BEGIN_SRC emacs-lisp
-(cond ((eq system-type 'windows-nt)
-       (set-face-attribute 'default nil :height 105)))
-(cl-dolist (font '("Hack" "Source Code Pro" "DejaVu Sans Mono" "Consolas" "Cousine"))
-  (when (find-font (font-spec :family font))
-    (set-frame-font font nil t)
-    ;; FIXME not working?
-    (push `(font . ,(frame-parameter nil 'font)) default-frame-alist)
-    (cl-return)))
-#+END_SRC
-
-Variable pitch
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'variable-pitch nil :family "DejaVu Sans" :height 105)
-;; (set-face-attribute 'variable-pitch nil :family "Arial")
-#+END_SRC
-
-Japanese
-#+BEGIN_SRC emacs-lisp
-(cl-dolist (font '("Osaka" "MeiryoKe_Console"))
-  (when (find-font (font-spec :family font))
+;; Set the size before setting font (TODO why?)
+(when-let* (height
+            (cond ((eq system-type 'windows-nt) 109)))
+  (set-face-attribute 'default nil :height height))
+(cl-flet ((ff (fonts)
+            (cl-dolist (font fonts)
+              (when (find-font (font-spec :family font))
+                (cl-return font)))))
+  (when-let* (font
+               (ff '("Fira Code" "Anonymous Pro" "Hack" "Source Code Pro" "DejaVu Sans Mono" "Consolas" "Cousine")))
+    (set-frame-font font t t))
+  ;; Variable-width font
+  (when-let* (font (ff '("DejaVu Sans" "Arial")))
+    (set-face-attribute 'variable-pitch nil :family font))
+  ;; Japanese
+  (when-let* (font (ff '("Osaka" "MeiryoKe_Console")))
     (set-fontset-font t 'japanese-jisx0208 (cons font "iso10646-1"))
-    (set-fontset-font t 'katakana-jisx0201 (cons font "iso10646-1"))
-    (cl-return)))
+    (set-fontset-font t 'katakana-jisx0201 (cons font "iso10646-1"))))
 #+END_SRC
 
 Unicode
