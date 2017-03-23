@@ -2474,6 +2474,7 @@ keybind definition: (\"key\" . func)"
   :load-path "site-lisp/extempore-mode"
   :defer t
   :config
+  (require 'le-extempore)
   (add-hook 'extempore-mode-hook #'lispy-mode))
 #+END_SRC
 
