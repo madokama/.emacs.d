@@ -2428,6 +2428,56 @@ keybind definition: (\"key\" . func)"
 #+END_SRC
 
 ** Programming Languages
+
+*** Lisp
+Pretty symbols
+#+BEGIN_SRC emacs-lisp
+(defun custom-pretty-symbols ()
+  (setq prettify-symbols-alist
+        ;; https://raw.githubusercontent.com/enomsg/vim-haskellConcealPlus/master/after/syntax/haskell.vim
+        (append prettify-symbols-alist
+                ;; '(("thread-first" . ?🠊)
+                ;;   ("thread-last" . '(?🠊 (Bc . Bl) ?🠊)))
+                (eval-when-compile
+                  ;; Fira Code Symbol
+                  ;; https://gist.github.com/mordocai/50783defab3c3d1650e068b4d1c91495
+                  ;; https://github.com/tonsky/FiraCode/files/412440/FiraCode-Regular-Symbol.zip
+                  (mapcar (lambda (sym)
+                            (cons (car sym)
+                                  (concat "	"
+                                          (list (decode-char 'ucs (cdr sym))))))
+                          '(("*" . 215)
+                            (",@" . #Xe164)
+                            ;; (">=" . 8805)
+                            ;; ("<=" . 8804)
+                            ;; ("and" . 8743)
+                            ;; ("or" . 8744)
+                            ("not" . 172)
+                            ("sqrt" . 8730)
+                            ("/=" . 57614)
+                            ("<=" . 57687)
+                            (">=" . 57669)
+                            ;; ("thread-first" . 57619)
+                            ;; ("thread-last" . 57621)
+                            ))))))
+(add-hook 'emacs-lisp-mode-hook #'custom-pretty-symbols)
+#+END_SRC
+
+Indentation
+#+BEGIN_SRC emacs-lisp
+(use-package cl-indent
+  :defer t
+  ;; http://stackoverflow.com/questions/17764326/emacs-proper-cl-flet-indentation
+  :config
+  (put 'cl-flet* 'common-lisp-indent-function
+       (get 'flet 'common-lisp-indent-function))
+  (put 'if 'common-lisp-indent-function 2)
+  (put 'loop 'common-lisp-indent-function 'lisp-indent-loop)
+  (put 'use-package 'common-lisp-indent-function 1)
+  (put 'pcase-lambda 'common-lisp-indent-function '(&lambda &rest lisp-indent-function-lambda-hack))
+  (put 'custom-theme-set-faces 'common-lisp-indent-function 1)
+  (defalias 'common-lisp-indent-function #'common-lisp-indent-function-1))
+#+END_SRC
 *** Scheme
 **** SLIME
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -2475,56 +2525,11 @@ keybind definition: (\"key\" . func)"
   :defer t
   :config
   (require 'le-extempore)
-  (add-hook 'extempore-mode-hook #'lispy-mode))
-#+END_SRC
-
-*** Lisp
-Pretty symbols
-#+BEGIN_SRC emacs-lisp
-(defun custom-pretty-symbols ()
-  (setq prettify-symbols-alist
-        ;; https://raw.githubusercontent.com/enomsg/vim-haskellConcealPlus/master/after/syntax/haskell.vim
-        (append prettify-symbols-alist
-                ;; '(("thread-first" . ?🠊)
-                ;;   ("thread-last" . '(?🠊 (Bc . Bl) ?🠊)))
-                (eval-when-compile
-                  ;; Fira Code Symbol
-                  ;; https://gist.github.com/mordocai/50783defab3c3d1650e068b4d1c91495
-                  ;; https://github.com/tonsky/FiraCode/files/412440/FiraCode-Regular-Symbol.zip
-                  (mapcar (lambda (sym)
-                            (cons (car sym)
-                                  (concat "	"
-                                          (list (decode-char 'ucs (cdr sym))))))
-                          '(("*" . 215)
-                            ;; (">=" . 8805)
-                            ;; ("<=" . 8804)
-                            ;; ("and" . 8743)
-                            ;; ("or" . 8744)
-                            ("not" . 172)
-                            ("sqrt" . 8730)
-                            ("/=" . 57614)
-                            ("<=" . 57687)
-                            (">=" . 57669)
-                            ;; ("thread-first" . 57619)
-                            ;; ("thread-last" . 57621)
-                            ))))))
-(add-hook 'emacs-lisp-mode-hook #'custom-pretty-symbols)
-#+END_SRC
-
-Indentation
-#+BEGIN_SRC emacs-lisp
-(use-package cl-indent
-  :defer t
-  ;; http://stackoverflow.com/questions/17764326/emacs-proper-cl-flet-indentation
-  :config
-  (put 'cl-flet* 'common-lisp-indent-function
-       (get 'flet 'common-lisp-indent-function))
-  (put 'if 'common-lisp-indent-function 2)
-  (put 'loop 'common-lisp-indent-function 'lisp-indent-loop)
-  (put 'use-package 'common-lisp-indent-function 1)
-  (put 'pcase-lambda 'common-lisp-indent-function '(&lambda &rest lisp-indent-function-lambda-hack))
-  (put 'custom-theme-set-faces 'common-lisp-indent-function 1)
-  (defalias 'common-lisp-indent-function #'common-lisp-indent-function-1))
+  (add-hook 'extempore-mode-hook #'lispy-mode)
+  (add-hook 'extempore-mode-hook
+            (lambda ()
+              (setq-local prettify-symbols-alist lisp-prettify-symbols-alist)
+              (custom-pretty-symbols))))
 #+END_SRC
 
 *** Clojure

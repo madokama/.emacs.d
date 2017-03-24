@@ -81,6 +81,7 @@
  '(explicit-shell-file-name "bash")
  '(extempore-default-device-number 5)
  '(extempore-share-directory "c:/extempore/")
+ '(extempore-use-pretty-lambdas nil)
  '(fast-but-imprecise-scrolling t)
  '(fit-window-to-buffer-horizontally t)
  '(flycheck-emacs-lisp-load-path (quote inherit))
