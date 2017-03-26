@@ -1334,24 +1334,9 @@ Just to suppress lighter
   (advice-add 'process-send-string :around #'ad-process-send-string)
 
   (add-to-list 'fakecygpty-program-regexps (rx bos (or "sh" "bash") eow))
-
   (add-to-list 'fakecygpty-ignored-program-regexps
                (rx bow (or "setsid" "powershell" "git") eow))
 
-  ;; (add-to-list 'fakecygpty-ignored-program-regexps
-  ;;              (rx bow (or "nircmd"
-  ;;                          "explorer"
-  ;;                          ;;"youtube-dl"
-  ;;                          ;;"ffmpeg"
-  ;;                          ;; "flashplayer"
-  ;;                          ;; "foobar2000"
-  ;;                          "git"
-  ;;                          "ag"
-  ;;                          "sh"
-  ;;                          ;;"mpv"
-  ;;                          ;;"typeperf"
-  ;;                          )
-  ;;                  eow))
   (fakecygpty-activate))
 #+END_SRC
 
@@ -1619,9 +1604,6 @@ until we have some outputs"
   :defer 5
   :diminish (yas-minor-mode . " Ⓨ")
   :config
-  ;; (setq yas-snippet-dirs (list (custom-path "snippets")
-  ;;                                       ;yas-installed-snippets-dir
-  ;;                              ))
   (bind-key "C-c y" #'hydra-yasnippet/body)
   (add-hook 'yas-dont-activate-functions (lambda () buffer-read-only))
   (yas-global-mode))
@@ -2846,14 +2828,14 @@ Indentation
         ;; elshogi-debug t
         )
 
-  (defun elshogi-display-apply-style ()
-    (let ((disp (make-display-table)))
-      (set-display-table-slot disp 0 ?\ )
-      (set-display-table-slot disp 1 ?\ )
-      (cl-loop for w being the windows
-               do (set-window-display-table w disp)))
-    (set-frame-font "Osaka" t))
-  (add-hook 'elshogi-display-frame-hooks #'elshogi-display-apply-style)
+  ;; (defun elshogi-display-apply-style ()
+  ;;   (let ((disp (make-display-table)))
+  ;;     (set-display-table-slot disp 0 ?\ )
+  ;;     (set-display-table-slot disp 1 ?\ )
+  ;;     (cl-loop for w being the windows
+  ;;              do (set-window-display-table w disp)))
+  ;;   (set-frame-font "Osaka" t))
+  ;; (add-hook 'elshogi-display-frame-hooks #'elshogi-display-apply-style)
 
   (add-to-list 'fakecygpty-ignored-program-regexps
                (regexp-opt
