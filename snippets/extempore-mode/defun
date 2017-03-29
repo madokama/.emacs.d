@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: defun
+# key: df
+# --
+(define ${1:fun}
+  (lambda (${2:args})
+    $0))
