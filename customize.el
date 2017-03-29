@@ -79,8 +79,6 @@
  '(eww-search-prefix "https://www.google.com/search?q=")
  '(explicit-bash-args (quote ("--noediting" "--login" "-i")))
  '(explicit-shell-file-name "bash")
- '(extempore-default-device-number 5)
- '(extempore-share-directory "c:/extempore/")
  '(extempore-use-pretty-lambdas nil)
  '(fast-but-imprecise-scrolling t)
  '(fit-window-to-buffer-horizontally t)

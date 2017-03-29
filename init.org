@@ -2508,11 +2508,25 @@ Indentation
   :defer t
   :config
   (require 'le-extempore)
-  (add-hook 'extempore-mode-hook #'lispy-mode)
+
+  (cond ((eq system-type 'windows-nt)
+         (setq extempore-share-directory "c:/extempore/")))
+
+  (push (list
+         (concat "("
+                 (regexp-opt '("when" "unless" "defstruct" "aif") t)
+                 "\\>")
+         '(1 font-lock-keyword-face t))
+        extempore-font-lock-keywords)
+  (put 'when 'extempore-indent-function 1)
+  (put 'unless 'extempore-indent-function 1)
+  (put 'macro 'extempore-indent-function 1)
+
   (add-hook 'extempore-mode-hook
             (lambda ()
               (setq-local prettify-symbols-alist lisp-prettify-symbols-alist)
-              (custom-pretty-symbols))))
+              (custom-pretty-symbols)
+              (lispy-mode))))
 #+END_SRC
 
 *** Clojure
