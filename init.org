@@ -2531,7 +2531,7 @@ Indentation
 
 *** Clojure
 **** clojure-mode
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 (use-package clojure-mode
   :load-path "site-lisp/clojure-mode"
   :commands clojure-mode
@@ -2549,12 +2549,13 @@ Indentation
     (add-to-list 'load-path semantic-path)
     (load (expand-file-name "clojure" semantic-path)))
 
-  (setq clojure--prettify-symbols-alist
-        '(("fn"  . ?λ)
-          ("comp" . ?∘)
-          ("not=" . ?≠)
-          ("<=" . ?≤)
-          (">=" . ?≥)))
+  (defun clojure--prettify-symbols ()
+    (setq prettify-symbols-alist
+          (append '(("comp" . ?∘)
+                    ("fn"  . ?λ)
+                    ("not=" . ?≠))
+                  (custom-pretty-symbols)))
+    (prettify-symbols-mode))
 
   (define-clojure-indent
       (aif 1)
@@ -2563,7 +2564,7 @@ Indentation
   (put 'cond 'clojure-backtracking-indent
        '(2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4))
 
-  (add-hook 'clojure-mode-hook #'prettify-symbols-mode)
+  (add-hook 'clojure-mode-hook #'clojure--prettify-symbols)
   (add-hook 'clojure-mode-hook #'lispy-mode))
 #+END_SRC
 **** cider
