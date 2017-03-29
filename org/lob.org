@@ -78,3 +78,14 @@
 #+BEGIN_SRC emacs-lisp :var name="Madoka Machitani"
 (thread-first (format "git log --author=%S --pretty=oneline" name) shell-command-to-string (split-string "\n" t) length)
 #+END_SRC
+
+** batch command
+#+name: batch
+#+BEGIN_SRC emacs-lisp :var cmds='() :results code
+(with-temp-buffer
+  (mapc (lambda (cmd)
+          (call-process "cmd.exe" nil t nil "/C" cmd))
+        cmds)
+  (message "%s" (buffer-string)))
+#+END_SRC
+
