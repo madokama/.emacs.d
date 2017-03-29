@@ -2702,7 +2702,8 @@ Indentation
                                    "vimeo.com"
                                    "video.twimg.com"
                                    "youtu.be"
-                                   "youtube.com")
+                                   "youtube.com"
+                                   "live.line.me")
                            "/")
                        'youtube-dl/play)))
   :config
