@@ -474,7 +474,8 @@ narrowed."
 ;;;###autoload
 (defun move-beginning-of-line-dwim ()
   (interactive)
-  (if (looking-at-p "^")
+  (if (and (looking-at-p "^")
+           (not (memq major-mode '(ffedit-mode))))
       (call-interactively #'back-to-indentation)
     (call-interactively #'move-beginning-of-line)))
 #+END_SRC
@@ -720,7 +721,7 @@ narrowed."
          (dired ivy--directory)
          (goto-char (point-min))
          (when (re-search-forward
-                (regexp-quote (substring ivy--current 0 -1)) nil t)
+                (regexp-quote (substring (ivy-state-current ivy-last) 0 -1)) nil t)
            (goto-char (match-beginning 0))))
       (user-error
        "Not completing files currently")))
@@ -3045,16 +3046,17 @@ Indentation
          ;; '(org-level-3 ((t :height 1.0)))
          ))
 
-    (eval-after-load 'elfeed-search
-      `(custom-theme-set-faces
-           ',theme
-         '(elfeed-search-date-face ((t :inherit font-lock-comment-delimiter-face)))
-         '(elfeed-search-title-face ((t)))
-         ;; '(elfeed-search-unread-title-face ((t)))
-         '(elfeed-search-feed-face ((t :inherit font-lock-constant-face)))
-         '(elfeed-search-tag-face ((t :inherit font-lock-keyword-face)))
-         ;; '(elfeed-search-last-update-face ((t)))
-         ;; '(elfeed-search-unread-count-face ((t)))
-         ;; '(elfeed-search-filter-face ((t)))
-         ))))
+    ;; (eval-after-load 'elfeed-search
+    ;;   `(custom-theme-set-faces
+    ;;        ',theme
+    ;;      '(elfeed-search-date-face ((t :inherit font-lock-comment-delimiter-face)))
+    ;;      '(elfeed-search-title-face ((t)))
+    ;;      ;; '(elfeed-search-unread-title-face ((t)))
+    ;;      '(elfeed-search-feed-face ((t :inherit font-lock-constant-face)))
+    ;;      '(elfeed-search-tag-face ((t :inherit font-lock-keyword-face)))
+    ;;      ;; '(elfeed-search-last-update-face ((t)))
+    ;;      ;; '(elfeed-search-unread-count-face ((t)))
+    ;;      ;; '(elfeed-search-filter-face ((t)))
+    ;;      ))
+    ))
 #+END_SRC
