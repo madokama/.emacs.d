@@ -124,6 +124,7 @@
  '(lisp-indent-function (quote common-lisp-indent-function))
  '(lispy-avy-style-symbol (quote at-full))
  '(lispy-comment-use-single-semicolon t)
+ '(lispy-no-space t)
  '(ls-lisp-use-insert-directory-program t)
  '(mailcap-user-mime-data (quote ((pdf-view-mode "application/pdf" nil))))
  '(menu-bar-mode nil)

@@ -2053,7 +2053,9 @@ until we have some outputs"
   :bind (("C-," . lispy-kill-at-point)
          ("C-M-," . lispy-mark)
          ;;("M-m" . lispy-mark-symbol)
-         ("P" . special-lispy-paste))
+         ("P" . special-lispy-paste)
+         :map lispy-mode-map-special
+         ("L" . lispy-wrap-round))
   :init
   (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
   :config
