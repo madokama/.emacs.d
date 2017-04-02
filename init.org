@@ -3077,17 +3077,8 @@ Indentation
          ;; '(org-level-3 ((t :height 1.0)))
          ))
 
-    ;; (eval-after-load 'elfeed-search
-    ;;   `(custom-theme-set-faces
-    ;;        ',theme
-    ;;      '(elfeed-search-date-face ((t :inherit font-lock-comment-delimiter-face)))
-    ;;      '(elfeed-search-title-face ((t)))
-    ;;      ;; '(elfeed-search-unread-title-face ((t)))
-    ;;      '(elfeed-search-feed-face ((t :inherit font-lock-constant-face)))
-    ;;      '(elfeed-search-tag-face ((t :inherit font-lock-keyword-face)))
-    ;;      ;; '(elfeed-search-last-update-face ((t)))
-    ;;      ;; '(elfeed-search-unread-count-face ((t)))
-    ;;      ;; '(elfeed-search-filter-face ((t)))
-    ;;      ))
-    ))
+    (eval-after-load 'extempore-mode
+      `(custom-theme-set-faces
+           ',theme
+         '(extempore-blink-face ((t :inherit highlight)))))))
 #+END_SRC
