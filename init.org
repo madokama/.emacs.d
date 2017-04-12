@@ -1275,17 +1275,17 @@ Just to suppress lighter
         (run-with-timer 1.5 nil
                         (lambda (cd buf)
                           (with-current-buffer buf
-                           (goto-char (point-max))
-                           (comint-kill-input)
-                           (insert (format "cd %s" cd))
-                           (comint-send-input nil t)))
+                            (goto-char (point-max))
+                            (comint-kill-input)
+                            (insert (format "cd %s" cd))
+                            (comint-send-input nil t)))
                         cd (current-buffer)))))
 
   (defun ad-shell-cd (orig-fun &rest args)
     (let ((cd default-directory))
-      (apply orig-fun args)
-      (when (file-directory-p cd)
-        (shell-mode-sync-cd (abbreviate-file-name cd)))))
+      (with-current-buffer (apply orig-fun args)
+        (when (file-directory-p cd)
+          (shell-mode-sync-cd (abbreviate-file-name cd))))))
 
   (advice-add 'shell :around #'ad-shell-cd)
 
