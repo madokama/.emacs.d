@@ -2527,14 +2527,18 @@ Indentation
 
   (push (list
          (concat "("
-                 (regexp-opt '("when" "unless" "defstruct" "aif" "seq-let") t)
+                 (regexp-opt '("when" "unless" "defstruct" "aif" "seq-let" "awhen" "when-let" "if-let") t)
                  "\\>")
          '(1 font-lock-keyword-face t))
         extempore-font-lock-keywords)
   (put 'when 'extempore-indent-function 1)
   (put 'unless 'extempore-indent-function 1)
   (put 'macro 'extempore-indent-function 1)
+  (put 'lily-deftype 'extempore-indent-function 1)
   (put 'seq-let 'extempore-indent-function 2)
+  (put 'awhen 'extempore-indent-function 1)
+  (put 'when-let 'extempore-indent-function 1)
+  (put 'if-let 'extempore-indent-function 1)
 
   (add-hook 'extempore-mode-hook
             (lambda ()
