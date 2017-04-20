@@ -542,7 +542,7 @@ narrowed."
 (bind-keys :map ctl-x-map
            ("C-r" . revert-buffer)
            ("e" . eval-pp-last-sexp)
-           ;; ("k" . kill-this-buffer)
+           ("k" . kill-this-buffer)
            ("n" . narrow-or-widen-dwim))
 
 ;;(unbind-key "C-z")
