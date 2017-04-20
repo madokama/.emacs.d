@@ -673,25 +673,6 @@ narrowed."
   (push '(emacs-lisp-mode . swiper-match-face-1)
         ivy-switch-buffer-faces-alist)
 
-  ;; From https://github.com/abo-abo/oremacs/commit/5fc037ff81a1d36e40d7ff6bcae1e088ee9bbc99
-  (defun ora-insert (x)
-    (with-ivy-window
-      (insert
-       (if (stringp x)
-           x
-         (car x)))))
-
-  (defun ora-kill-new (x)
-    (kill-new
-     (if (stringp x)
-         x
-       (car x))))
-
-  (ivy-set-actions
-   t
-   '(("I" ora-insert "insert")
-     ("w" ora-kill-new "copy")))
-
   (defun ad-swiper-all-buffer-p (oldfun buf)
     (with-current-buffer buf
       (cond ((derived-mode-p 'pdf-view-mode) nil)
@@ -1951,7 +1932,7 @@ until we have some outputs"
 #+END_SRC
 
 *** org-elfeed
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package org-elfeed
   :after (elfeed ;; org
                  ))
