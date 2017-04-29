@@ -910,7 +910,6 @@ narrowed."
   :config
   (add-to-list 'aw-ignored-buffers "*compilation*")
   (setq aw-background nil
-        aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
         aw-scope 'frame
         aw-leading-char-style 'path
         ;;aw--flip-keys '("o") ; needs to be set via Customize

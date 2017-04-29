@@ -116,16 +116,8 @@ _b_uffer   _D_el ace  _M_ax ace _v_: vert  _t_rans   _a_ alpha
   ("d" delete-window)
   ("D" ace-delete-window)
   ;; Max
-  ("m" (progn
-         (delete-other-windows)
-         ;; (delete-side-windows)
-         )
-       :exit t)
-  ("M" (progn
-         (ace-maximize-window)
-         ;; (delete-side-windows)
-         )
-       :exit t)
+  ("m" delete-other-windows :exit t)
+  ("M" ace-delete-other-windows :exit t)
   ;; Split
   ("x" (progn (split-window-below) (windmove-down)))
   ("v" (progn (split-window-right) (windmove-right)))

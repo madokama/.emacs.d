@@ -4,6 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(async-bytecomp-allowed-packages (quote (all)))
+ '(aw-keys (quote (97 115 100 102 103 104 106 107 108)))
  '(blink-cursor-mode nil)
  '(byte-compile-verbose nil)
  '(checkdoc-force-docstrings-flag nil)
