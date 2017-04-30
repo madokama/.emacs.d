@@ -185,6 +185,8 @@
          (eww-current-url))
         ((derived-mode-p 'elfeed-show-mode)
          (elfeed-entry-link elfeed-show-entry))
+        ((derived-mode-p 'elfeed-search-mode)
+         (elfeed-entry-link (elfeed-search-selected t)))
         ((derived-mode-p 'ffedit-mode)
          ffedit-video-path)))
 

@@ -1927,7 +1927,8 @@ until we have some outputs"
   :config
   (require 'enh-elfeed)
   (use-package page2feed)
-  (load (expand-file-name "private/subscriptions" user-emacs-directory)))
+  (load (expand-file-name "private/subscriptions" user-emacs-directory))
+  (cl-old-struct-compat-mode))
 #+END_SRC
 
 *** org-elfeed

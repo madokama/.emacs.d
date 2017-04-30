@@ -31,10 +31,5 @@
   (propertize (format "*elfeed:%s*" (elfeed-entry-title item))
               'recentb (list 'elfeed-show-entry item)))
 
-(defun recentb-elfeed-register-hook ()
-  (add-hook 'kill-buffer-hook #'recentb-save1 nil t))
-
-(add-hook 'elfeed-show-mode-hook #'recentb-elfeed-register-hook)
-
 (provide 'recentb-elfeed)
 ;;; recentb-elfeed.el ends here
