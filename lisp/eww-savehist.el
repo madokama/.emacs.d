@@ -4,8 +4,8 @@
 
 ;;; Code:
 
-;; (eval-and-compile
-;;   (require 'subr-x))
+(eval-and-compile
+  (require 'subr-x))
 (require 'seq)
 (require 'savehist)
 (require 'eww)

@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'subr-x))
 (require 'url-parse)
 (require 'dom)
 (require 'json)

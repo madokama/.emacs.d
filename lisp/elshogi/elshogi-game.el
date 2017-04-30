@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'subr-x))
 (require 'elshogi-core)
 (require 'elshogi-struct)
 

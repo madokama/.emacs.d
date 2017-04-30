@@ -8,6 +8,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'subr-x))
 (require 'seq)
 (require 'savehist)
 (require 'ivy)

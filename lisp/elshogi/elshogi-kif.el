@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'subr-x))
 (require 'elshogi-game)
 (require 'elshogi-move)
 (require 'elshogi-replay)

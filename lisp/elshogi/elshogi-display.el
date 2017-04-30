@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'subr-x))
 (require 'seq)
 (require 'elshogi-game)
 (require 'elshogi-candidates)
