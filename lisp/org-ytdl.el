@@ -270,7 +270,7 @@
                                          (delete-file video-file)))))
           ((and start (not end))
            (ffmpeg-screenshot (1+ start)
-                              (assoc-default 'url (ytdl-format-mq json))
+                              (alist-get 'url (ytdl-format-mq json))
                               thumb-file
                               (org-ytdl-display-thumbnail)))
           (t

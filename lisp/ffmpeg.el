@@ -74,7 +74,7 @@
 (defun ffmpeg--preview-filter/between (info start end)
   (if (or start end)
       (let ((start (or start 0))
-            (end (or end (assoc-default 'duration info))))
+            (end (or end (alist-get 'duration info))))
         (format "between(t\\,%d\\,%d)*" start end))
     ""))
 
@@ -86,7 +86,7 @@
 
 (defun ffmpeg--preview-filter/period (info duration tiles)
   (format "not(mod(n\\,%d))"
-          (floor (/ (* duration (assoc-default 'fps info))
+          (floor (/ (* duration (alist-get 'fps info))
                     (expt tiles 2)))))
 
 (defun ffmpeg--preview-filter/tile-height (tiles)
@@ -94,7 +94,7 @@
       (/ ffmpeg-preview-height tiles)))
 
 (defun ffmpeg--preview-filter (info start end)
-  (let* ((duration (- (or end (assoc-default 'duration info))
+  (let* ((duration (- (or end (alist-get 'duration info))
                       (or start 0)))
          ;; Square root of tiles
          (tiles (ffmpeg--preview-filter/tiles duration)))
