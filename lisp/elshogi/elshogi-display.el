@@ -183,7 +183,8 @@ Go to next position if the bottom of the window is visible."
 (defun elshogi-display-buffer (game)
   (let ((buf (elshogi-game-buffer game)))
     (with-current-buffer buf
-      (elshogi-mode)
+      (unless (derived-mode-p 'elshogi-mode)
+        (elshogi-mode))
       (if elshogi-display-use-frame
           (unless (get-buffer-window buf t)
             (elshogi-display-frame game))
