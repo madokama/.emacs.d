@@ -118,6 +118,10 @@ to view the log.
 (load (file-name-sans-extension custom-file) nil t)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(load (expand-file-name "private/private" user-emacs-directory) t t)
+#+END_SRC
+
 ** package.el                                                     :disabled:
 #+BEGIN_SRC emacs-lisp :tangle no
 (eval-and-compile
@@ -1094,6 +1098,10 @@ Just to suppress lighter
   :load-path "site-lisp/all-the-icons"
   ;;:commands (all-the-icons-devicon all-the-icons-alltheicon)
   :defer t)
+
+(use-package memoize
+  :load-path "site-lisp/memoize"
+  :defer t)
 #+END_SRC
 
 *** mode-icons
@@ -2065,11 +2073,12 @@ until we have some outputs"
   (add-hook 'minibuffer-setup-hook #'conditionally-enable-lispy)
   (add-hook 'command-history-hook #'lispy-mode)
 
+  (define-key lispy-mode-map (kbd "M-r") #'lispy-raise-sexp)
   ;; (advice-add 'lispy--ensure-visible :after #'recenter)
   )
 #+END_SRC
 *** names
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package names
   :unless noninteractive
   :load-path "site-lisp/names"
@@ -2090,9 +2099,14 @@ until we have some outputs"
     (flycheck-pos-tip-mode))
 
   (defun ad-flycheck-may-enable-mode (oldfun &rest r)
-    (when (and buffer-file-name
-               (not (file-in-directory-p buffer-file-name "~/Documents/junk/")))
-      (apply oldfun r)))
+    (when buffer-file-name
+      (if (derived-mode-p 'emacs-lisp-mode)
+          (let ((libdir (file-name-directory buffer-file-name)))
+            (when (cl-some (lambda (path)
+                             (file-equal-p libdir (expand-file-name path)))
+                           load-path)
+              (apply oldfun r)))
+        (apply oldfun r))))
   (advice-add 'flycheck-may-enable-mode :around #'ad-flycheck-may-enable-mode)
 
   (defun pml-flycheck ()

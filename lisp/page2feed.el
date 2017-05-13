@@ -7,9 +7,7 @@
 ;;; Code:
 
 (eval-when-compile
-  ;; (require 'cl)
   (require 'subr-x))
-;; (require 'cl-lib)
 (require 'seq)
 (require 'shr)
 (require 'url-expand)
