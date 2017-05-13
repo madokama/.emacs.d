@@ -526,5 +526,22 @@ If REFRESH is non-nil, discard cache files, if any."
                               (path . ,cache)
                               (title . ,(ytdl-json/title json))))))))
 
+;;;###autoload
+(defun ffedit-export-url ()
+  (let ((urlobj (url-generic-parse-url ffedit-video-path)))
+    (if (string-match-p (rx "youtube.com") (url-host urlobj))
+        (let ((segs (ffedit--preview-segments (point-min) (point-max))))
+          (setf (url-filename urlobj)
+                (format "%s?%s"
+                        (car (url-path-and-query urlobj))
+                        (url-build-query-string
+                         `(,@(url-parse-query-string
+                              (cdr (url-path-and-query urlobj)))
+                             (t ,(floor (caar segs)))
+                             ,@(when-let* ((end (cdar (last segs))))
+                                `((end ,(ceiling end))))))))
+          (url-recreate-url urlobj))
+      ffedit-video-path)))
+
 (provide 'ffedit)
 ;;; ffedit.el ends here

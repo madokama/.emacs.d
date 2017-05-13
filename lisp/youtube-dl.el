@@ -174,9 +174,9 @@
 
 (defvar eww-data)
 (defvar elfeed-show-entry)
-(defvar ffedit-video-path)
 (declare-function elfeed-entry-link "ext:elfeed-db")
 (declare-function eww-current-url "eww")
+(declare-function ffedit-export-url "ext:ffedit")
 
 (defun youtube-dl--visiting-url ()
   (cond ((derived-mode-p 'org-mode)
@@ -188,7 +188,7 @@
         ((derived-mode-p 'elfeed-search-mode)
          (elfeed-entry-link (elfeed-search-selected t)))
         ((derived-mode-p 'ffedit-mode)
-         ffedit-video-path)))
+         (ffedit-export-url))))
 
 ;;;###autoload
 (defun youtube-dl-url (&rest candidates)
