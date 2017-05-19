@@ -854,11 +854,17 @@ narrowed."
   :unless noninteractive
   :after ivy
   :config
-  (recentb-enable-plugins '(info shell elfeed eww man mpv firefox elshogi))
+  (recentb-enable-plugins '(info shell elfeed eww man mpv firefox elshogi abema))
   (use-package recentb-shell
     :config
     (setq recentb-shell-action-function #'recentb-shell-action-msys2
-          recentb-shell-history-function #'recentb-shell-history-msys2)))
+          recentb-shell-history-function #'recentb-shell-history-msys2))
+  (use-package recentb-abema
+    :config
+    (setq recentb-abema-channels '(shogi pet))
+    (cond ((eq system-type 'windows-nt)
+           (setq abema-watch-browser
+                 "C:\\Program Files\\Vivaldi\\Application\\vivaldi.exe")))))
 #+END_SRC
 
 *** view-mode
