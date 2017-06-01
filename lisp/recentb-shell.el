@@ -39,22 +39,26 @@
                  `(setq-local ,var ,val))
                env)))
 
+(defun recentb-shell (name)
+  ;; Keep the window of opened buffer selected.
+  (select-window (get-buffer-window (shell name))))
+
 (defun recentb-shell-action-msys2 (item)
   (pcase (and (string-match "shell:\\([^*]+\\)" item)
               (match-string 1 item))
     ("msys2"
      (recentb-with-env ((process-environment
                          (cons "MSYSTEM=MSYS" process-environment)))
-       (shell item)))
+       (recentb-shell item)))
     ("w32"
      (recentb-with-env ((explicit-shell-file-name "cmdproxy")
                         (default-process-coding-system '(utf-8-dos . utf-8-dos)))
-       (shell item)))
+       (recentb-shell item)))
     ("powershell"
      (recentb-with-env ((explicit-shell-file-name "powershell")
                         (explicit-powershell-args '())
                         (default-process-coding-system '(utf-8-dos . utf-8-dos)))
-       (shell item)))
+       (recentb-shell item)))
     ("term"
      (when (require 'multi-term nil t)
        (let ((term
@@ -64,7 +68,7 @@
            (multi-term-internal))
          (pop-to-buffer-same-window term))))
     (_
-     (shell item))))
+     (recentb-shell item))))
 
 (defun recentb-shell-history-msys2 ()
   '("*shell*" "*shell:term*" "*shell:msys2*" "*shell:w32*" "*shell:powershell*"))

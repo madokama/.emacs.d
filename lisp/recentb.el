@@ -93,21 +93,17 @@
 
 (defun recentb-ivy-action (str)
   (when-let* (action (get-text-property 0 'recentb str))
-    (with-ivy-window
-      (apply #'funcall action)
-      (current-buffer))))
+    (apply #'funcall action)
+    (current-buffer)))
 
 (defun ad-recentb-ivy-switch-buffer-action (oldfun str)
-  (or (recentb-ivy-action str)
+  (or (with-ivy-window (recentb-ivy-action str))
       (funcall oldfun str)))
 
 (defun ad-recentb-ivy-switch-buffer-ow-action (oldfun str)
-  (let ((buf
-         (save-window-excursion
-           (recentb-ivy-action str))))
-    (if buf
-        (switch-to-buffer-other-window buf)
-      (funcall oldfun str))))
+  (if-let* (buf (save-window-excursion (recentb-ivy-action str)))
+      (switch-to-buffer-other-window buf)
+    (funcall oldfun str)))
 
 (defun recentb-integrate-with-ivy ()
   (ivy-set-sources 'ivy-switch-buffer

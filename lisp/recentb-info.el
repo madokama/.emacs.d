@@ -18,9 +18,7 @@
 (autoload 'Info-find-node "info")
 
 (defun recentb-info-candidate (item)
-  (let ((file (car item))
-        (node (cadr item))
-        (point (caddr item)))
+  (seq-let (file node point) item
     (propertize (format "*info:%s(%s)*" (file-name-nondirectory file) node)
                 'recentb `((lambda ()
                              (Info-find-node ,file ,node)
@@ -29,8 +27,10 @@
 (defun recentb-info-history ()
   (when (derived-mode-p 'Info-mode)
     (cl-delete-duplicates (append
-                           (cons (list Info-current-file Info-current-node (point))
-                                 Info-history)
+                           (if Info-current-file
+                               (cons (list Info-current-file Info-current-node (point))
+                                     Info-history)
+                             Info-history)
                            recentb-info)
                           :test (lambda (a b)
                                   (and (string= (car a) (car b))
