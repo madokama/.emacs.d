@@ -118,7 +118,7 @@
     (elshogi-game-focus game)))
 
 (defvar org-link-parameters)
-(autoload 'org-activate-plain-links "org")
+(autoload 'org-activate-links "org")
 
 (defvar elshogi-display-link-params
   (let ((map (make-sparse-keymap)))
@@ -132,7 +132,7 @@
     (let ((org-link-parameters elshogi-display-link-params))
       (goto-char (point-min))
       ;; Copied from org-agenda.el
-      (while (org-activate-plain-links (point-max))
+      (while (org-activate-links (point-max))
         (add-text-properties (match-beginning 0) (match-end 0)
                              `(game ,game))))))
 
