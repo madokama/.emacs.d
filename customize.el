@@ -13,7 +13,7 @@
  '(company-backends
    (quote
     (company-semantic company-capf company-files
-     (company-dabbrev-code company-gtags company-etags company-keywords)
+     (company-dabbrev-code company-gtags company-keywords)
      company-dabbrev)))
  '(company-dabbrev-code-everywhere t)
  '(company-global-modes (quote (not shell-mode term-mode)))
@@ -102,6 +102,7 @@
  '(initial-buffer-choice t)
  '(initial-frame-alist nil)
  '(initial-scratch-message nil)
+ '(ivy-auto-select-single-candidate t)
  '(ivy-completing-read-handlers-alist
    (quote
     ((tmm-menubar . completing-read-default)
@@ -114,6 +115,7 @@
  '(ivy-ignore-buffers
    (quote
     ("\\` " "company-statistics-cache\\.el" "/elfeed/index" "~\\'")))
+ '(ivy-magic-slash-non-match-action (quote ivy-magic-slash-non-match-create))
  '(ivy-use-virtual-buffers t)
  '(ivy-virtual-abbreviate (quote full))
  '(ivy-wrap nil)
@@ -131,6 +133,7 @@
  '(menu-bar-mode nil)
  '(multi-term-program "bash")
  '(multi-term-program-switches "--login")
+ '(next-error-recenter (quote (4)))
  '(next-screen-context-lines 1)
  '(org-agenda-files (quote ("~/Dropbox/emacs/org/notes.org")))
  '(org-babel-clojure-backend (quote cider))

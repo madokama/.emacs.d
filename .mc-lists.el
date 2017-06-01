@@ -40,6 +40,7 @@
         lispy-space
         lispy-tick
         lispy-yank
+        move-beginning-of-line-dwim
         org-beginning-of-line
         org-delete-char
         org-end-of-line
