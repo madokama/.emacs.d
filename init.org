@@ -2424,6 +2424,14 @@ keybind definition: (\"key\" . func)"
   (sp-use-smartparens-bindings))
 #+END_SRC
 
+*** parsec
+#+BEGIN_SRC emacs-lisp
+(use-package parsec
+  :unless noninteractive
+  :load-path "site-lisp/parsec"
+  :defer t)
+#+END_SRC
+
 ** Programming Languages
 
 *** Lisp
