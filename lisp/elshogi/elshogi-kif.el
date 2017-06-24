@@ -294,7 +294,7 @@
 (defun elshogi-kif-parse-header ()
   ;; Assuming the cursor is on the initial comment line
   (elshogi-kif-parse-lines (lambda (line)
-                             (when (string-match "^\\(.+?\\)：\\(.+\\)$" line)
+                             (when (string-match "^\\(.+?\\)：\\(.*\\)$" line)
                                (cons (match-string 1 line)
                                      (match-string 2 line))))))
 
