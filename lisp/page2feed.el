@@ -73,7 +73,9 @@
   r)
 
 (defun page2feed-title ()
-  (when (search-forward-regexp "<title>\\(.+?\\)</title>" nil t)
+  (when (re-search-forward
+         "<title>[[:space:]\r\n]*\\(.+?\\)[[:space:]\r\n]*</title>"
+         nil t)
     (match-string 1)))
 
 (defun aggressive-encode-time (time)
@@ -133,6 +135,7 @@
                                                     (plist-get parsed 'link))))
                          `(entry nil
                                  (title nil ,(plist-get entry 'title))
+                                 ;; TODO Separate `link' with `enclosure'
                                  (link ((href . ,elink)
                                         ,@(when-let* (type
                                                       (plist-get entry 'enclosure))
@@ -296,6 +299,56 @@
               (mapcar #'page2feed-scrape-linelive-entry))))))
 
 (add-hook 'page2feed-scrapers #'page2feed-scrape-linelive)
+
+;;
+
+(require 'json)
+
+(defun page2feed-instagram-image (data)
+  (cl-flet ((get (k al)
+              (cdr (assq k al))))
+    (let-alist data
+      (format "<img src=%S />"
+              (thread-last .images
+                (get 'thumbnail)
+                (get 'url)
+                (replace-regexp-in-string "s[0-9]+x[0-9]+/" ""))))))
+
+(defun page2feed-instagram-entry (data)
+  (let-alist data
+    (let ((caption (split-string (cdr (assq 'text .caption)) "\n")))
+      (list 'title (car caption)
+            'link .link
+            'updated (string-to-number .created_time)
+            'content
+            (concat (if (string= .type "carousel")
+                        (mapconcat #'page2feed-instagram-image .carousel_media "")
+                        (page2feed-instagram-image data))
+                    (mapconcat (lambda (line)
+                                 (format "<div>%s</div>" line))
+                               (cdr caption) "\n"))))))
+
+(defun page2feed-instagram-json (url)
+  (with-temp-buffer
+    (call-process "curl" nil t nil "-s" (format "%smedia/" url))
+    (goto-char (point-min))
+    (cdr (assq 'items (json-read)))))
+
+(defun page2feed-instagram-scrape ()
+  (when (re-search-forward "<meta .*?content=\"Instagram\"" nil t)
+    (cl-flet ((re1 (regex)
+                (when (re-search-forward regex nil t)
+                  (match-string 1))))
+      ;; Order matters!
+      (let ((user (re1 "<meta .*?username=\\(.+?\\)\""))
+            (url (re1 "<link rel=\"canonical\" href=\"\\(.+?\\)\"")))
+        (list 'link url
+              'author user
+              'entries
+              (mapcar #'page2feed-instagram-entry
+                      (page2feed-instagram-json url)))))))
+
+(add-hook 'page2feed-scrapers #'page2feed-instagram-scrape)
 
 (advice-add 'elfeed-xml-parse-region :filter-args #'page2feed)
 
