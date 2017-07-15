@@ -6,11 +6,13 @@
 
 (require 'recentb)
 
+(defvar recentb-mpv nil)
+
 (recentb-define-mode mpv
-  :var recentb-mpv
+  :history recentb-mpv-history
   :candidate recentb-mpv-candidate)
 
-(defvar recentb-mpv-history
+(defvar recentb-mpv--history
   (expand-file-name ".history" (getenv "MPV_HOME")))
 
 (defun recentb-mpv-save-history (history)
@@ -19,7 +21,7 @@
       (let ((buf (current-buffer)))
         (cl-loop for item in history
                  do (pp item buf))))
-    (rename-file tmp recentb-mpv-history t)))
+    (rename-file tmp recentb-mpv--history t)))
 
 (defun recentb-mpv-truncate-history (history)
   (when (> (length history) recentb-max-saved-items)
@@ -32,6 +34,11 @@
                      (- (length history)
                         recentb-max-saved-items)))))
   history)
+
+(defun recentb-mpv-history ()
+  (prog1 (or recentb-mpv
+             (recentb-mpv-read-history))
+    (recentb-mpv-watch-history)))
 
 (defun recentb-mpv-candidate (item)
   (let ((url (plist-get item :url))
@@ -56,28 +63,23 @@
 (defun recentb-mpv-watch-history ()
   (unless (file-notify-valid-p recentb-mpv-watch-desc)
     (setq recentb-mpv-watch-desc
-          (file-notify-add-watch recentb-mpv-history '(change)
+          (file-notify-add-watch recentb-mpv--history '(change)
                                  #'recentb-mpv-history-watcher))))
 
 (defun recentb-mpv-read-history ()
-  (when (file-exists-p recentb-mpv-history)
-    (let ((visitedp (get-file-buffer recentb-mpv-history)))
-      (with-current-buffer (find-file-noselect recentb-mpv-history)
+  (when (file-exists-p recentb-mpv--history)
+    (let ((visitedp (get-file-buffer recentb-mpv--history)))
+      (with-current-buffer (find-file-noselect recentb-mpv--history)
         (when visitedp
           (revert-buffer t t t))
         (goto-char (point-min))
-        (setq recentb-mpv
-              (nreverse
-               (recentb-mpv-truncate-history
-                (cl-loop for item = (ignore-errors (read (current-buffer)))
-                         while item collect item))))
-        (unless visitedp
-          (kill-buffer (current-buffer)))))))
-
-(run-with-idle-timer 8 nil
-                     (lambda ()
-                       (recentb-mpv-read-history)
-                       (recentb-mpv-watch-history)))
+        (prog1 (setq recentb-mpv
+                     (nreverse
+                      (recentb-mpv-truncate-history
+                       (cl-loop for item = (ignore-errors (read (current-buffer)))
+                                while item collect item))))
+          (unless visitedp
+            (kill-buffer (current-buffer))))))))
 
 (provide 'recentb-mpv)
 ;;; recentb-mpv.el ends here
