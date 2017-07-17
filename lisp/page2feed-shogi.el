@@ -11,25 +11,23 @@
 (require 'json)
 
 (defun page2feed-shogi-json-game (title date game)
-  (cl-flet ((get (k al)
-              (cdr (assq k al))))
-    (let-alist game
-      (let* ((body (aref .gamebodies 0))
-             (url (get 'url body)))
-        (list 'title (format "%s%s%s―%s%s %s%s%s"
-                             (if-let* (status (get 'status body))
-                                 (format "*%s " status)
-                               "")
-                             (get 'name .player1)
-                             (get 'grade .player1)
-                             (get 'name .player2)
-                             (get 'grade .player2)
-                             .kaiki
-                             title
-                             (get 'name .division))
-              'link url
-              'updated (format "%s %s" date (get 'starttime .division))
-              'content (format "<a href=\"%s\">棋譜を見る</a>" url))))))
+  (let-alist game
+    (let* ((body (aref .gamebodies 0))
+           (url (alist-get 'url body)))
+      (list 'title (format "%s%s%s―%s%s %s%s%s"
+                           (if-let* (status (alist-get 'status body))
+                               (format "*%s " status)
+                             "")
+                           (alist-get 'name .player1)
+                           (alist-get 'grade .player1)
+                           (alist-get 'name .player2)
+                           (alist-get 'grade .player2)
+                           .kaiki
+                           title
+                           (alist-get 'name .division))
+            'link url
+            'updated (format "%s %s" date (alist-get 'starttime .division))
+            'content (format "<a href=\"%s\">棋譜を見る</a>" url)))))
 
 (defun page2feed-shogi-json-games/date (title games)
   (let-alist games
@@ -38,7 +36,7 @@
 
 (defun page2feed-shogi-json-games (title json)
   (mapcan (apply-partially #'page2feed-shogi-json-games/date title)
-          (cdr (assq 'games json))))
+          (alist-get 'games json)))
 
 (defun page2feed-shogi-dom-find (dom stop)
   (when-let* (tag (dom-tag dom))

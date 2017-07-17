@@ -65,7 +65,7 @@
 
 (defun pml-major-mode ()
   (format-mode-line
-   (or (cdr (assq major-mode pml-major-mode-alist))
+   (or (alist-get major-mode pml-major-mode-alist)
        mode-name)))
 
 (defun pml-minor-modes ()

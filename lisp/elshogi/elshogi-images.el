@@ -75,7 +75,7 @@
 
 (defun elshogi-images-piece (piece pov &optional relief-p color)
   (let ((name
-         (cdr (assq (elshogi-piece/name piece) elshogi-images-name-alist))))
+         (alist-get (elshogi-piece/name piece) elshogi-images-name-alist)))
     (create-image (elshogi-images-file
                    (concat (if (eq pov (elshogi-piece/side piece)) "S" "G")
                            (if (elshogi-piece/promoted piece)
@@ -188,7 +188,7 @@
              (side-p (elshogi-players-side-p game side))
              (pieces
               (seq-sort-by (pcase-lambda (`(,name . _))
-                             (cdr (assq name elshogi-piece-values)))
+                             (alist-get name elshogi-piece-values))
                            (if (eq (elshogi-game-pov game) side) #'> #'<)
                            (seq-group-by #'elshogi-piece/name
                                          (elshogi-pieces-on-stand game side)))))

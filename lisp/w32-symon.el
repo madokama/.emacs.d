@@ -41,7 +41,7 @@
                     (- 1 (/ datum w32-symon-memory-max))))))))
 
 (defun w32-symon-get-status (object &optional callback)
-  (let ((cell (cdr (assq object w32-symon-status))))
+  (let ((cell (alist-get object w32-symon-status)))
     (if callback
         (when cell (funcall callback cell))
       cell)))

@@ -214,7 +214,7 @@
                    with temps = nil
                    do (condition-case nil
                           (let* ((json
-                                  (ytdl-get-json (cdr (assq 'url entry))))
+                                  (ytdl-get-json (alist-get 'url entry)))
                                  (thumb-file
                                   (file-name-nondirectory
                                    (org-ytdl--thumb-file json))))

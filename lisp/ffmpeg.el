@@ -164,9 +164,9 @@
         (json (ffprobe-video-info video))
         (default-directory tmpdir))
     (let ((frags
-           (cl-loop for i from 1 to (length (cdr (assq 'chapters info)))
+           (cl-loop for i from 1 to (length (alist-get 'chapters info))
                     collect (format "%s-%d.%s" base i ext)))
-          (pts-p (cdr (assq 'pts-p info)))
+          (pts-p (alist-get 'pts-p info))
           (inparams
            (append (list "-i" video "-y")
                    ;; (when-let* (start (ffprobe-start-offset json))
@@ -195,7 +195,7 @@
                                                    (cdr c))))
                                          (list v)))
                                frags
-                               (cdr (assq 'chapters info)))))))
+                               (alist-get 'chapters info))))))
           (progn
             (kill-buffer buf)
             frags)
@@ -262,14 +262,14 @@
 (defun ffmpeg-split (video)
   (interactive "fVideo: ")
   (let ((info (ffmpeg-video-info video)))
-    (when (> (cdr (assq 'duration info))
+    (when (> (alist-get 'duration info)
              ffmpeg-split-interval)
       (let* ((base (md5 (file-name-base video)))
              (dir (file-name-directory video))
              (tmpdir (expand-file-name base dir)))
         (unless (file-directory-p tmpdir)
           (mkdir tmpdir))
-        (if (cdr (assq 'chapters info))
+        (if (alist-get 'chapters info)
             (ffmpeg-split-at-chapters video tmpdir info)
           (make-process :name "ffmpeg-split"
                         :command

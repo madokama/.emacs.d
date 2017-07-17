@@ -75,7 +75,7 @@
 (defun ffedit--update-timebase (time-base)
   ;; Ffprobe and ffmpeg may report different values on `time_base'.
   ;; Prefer the latter.
-  (unless (string= time-base (cdr (assq 'time_base ffedit-video-info)))
+  (unless (string= time-base (alist-get 'time_base ffedit-video-info))
     (message "[FF]%S" (cons time-base (assq 'time_base ffedit-video-info)))
     (setq ffedit-video-info
           (cons (cons 'time_base time-base)

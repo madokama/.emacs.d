@@ -115,7 +115,7 @@ Preferring webm for cleaner cuts at keyframes.")
                      for frag across .fragments
                      do (insert
                          (format "  %S %s\n"
-                                 (cdr (assq 'url frag))
+                                 (alist-get 'url frag)
                                  (if (= i 1) "" "\\"))))
           (insert (format "  %S\n" .url))))
       (insert "rm $0\n"))
@@ -149,7 +149,7 @@ Preferring webm for cleaner cuts at keyframes.")
   (let ((fmts (ytdl-json/formats json)))
     (or (seq-find pred
                   (seq-sort-by (lambda (fmt)
-                                 (cdr (assq 'height fmt)))
+                                 (alist-get 'height fmt))
                                cmp
                                (seq-filter
                                 (lambda (fmt)

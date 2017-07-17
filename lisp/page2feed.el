@@ -230,7 +230,7 @@
                     keys)))
     (apply #'encode-time
            (mapcar (lambda (key)
-                     (or (cdr (assq key time)) 0))
+                     (alist-get key time 0))
                    '(sec min hour day mon year)))))
 
 (defvar page2feed-scrape-morcoff-filter)
@@ -244,8 +244,8 @@
                    (string-match-p page2feed-scrape-morcoff-filter title)))
       (let ((parsed (page2feed-scrape-morcoff-link link base)))
         (list 'title title
-              'link (cdr (assq 'link parsed))
-              'enclosure (cdr (assq 'type parsed))
+              'link (alist-get 'link parsed)
+              'enclosure (alist-get 'type parsed)
               'updated (page2feed-encode-time
                         "^\\([0-9]+\\)/\\([0-9]+\\)/\\([0-9]+\\)(.+?)\\([0-9]+\\):\\([0-9]+\\)"
                         '(year mon day hour min)
@@ -279,7 +279,7 @@
           'updated .createdAt
           'content (format "<a href=%S><img src=%S /></a>"
                            .shareURL
-                           (cdr (assq 'swipe .thumbnailURLs))))))
+                           (alist-get 'swipe .thumbnailURLs)))))
 
 (declare-function json-read-from-string "json")
 
@@ -305,18 +305,16 @@
 (require 'json)
 
 (defun page2feed-instagram-image (data)
-  (cl-flet ((get (k al)
-              (cdr (assq k al))))
-    (let-alist data
-      (format "<img src=%S />"
-              (thread-last .images
-                (get 'thumbnail)
-                (get 'url)
-                (replace-regexp-in-string "s[0-9]+x[0-9]+/" ""))))))
+  (let-alist data
+    (format "<img src=%S />"
+            (thread-last .images
+              (alist-get 'thumbnail)
+              (alist-get 'url)
+              (replace-regexp-in-string "s[0-9]+x[0-9]+/" "")))))
 
 (defun page2feed-instagram-entry (data)
   (let-alist data
-    (let ((caption (split-string (cdr (assq 'text .caption)) "\n")))
+    (let ((caption (split-string (alist-get 'text .caption) "\n")))
       (list 'title (car caption)
             'link .link
             'updated (string-to-number .created_time)
@@ -332,7 +330,7 @@
   (with-temp-buffer
     (call-process "curl" nil t nil "-s" (format "%smedia/" url))
     (goto-char (point-min))
-    (cdr (assq 'items (json-read)))))
+    (alist-get 'items (json-read))))
 
 (defun page2feed-instagram-scrape ()
   (when (re-search-forward "<meta .*?content=\"Instagram\"" nil t)

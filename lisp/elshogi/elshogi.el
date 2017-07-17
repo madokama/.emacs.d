@@ -80,7 +80,7 @@
   (message "USI [exit]: %S" event))
 
 (defun elshogi-engine-setup (conf side)
-  (let* ((path (cdr (assq 'path conf)))
+  (let* ((path (alist-get 'path conf))
          (default-directory (file-name-directory path)))
     (elshogi-make-player :name (file-name-base path)
                          :engine
@@ -96,7 +96,7 @@
   (elshogi-usi-send-command
    (format "setoption name %s value %s"
            option
-           (or (cdr (assq (intern option) elshogi-engine-conf))
+           (or (alist-get (intern option) elshogi-engine-conf)
                (if (string-match "^\\(\\sw+\\) " default)
                    (match-string 1 default)
                    default)))))
@@ -123,9 +123,9 @@
         ((string= "usiok" command)
          (elshogi-usi-send-command
           (format "setoption name USI_Ponder value %s"
-                  (if (cdr (assq 'USI_Ponder elshogi-engine-conf))
+                  (if (alist-get 'USI_Ponder elshogi-engine-conf)
                       "true" "false")))
-         (when-let* (hash (cdr (assq 'USI_Hash elshogi-engine-conf)))
+         (when-let* (hash (alist-get 'USI_Hash elshogi-engine-conf))
            (elshogi-usi-send-command
             (format "setoption name USI_Hash value %s" hash)))
          (elshogi-usi-send-command "isready"))
@@ -215,8 +215,7 @@
              (if ponder
                  "ponder"
                (format "btime 0 wtime 0 byoyomi %d"
-                       (* (or (cdr (assq 'byoyomi elshogi-engine-conf))
-                              5)
+                       (* (alist-get 'byoyomi elshogi-engine-conf 5)
                           1000)))))))
 
 ;;; Game
@@ -247,7 +246,7 @@
 
 (defun elshogi-game-start (conf)
   (elshogi-game-setup conf
-                      (or (cdr (assq 'white-p conf))
+                      (or (alist-get 'white-p conf)
                           (zerop (random 2)))))
 
 (defun elshogi-game-resume ()
@@ -385,12 +384,12 @@
   "Start playing shogi.
 Specify the engine settings with CONF."
   (interactive (list
-                (cdr (assq
-                      (or elshogi-default-engine
-                          (intern
-                           (completing-read "Choose engine: "
-                                            (mapcar #'car elshogi-engines))))
-                      elshogi-engines))))
+                (alist-get
+                 (or elshogi-default-engine
+                     (intern
+                      (completing-read "Choose engine: "
+                                       (mapcar #'car elshogi-engines))))
+                 elshogi-engines)))
   (unless conf
     (user-error "Engine not specified.  Exiting"))
   (elshogi-game-start (append conf elshogi-engine-default-conf)))
@@ -494,7 +493,7 @@ Specify the engine settings with CONF."
 (defun elshogi-key-drop-candidates (game)
   (mapcar (apply-partially #'elshogi-pack-index game)
           (seq-sort-by (lambda (p)
-                         (cdr (assq (elshogi-piece/name p) elshogi-piece-values)))
+                         (alist-get (elshogi-piece/name p) elshogi-piece-values))
                        #'>
                        (cl-delete-duplicates
                         (elshogi-pieces-on-stand game (elshogi-current-side game))

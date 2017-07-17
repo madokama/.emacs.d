@@ -31,7 +31,7 @@
   (when (org-in-src-block-p)
     (let* ((info (org-babel-get-src-block-info))
            (params (nth 2 info)))
-      (when (cl-equalp (cdr (assq :async params)) "yes")
+      (when (cl-equalp (alist-get :async params) "yes")
         (let ((file buffer-file-name)  ;TODO handle case when it's nil
               (sid (md5 (pp-to-string info)))
               (frame (window-frame))
