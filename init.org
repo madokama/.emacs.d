@@ -1062,6 +1062,16 @@ Just to suppress lighter
   )
 #+END_SRC
 
+*** idle-highlight-mode
+#+BEGIN_SRC emacs-lisp
+(use-package idle-highlight-mode
+  :unless noninteractive
+  :load-path "site-lisp/idle-highlight-mode"
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook #'idle-highlight-mode))
+#+END_SRC
+
 *** eval-sexp-fu
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package eval-sexp-fu
