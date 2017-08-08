@@ -23,8 +23,11 @@
  '(compilation-ask-about-save nil)
  '(confirm-kill-emacs (quote y-or-n-p))
  '(counsel-find-file-at-point t)
- '(counsel-find-file-ignore-regexp "\\(?:\\.elc\\|~\\)\\'")
- '(counsel-grep-base-command "grep -naiE \"%s\" %s")
+ '(counsel-find-file-ignore-regexp
+   "\\(?:\\.\\(?:386\\|aux\\|b\\(?:ak\\|bl\\|in\\|lg\\|zr/\\)\\|c\\(?:lass\\|ps?\\)\\|d\\(?:64fsl\\|fsl\\|ll\\|rv\\|x\\(?:\\(?:\\(?:32\\|64\\)fs\\)?l\\)\\)\\|elc\\|f\\(?:asl?\\|mt\\|ns?\\|\\(?:x\\(?:\\(?:32\\|64\\)f\\)\\)?sl\\)\\|g\\(?:it/\\|[lm]o\\)\\|hg/\\|i\\(?:co\\|dx\\)\\|kys?\\|l\\(?:ib\\|nk\\|o[ft]\\|x\\(?:\\(?:32\\|64\\)fsl\\)\\|[ano]\\)\\|m\\(?:ap\\|em\\|o\\)\\|obj\\|p\\(?:64fsl\\|fsl\\|gs?\\|if\\|y[co]\\)\\|s\\(?:parcf\\|vn/\\|x\\(?:\\(?:32\\|64\\)fsl\\)\\)\\|t\\(?:fm\\|oc\\|ps?\\)\\|ufsl\\|v\\(?:rs?\\|xd\\)\\|wx\\(?:\\(?:32\\|64\\)fsl\\)\\|x86f\\|[ao]\\)\\|CVS/\\|_\\(?:\\(?:MTN\\|darcs\\)/\\)\\|~\\)")
+ '(counsel-git-grep-skip-counting-lines nil)
+ '(counsel-grep-base-command
+   "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
  '(counsel-grep-post-action-hook (quote (recenter)))
  '(counsel-mode-override-describe-bindings t)
  '(create-lockfiles nil)
@@ -102,7 +105,7 @@
  '(initial-buffer-choice t)
  '(initial-frame-alist nil)
  '(initial-scratch-message nil)
- '(ivy-auto-select-single-candidate t)
+ '(ivy-auto-select-single-candidate t t)
  '(ivy-completing-read-handlers-alist
    (quote
     ((tmm-menubar . completing-read-default)
@@ -116,6 +119,7 @@
    (quote
     ("\\` " "company-statistics-cache\\.el" "/elfeed/index" "~\\'")))
  '(ivy-magic-slash-non-match-action (quote ivy-magic-slash-non-match-create))
+ '(ivy-use-selectable-prompt t)
  '(ivy-use-virtual-buffers t)
  '(ivy-virtual-abbreviate (quote full))
  '(ivy-wrap nil)
