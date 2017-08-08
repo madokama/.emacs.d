@@ -214,6 +214,9 @@
  '(scroll-conservatively 2305843009213693951)
  '(sentence-end-double-space nil)
  '(shell-completion-execonly nil)
+ '(shell-dynamic-complete-functions
+   (quote
+    (comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory shell-filename-completion comint-filename-completion)))
  '(shell-file-name "sh")
  '(shr-image-animate t)
  '(shr-width 80)
