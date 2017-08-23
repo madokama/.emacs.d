@@ -63,7 +63,7 @@
   (let ((thumb-file (org-ytdl--thumb-file json)))
     (setq org-ytdl-template-hook
           (lambda ()
-            (format "[[%s]]" thumb-file)))
+            (format "[[file:%s]]" (file-relative-name thumb-file org-directory))))
     (setq org-ytdl-finalize-hook
           (lambda ()
             (org-ytdl-generate-thumbnail json thumb-file)))))
@@ -278,7 +278,7 @@
 
 ;;;###autoload
 (defun org-ytdl-display-inline-image (state)
-  (when (eq state 'subtree)
+  (when (memq state '(subtree folded))
     (org-display-inline-images nil t
                                (save-excursion
                                  (outline-end-of-heading)
