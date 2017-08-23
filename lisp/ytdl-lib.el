@@ -111,12 +111,13 @@ Preferring webm for cleaner cuts at keyframes.")
         (cl-loop for (k . v) in .http_headers
                  do (insert (format "  --header=\"%s: %s\" \\\n" k v)))
         (if (string= .protocol "http_dash_segments")
-            (cl-loop for i downfrom (length .fragments)
-                     for frag across .fragments
-                     do (insert
-                         (format "  %S %s\n"
-                                 (alist-get 'url frag)
-                                 (if (= i 1) "" "\\"))))
+            (let ((url .fragment_base_url))
+             (cl-loop for i downfrom (length .fragments)
+                      for frag across .fragments
+                      do (insert
+                          (format "  %S %s\n"
+                                  (concat url (alist-get 'path frag))
+                                  (if (= i 1) "" "\\")))))
           (insert (format "  %S\n" .url))))
       (insert "rm $0\n"))
     (list shell-file-name script)))
