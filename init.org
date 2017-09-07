@@ -1976,14 +1976,22 @@ until we have some outputs"
   (unless (eq (server-running-p) t)
     (server-start)))
 #+END_SRC
-*** moz
+*** cookie-sync
 #+BEGIN_SRC emacs-lisp
+(use-package cookie-sync
+  :defer t
+  :config
+  (setq csync-profile-firefox "~/AppData/Roaming/Mozilla/Firefox/Profiles/shexl6o1.default"))
+#+END_SRC
+
+*** moz
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package moz
   :defer t
   :load-path "site-lisp/mozrepl/chrome/content")
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package emoz-eww
   :unless noninteractive
   :after eww
