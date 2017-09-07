@@ -379,7 +379,7 @@ Unicode
 #+END_SRC
 
 *** eval expression
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (advice-add 'eval-expression-print-format :around
             (lambda (oldfun &rest r)
               "Inhibit formatting of integers as strings; it could slow things
@@ -864,7 +864,7 @@ narrowed."
     (setq recentb-abema-channels '(shogi pet))
     (cond ((eq system-type 'windows-nt)
            (setq abema-watch-browser
-                 "C:\\Program Files\\Vivaldi\\Application\\vivaldi.exe")))))
+                 "C:\\Program Files (x86)\\Vivaldi\\Application\\vivaldi.exe")))))
 #+END_SRC
 
 *** view-mode
@@ -1946,8 +1946,7 @@ until we have some outputs"
 (use-package elfeed
   ;; https://github.com/skeeto/.emacs.d/blob/master/etc/feed-setup.el
   :load-path "site-lisp/elfeed"
-  ;; :defer t
-  :after (elfeed-show elfeed-db)
+  :defer t
   :config
   (require 'enh-elfeed)
   (use-package page2feed)
@@ -2277,6 +2276,7 @@ keybind definition: (\"key\" . func)"
   (global-company-mode))
 
 (use-package company-etags
+  :disabled t
   :after clojure-mode
   :defines company-etags-modes
   :config
@@ -3062,7 +3062,7 @@ Indentation
 #+END_SRC
 
 *** Theme overrides
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (unless noninteractive
   (let ((theme (car custom-known-themes))
         (default-bg (or "black" "#050505"))

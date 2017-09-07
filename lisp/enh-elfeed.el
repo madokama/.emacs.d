@@ -193,9 +193,9 @@
           (propertize (mapconcat #'symbol-name
                                  (elfeed-entry-tags elfeed-show-entry)
                                  " ")
-                      'face 'font-lock-comment-face)
+                      'face 'elfeed-search-unread-count-face)
           (propertize (elfeed-entry-title elfeed-show-entry)
-                      'face 'message-header-subject)))
+                      'face 'elfeed-search-last-update-face)))
 
 (setq elfeed-show-entry-switch
       (lambda (buf)

@@ -22,7 +22,9 @@
                                       :from-end t)))
 
 (defun recentb-elfeed-candidate (item)
-  (propertize (format "*elfeed:%s*" (elfeed-entry-title item))
+  (propertize (format "*elfeed:%s:%s*"
+                      (elfeed-entry-title item)
+                      (elfeed-feed-title (elfeed-entry-feed item)))
               'recentb (list 'elfeed-show-entry item)))
 
 (provide 'recentb-elfeed)

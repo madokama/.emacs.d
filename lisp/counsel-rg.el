@@ -53,7 +53,9 @@
                      (when current-prefix-arg
                        (read-directory-name "rg in directory: "))))
   (setq counsel-grep-last-line nil)
-  (setq counsel--git-grep-dir (or initial-directory default-directory))
+  (setq counsel--git-grep-dir (or initial-directory
+                                  (locate-dominating-file default-directory ".git")
+                                  default-directory))
   (ivy-set-prompt 'counsel-rg #'counsel-prompt-function-default)
   (let ((init-point (point))
         res)

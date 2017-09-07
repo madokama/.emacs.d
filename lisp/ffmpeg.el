@@ -112,7 +112,7 @@
                           (directory-files dir nil
                                            (rx "." (or "jpg" "bmp" "png") eos))))
                      (append imgs (when palindrome (reverse imgs)))))
-        (insert (format "file %s\nduration %.1f\n" img (or dur 0.2)))))
+        (insert (format "file %s\nduration %.1f\n" img (or dur 0.1)))))
     (call-process "ffmpeg" nil "*ffmpeg*" nil
                   "-f" "concat"
                   "-i" infile
