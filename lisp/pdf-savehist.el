@@ -26,8 +26,8 @@
 
 ;;;###autoload
 (defun pdf-savehist-load ()
-  (when-let* (regv
-              (pdf-savehist-call/pdf (pdf-view-buffer-file-name) #'cl-find-if))
+  (when-let* ((regv
+               (pdf-savehist-call/pdf (pdf-view-buffer-file-name) #'cl-find-if)))
     (funcall (registerv-jump-func regv) (registerv-data regv))))
 
 ;;;###autoload(with-eval-after-load 'pdf-view (add-hook 'pdf-view-mode-hook #'pdf-savehist-load))

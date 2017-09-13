@@ -39,7 +39,7 @@
            recentb-mode-alist))
 
 (defsubst recentb-mode-ref (key &optional plst)
-  (when-let* (plst (or plst (recentb-mode-plist)))
+  (when-let* ((plst (or plst (recentb-mode-plist))))
     (plist-get plst key)))
 
 (defun recentb-save-on-kill-buffer ()
@@ -54,7 +54,7 @@
 
 (defun recentb-register-vars ()
   (cl-loop for (_mode . plst) in recentb-mode-alist
-           do (when-let* (var (recentb-mode-ref :var plst))
+           do (when-let* ((var (recentb-mode-ref :var plst)))
                 (add-to-list 'savehist-additional-variables var))))
 
 (defsubst recentb-history (plst)
@@ -83,7 +83,7 @@
             (let ((cand (or (symbol-function (recentb-mode-ref :candidate plst))
                             #'identity)))
               (cl-reduce (lambda (item acc)
-                           (if-let* (item (funcall cand item))
+                           (if-let* ((item (funcall cand item)))
                                (cons (propertize item 'face 'ivy-virtual)
                                      acc)
                              acc))
@@ -92,7 +92,7 @@
           recentb-mode-alist))
 
 (defun recentb-ivy-action (str)
-  (when-let* (action (get-text-property 0 'recentb str))
+  (when-let* ((action (get-text-property 0 'recentb str)))
     (apply #'funcall action)
     (current-buffer)))
 
@@ -101,7 +101,7 @@
       (funcall oldfun str)))
 
 (defun ad-recentb-ivy-switch-buffer-ow-action (oldfun str)
-  (if-let* (buf (save-window-excursion (recentb-ivy-action str)))
+  (if-let* ((buf (save-window-excursion (recentb-ivy-action str))))
       (switch-to-buffer-other-window buf)
     (funcall oldfun str)))
 

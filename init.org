@@ -22,7 +22,7 @@
                (not (eobp)))
         (let ((form (read buf)))
           (when (eq (car-safe form) 'use-package)
-            (when-let* (path (cadr (memq :load-path form)))
+            (when-let* ((path (cadr (memq :load-path form))))
               (push (if (file-name-absolute-p path)
                         path
                       (expand-file-name path user-emacs-directory))
@@ -244,21 +244,21 @@ Font samples [[file:etc/org/emojis.org][emojis.org]] which contains:
 
 #+BEGIN_SRC emacs-lisp
 ;; Set the size before setting font (TODO why?)
-(when-let* (height
-            (cond ((eq system-type 'windows-nt) 109)))
+(when-let* ((height
+             (cond ((eq system-type 'windows-nt) 109))))
   (set-face-attribute 'default nil :height height))
 (cl-flet ((ff (fonts)
             (cl-dolist (font fonts)
               (when (find-font (font-spec :family font))
                 (cl-return font)))))
-  (when-let* (font
-               (ff '("Fira Code" "Anonymous Pro" "Hack" "Source Code Pro" "DejaVu Sans Mono" "Consolas" "Cousine")))
+  (when-let* ((font
+               (ff '("Fira Code" "Anonymous Pro" "Hack" "Source Code Pro" "DejaVu Sans Mono" "Consolas" "Cousine"))))
     (set-frame-font font t t))
   ;; Variable-width font
-  (when-let* (font (ff '("DejaVu Sans" "Arial")))
+  (when-let* ((font (ff '("DejaVu Sans" "Arial"))))
     (set-face-attribute 'variable-pitch nil :family font))
   ;; Japanese
-  (when-let* (font (ff '("Osaka" "MeiryoKe_Console")))
+  (when-let* ((font (ff '("Osaka" "MeiryoKe_Console"))))
     (set-fontset-font t 'japanese-jisx0208 (cons font "iso10646-1"))
     (set-fontset-font t 'katakana-jisx0201 (cons font "iso10646-1"))))
 #+END_SRC
@@ -1397,7 +1397,7 @@ Just to suppress lighter
   ;; カレントバッファが shellバッファのときに、動いている process の coding-system
   ;; の DECODING の設定を undecided にする
   (defun ad-comint-output-filter--shell-coding-system (&rest _)
-    (when-let* (process (get-buffer-process (buffer-name)))
+    (when-let* ((process (get-buffer-process (buffer-name))))
       (when (string-match "^shell" (process-name process))
         (let ((coding-system (process-coding-system process)))
           (set-process-coding-system process
@@ -2904,7 +2904,7 @@ Indentation
                (regexp-opt
                 (delq nil
                       (mapcar (lambda (params)
-                                (when-let* (path (cdr (assq 'path (cdr params))))
+                                (when-let* ((path (cdr (assq 'path (cdr params)))))
                                   (file-name-base path)))
                               elshogi-engines))
                 'words)))

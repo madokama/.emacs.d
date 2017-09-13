@@ -11,12 +11,12 @@
 
 (defun ffmpeg-join-name (parts ext)
   (format "%s.%s"
-          (or (when-let* (name
-                          (apply #'fill-common-string-prefix
-                                 (mapcar #'file-name-base (seq-take parts 2))))
-                (concat (replace-regexp-in-string "_part$" "" name)
-                        "joined"))
-              (format "%s-joined" (file-name-base (car parts))))
+          (if-let* ((name
+                     (apply #'fill-common-string-prefix
+                            (mapcar #'file-name-base (seq-take parts 2)))))
+              (concat (replace-regexp-in-string "_part$" "" name)
+                      "joined")
+            (format "%s-joined" (file-name-base (car parts))))
           ext))
 
 (defun ffmpeg-join-sort (parts)

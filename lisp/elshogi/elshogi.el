@@ -66,9 +66,9 @@
 ;;; Engine Interface
 
 (defun elshogi-engine-active ()
-  (when-let* (process
-              (and elshogi-game-engine
-                   (elshogi-player/engine elshogi-game-engine)))
+  (when-let* ((process
+               (and elshogi-game-engine
+                    (elshogi-player/engine elshogi-game-engine))))
     (and (eq (process-status process) 'run)
          process)))
 
@@ -125,7 +125,7 @@
           (format "setoption name USI_Ponder value %s"
                   (if (alist-get 'USI_Ponder elshogi-engine-conf)
                       "true" "false")))
-         (when-let* (hash (alist-get 'USI_Hash elshogi-engine-conf))
+         (when-let* ((hash (alist-get 'USI_Hash elshogi-engine-conf)))
            (elshogi-usi-send-command
             (format "setoption name USI_Hash value %s" hash)))
          (elshogi-usi-send-command "isready"))
@@ -187,7 +187,7 @@
 
 (defun elshogi-usi-send-command (command)
   ;;(message "USI:> %S" command)
-  (when-let* (engine (elshogi-engine-active))
+  (when-let* ((engine (elshogi-engine-active)))
     (process-send-string engine (concat command "\n"))))
 
 (defun elshogi-usi-ponder (move ponder)
@@ -429,8 +429,8 @@ Specify the engine settings with CONF."
                           ;; Prevent simple mis-clicks, in which case
                           ;; do not clear the last selection.
                           (when (elshogi-move-legal-p elshogi-last-selected target)
-                            (if-let* (piece
-                                      (elshogi-pack:piece elshogi-last-selected))
+                            (if-let* ((piece
+                                       (elshogi-pack:piece elshogi-last-selected)))
                                 (elshogi-drop-piece game target piece)
                               (elshogi-move-piece
                                game origin target
@@ -447,11 +447,11 @@ Specify the engine settings with CONF."
 (defun elshogi-mouse-select-square (ev)
   "Select the square on mouse event EV."
   (interactive "e")
-  (when-let* (plst (elshogi-mouse-read-prop ev 'elshogi-index))
+  (when-let* ((plst (elshogi-mouse-read-prop ev 'elshogi-index)))
     (elshogi-select-square plst t)))
 
 (defun elshogi-piece-algebraic (plst)
-  (if-let* (piece (elshogi-pack:piece plst))
+  (if-let* ((piece (elshogi-pack:piece plst)))
       (format "%s*" (elshogi-piece-text piece))
     (let* ((index (elshogi-pack:index plst))
            (piece (elshogi-piece-at (elshogi-pack:game plst) index)))
@@ -482,9 +482,9 @@ Specify the engine settings with CONF."
 (defun elshogi-key-move-piece ()
   "Select the piece to move with keyboard."
   (interactive)
-  (when-let* (cands (elshogi-candidates-origin
-                     elshogi-current-game
-                     (elshogi-char->file last-command-event)))
+  (when-let* ((cands (elshogi-candidates-origin
+                      elshogi-current-game
+                      (elshogi-char->file last-command-event))))
     (elshogi-display-highlight-candidates cands)
     (let ((plst (elshogi-query-selection cands)))
       (when (elshogi-select-square plst)

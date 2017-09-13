@@ -95,8 +95,8 @@
             (- (region-end) (region-beginning)))))
 
 (defun pml-region-state (face1 face2 sepl sepr)
-  (when-let* (state
-              (delq nil (list (pml--narrow) (pml--region-info))))
+  (when-let* ((state
+               (delq nil (list (pml--narrow) (pml--region-info)))))
     (list (powerline-raw " " face1)
           (funcall sepl face1 face2)
           (powerline-raw " " face2)

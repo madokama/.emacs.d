@@ -53,8 +53,8 @@
            url))))
 
 (defsubst recentb-elshogi-history-item (game)
-  (when-let* (url (recentb-elshogi-normalize-url
-                   (or (elshogi-game/url game) (elshogi-game/kif game))))
+  (when-let* ((url (recentb-elshogi-normalize-url
+                    (or (elshogi-game/url game) (elshogi-game/kif game)))))
     (list url
           (elshogi-game/title game)
           (elshogi-mrec/count (elshogi-game-latest-move game)))))
@@ -67,7 +67,7 @@
                                    (file-exists-p kif)))
                              recentb-elshogi)))
       (cl-delete-duplicates
-       (if-let* (item (recentb-elshogi-history-item elshogi-current-game))
+       (if-let* ((item (recentb-elshogi-history-item elshogi-current-game)))
            (cons item hist)
          hist)
        :test (lambda (a b)

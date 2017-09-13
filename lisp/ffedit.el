@@ -51,7 +51,7 @@
     (expand-file-name path)))
 
 (defun ffedit--segment (p)
-  (when-let* (pts (get-text-property p 'pts))
+  (when-let* ((pts (get-text-property p 'pts)))
     (cons pts
           (get-text-property p 'end-pts))))
 
@@ -111,7 +111,7 @@
 (defun ffedit--add-thumb (thumbs-buf thumb pts)
   (with-current-buffer thumbs-buf
     (let ((buffer-read-only nil))
-      (when-let* (prev-pts (car ffedit--pts-list))
+      (when-let* ((prev-pts (car ffedit--pts-list)))
         (when (equal prev-pts (get-text-property (1- (point-max)) 'pts))
           (put-text-property (1- (point-max)) (point-max) 'end-pts pts)))
       (push pts ffedit--pts-list)

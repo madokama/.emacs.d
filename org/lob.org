@@ -53,7 +53,7 @@
 #+NAME: compile-log
 #+BEGIN_SRC elisp
 (require 'subr-x)
-(when-let (log (get-buffer "*Compile-Log*"))
+(when-let* ((log (get-buffer "*Compile-Log*")))
   (with-current-buffer log
     (let ((message-log-max nil))
       (message "%s" (buffer-string)))))

@@ -60,7 +60,7 @@
   (concat (mapconcat
            #'identity
            `(,(format "%s: size" (propertize "dz" 'face 'hydra-face-red))
-              ,@(when-let* (vids (dired-ffmpeg-filter-videos))
+              ,@(when-let* ((vids (dired-ffmpeg-filter-videos)))
                   (list (format "%s: info"
                                 (propertize "di" 'face 'hydra-face-red))
                         (format "%s: edit"

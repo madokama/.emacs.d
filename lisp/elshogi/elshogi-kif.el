@@ -152,12 +152,12 @@
       'utf-8
     (save-excursion
       (goto-char (point-min))
-      (or (when-let* (line (elshogi-kif-search-line (rx bol "#KIF")))
-            (when (string-match (rx "encoding=" (group (1+ (not blank)))) line)
-              (ignore-errors
-                (thread-last line
-                  (match-string 1) downcase intern-soft check-coding-system))))
-          'shift_jis-dos))))
+      (if-let* ((line (elshogi-kif-search-line (rx bol "#KIF"))))
+          (when (string-match (rx "encoding=" (group (1+ (not blank)))) line)
+            (ignore-errors
+              (thread-last line
+                (match-string 1) downcase intern-soft check-coding-system)))
+        'shift_jis-dos))))
 
 (declare-function mail-narrow-to-head "mail-parse")
 
@@ -243,9 +243,9 @@
                             (split-string-and-unquote (match-string 1 line)
                                                       ", ")))))))
                 (cl-flet ((expand (k)
-                            (when-let* (val (elshogi-kif-assoc k params))
+                            (when-let* ((val (elshogi-kif-assoc k params)))
                               (url-expand-file-name (car val) url))))
-                  (if-let* (kif (expand "kifu"))
+                  (if-let* ((kif (expand "kifu")))
                       (funcall callback
                                (list :url url
                                      :kif (elshogi-kif-gunzip-url kif)
@@ -299,17 +299,17 @@
                                      (match-string 2 line))))))
 
 (defun elshogi-kif-parse-comment ()
-  (when-let* (comment
-              (elshogi-kif-parse-lines
-               (lambda (line)
-                 (cond ((string-match-p (rx bos "*") line)
-                        (substring line 1))
-                       ((string-match-p (rx bos "まで") line)
-                        line)))))
+  (when-let* ((comment
+               (elshogi-kif-parse-lines
+                (lambda (line)
+                  (cond ((string-match-p (rx bos "*") line)
+                         (substring line 1))
+                        ((string-match-p (rx bos "まで") line)
+                         line))))))
     (string-join comment "\n")))
 
 (defun elshogi-kif-parse-move ()
-  (when-let* (move (elshogi-kif-search-line (rx bol (1+ blank) digit)))
+  (when-let* ((move (elshogi-kif-search-line (rx bol (1+ blank) digit))))
     (when (string-match (rx bos
                             (group (1+ digit)) (1+ blank)
                             (group (minimal-match (1+ print))) (1+ blank)

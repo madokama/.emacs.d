@@ -160,7 +160,7 @@
         (goto-char (+ (point) column))
         (add-text-properties
          (point) (+ (point) 3)
-         (when-let* (group (alist-get p pieces))
+         (when-let* ((group (alist-get p pieces)))
            (list 'display
                  (format "%2d%s"
                          (length group)

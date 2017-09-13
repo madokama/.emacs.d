@@ -29,7 +29,7 @@
     dir))
 
 (defun org-ytdl--thumb-url (json)
-  (when-let* (thumb-url (ytdl-json/thumbnail json))
+  (when-let* ((thumb-url (ytdl-json/thumbnail json)))
     (if (ytdl-youtube-p json)
         (replace-regexp-in-string "maxres" "hq" thumb-url)
       thumb-url)))
@@ -86,10 +86,10 @@
 
 ;;;###autoload
 (defun org-ytdl-link-at-point ()
-  (when-let* (elem (and (derived-mode-p 'org-mode)
-                        (org-element-lineage (org-element-context)
-                                             '(headline link)
-                                             t)))
+  (when-let* ((elem (and (derived-mode-p 'org-mode)
+                         (org-element-lineage (org-element-context)
+                                              '(headline link)
+                                              t))))
     (pcase (org-element-type elem)
       (`link
        (org-ytdl-raw-link elem))
@@ -101,20 +101,20 @@
          (org-ytdl-raw-link (org-element-link-parser)))))))
 
 (defun org-ytdl--find-link (contents type)
-  (when-let* (element
-              (seq-find (lambda (element)
-                          (and (eq (org-element-type element) 'link)
-                               (string= (org-element-property :type element)
-                                        type)))
-                        contents))
+  (when-let* ((element
+               (seq-find (lambda (element)
+                           (and (eq (org-element-type element) 'link)
+                                (string= (org-element-property :type element)
+                                         type)))
+                         contents)))
     element))
 
 (defun org-ytdl-current-content ()
-  (when-let* (head
-              (save-excursion
-                (unless (org-at-heading-p)
-                  (org-back-to-heading t))
-                (org-element-at-point)))
+  (when-let* ((head
+               (save-excursion
+                 (unless (org-at-heading-p)
+                   (org-back-to-heading t))
+                 (org-element-at-point))))
     (org-element--parse-objects (org-element-property :begin head)
                                 (org-element-property :end head)
                                 nil

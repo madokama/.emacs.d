@@ -58,11 +58,11 @@ multiple batches.")
 
 (defun emoz-query (code &optional callback)
   (mutex-lock emoz-mutex)
-  (if-let* (proc
-           (condition-case nil
-               (save-window-excursion
-                 (inferior-moz-process))
-             (error nil)))
+  (if-let* ((proc
+             (condition-case nil
+                 (save-window-excursion
+                   (inferior-moz-process))
+               (error nil))))
       (progn
         (setq emoz-monitor-function
               (lambda (output)

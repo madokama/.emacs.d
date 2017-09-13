@@ -432,7 +432,7 @@
 (defun scorely-convert (file)
   "Convert Lilypond score FILE to CSound score."
   (interactive (list (read-file-name ".ly file: " nil buffer-file-name t)))
-  (if-let* (voices (scorely-parse-file file))
+  (if-let* ((voices (scorely-parse-file file)))
       (with-temp-buffer
         (scorely-score/metro voices)
         (write-region nil nil (concat (file-name-sans-extension file) ".sco")))

@@ -29,7 +29,7 @@
            ,@(unless (string= url-request-method "HEAD")
                (when (url-cache-prepare cache)
                  (list "-o" cache)))
-           ,@(when-let* (cookie (expand-file-name (url-curl-cookie)))
+           ,@(when-let* ((cookie (expand-file-name (url-curl-cookie))))
                (list "-b" cookie "-c" cookie))
            ,@(mapcan (pcase-lambda (`(,name . ,value))
                        (list "-H" (format "%s: %s" name value)))
@@ -66,8 +66,8 @@
        ;; 304 Not modified
        ;; 305 Use proxy
        ;; 307 Temporary redirect
-       (when-let* (loc (or (mail-fetch-field "Location")
-                           (mail-fetch-field "URI")))
+       (when-let* ((loc (or (mail-fetch-field "Location")
+                            (mail-fetch-field "URI"))))
          (setq status (list :redirect loc))
          (delete-region (point-min) (point-max))))
       (4
@@ -156,7 +156,7 @@
                             (save-excursion
                               (goto-char (point-max))
                               (insert-file-contents-literally cache))
-                            (when-let* (redir (plist-get (car cbargs) :redirect))
+                            (when-let* ((redir (plist-get (car cbargs) :redirect)))
                               (message "[%s -> %s]" (url-recreate-url url) redir))
                             (apply callback cbargs)))))))
     buffer))

@@ -15,7 +15,7 @@
     (let* ((body (aref .gamebodies 0))
            (url (alist-get 'url body)))
       (list 'title (format "%s%s%s―%s%s %s%s%s"
-                           (if-let* (status (alist-get 'status body))
+                           (if-let* ((status (alist-get 'status body)))
                                (format "*%s " status)
                              "")
                            (alist-get 'name .player1)
@@ -39,7 +39,7 @@
           (alist-get 'games json)))
 
 (defun page2feed-shogi-dom-find (dom stop)
-  (when-let* (tag (dom-tag dom))
+  (when-let* ((tag (dom-tag dom)))
     (cond ((eq tag stop) dom)
           ((stringp tag)
            (page2feed-shogi-dom-find (cdr dom) stop))

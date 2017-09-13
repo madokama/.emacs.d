@@ -169,7 +169,7 @@
                nil)))))
 
 (defun elshogi-images-draw-player (player)
-  (when-let* (url (elshogi-player/image player))
+  (when-let* ((url (elshogi-player/image player)))
     (unless (elshogi-images-insert-cache url (current-buffer))
       (url-retrieve url
                     (lambda (status stand-buf)
