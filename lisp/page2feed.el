@@ -128,26 +128,26 @@
            (link ((href . ,(plist-get parsed 'link))))
            (updated nil ,(plist-get (car entries) 'updated))
            (author nil (name nil ,(plist-get parsed 'author)))
-           (id nil ,(plist-get parsed 'link))
+           (id nil ,(xml-escape-string (plist-get parsed 'link)))
            ,@(mapcar (lambda (entry)
-                       (let ((elink
-                              (url-expand-file-name (plist-get entry 'link)
-                                                    (plist-get parsed 'link))))
-                         `(entry nil
-                                 (title nil ,(plist-get entry 'title))
-                                 ;; TODO Separate `link' with `enclosure'
-                                 (link ((href . ,elink)
-                                        ,@(when-let* ((type
-                                                      (plist-get entry 'enclosure)))
-                                            `((rel . "enclosure")
-                                              (type . ,type)))))
-                                 (id nil ,elink)
-                                 (updated nil ,(plist-get entry 'updated))
-                                 ,@(when-let* ((summary (plist-get entry 'summary)))
-                                     `((summary nil ,summary)))
-                                 ,@(when-let* ((content (plist-get entry 'content)))
-                                     `((content ((type . "xhtml")) ,content))))))
-                     entries))))
+                      (let ((elink
+                             (url-expand-file-name (plist-get entry 'link)
+                                                   (plist-get parsed 'link))))
+                        `(entry nil
+                                (title nil ,(plist-get entry 'title))
+                                ;; TODO Separate `link' with `enclosure'
+                                (link ((href . ,elink)
+                                       ,@(when-let* ((type
+                                                     (plist-get entry 'enclosure)))
+                                          `((rel . "enclosure")
+                                            (type . ,type)))))
+                                (id nil ,(xml-escape-string elink))
+                                (updated nil ,(plist-get entry 'updated))
+                                ,@(when-let* ((summary (plist-get entry 'summary)))
+                                   `((summary nil ,summary)))
+                                ,@(when-let* ((content (plist-get entry 'content)))
+                                   `((content ((type . "xhtml")) ,content))))))
+                    entries))))
 
 (defun page2feed-match-date/paoweb (str)
   (when (string-match "\\([[:alpha:]]\\{3\\}\\)[[:alpha:].]*\\s +\\([[:digit:]]+\\)[, ]+\\([[:digit:]]+\\)" str)
@@ -306,11 +306,24 @@
 
 (defun page2feed-instagram-image (data)
   (let-alist data
-    (format "<img src=%S />"
-            (thread-last .images
-              (alist-get 'thumbnail)
-              (alist-get 'url)
-              (replace-regexp-in-string "s[0-9]+x[0-9]+/" "")))))
+    (let ((img
+           (format "<img src=%S />"
+                   (thread-last .images
+                     (alist-get 'thumbnail)
+                     (alist-get 'url)
+                     (replace-regexp-in-string "s[0-9]+x[0-9]+/" "")))))
+      (if (string= .type "video")
+          (format "<a href=%S> %s </a>"
+                  (alist-get 'url
+                             (cdr
+                              (cl-reduce (lambda (a b)
+                                           (if (> (alist-get 'width (cdr a))
+                                                  (alist-get 'width (cdr b)))
+                                               a
+                                             b))
+                                         .videos)))
+                  img)
+        img))))
 
 (defun page2feed-instagram-entry (data)
   (let-alist data
@@ -343,8 +356,69 @@
         (list 'link url
               'author user
               'entries
-              (mapcar #'page2feed-instagram-entry
-                      (page2feed-instagram-json url)))))))
+              (append (ignore-errors
+                        (when-let* ((story (page2feed-ig-story user)))
+                          (mapcar #'page2feed-ig-story-entry
+                                  (alist-get 'items story))))
+                      (mapcar #'page2feed-instagram-entry
+                              (page2feed-instagram-json url))))))))
+
+(declare-function url-curl-cookie "url-curl")
+
+(defun page2feed-extract-cookies (host keys)
+  (string-join
+   (mapcar (pcase-lambda (`(,k . ,v))
+             (format "%s=%s;" k v))
+           (with-current-buffer
+               (find-file-noselect (expand-file-name (url-curl-cookie)))
+             (goto-char (point-min))
+             (prog1
+                 (cl-loop while (re-search-forward
+                                 (format "^%s\t.+?\t\\([^\t]+\\)\t\\([^\t]+\\)$"
+                                         (regexp-quote host))
+                                 nil t)
+                          when (member (match-string 1) keys)
+                            collect (cons (match-string 1) (match-string 2)))
+               (kill-buffer (current-buffer)))))
+   " "))
+
+(defun page2feed-ig-story (user)
+  (with-temp-buffer
+    (apply #'call-process "curl" nil t nil
+           "https://i.instagram.com/api/v1/feed/reels_tray/"
+           "-s" "--compressed"
+           (mapcan (lambda (header)
+                     (list "-H" header))
+                   (list "dnt: 1"
+                         "accept-encoding: gzip, deflate, br"
+                         "x-ig-capabilities: 36oD"
+                         "accept-language: en-US,en;q=0.8"
+                         "user-agent: Instagram 10.26.0 (iPhone7,2; iOS 10_1_1; en_US; en-US; scale=2.00; gamut=normal; 750x1334) AppleWebKit/420+"
+                         "accept: */*"
+                         "authority: i.instagram.com"
+                         (concat "cookie: "
+                                 (page2feed-extract-cookies
+                                  "www.instagram.com"
+                                  '("csrftoken" "ds_user_id" "sessionid"))))))
+    ;; (message "%s" (buffer-string))
+    (goto-char (point-min))
+    (seq-find (lambda (alst)
+                (thread-last alst
+                  (alist-get 'user)
+                  (alist-get 'username)
+                  (string= user)))
+              (alist-get 'tray (json-read)))))
+
+(defun page2feed-ig-story-entry (json)
+  (let-alist json
+    (let* ((img (alist-get 'url (aref (alist-get 'candidates .image_versions2) 0)))
+           (url (if (= .media_type 2)
+                    (alist-get 'url (aref .video_versions 0))
+                  img)))
+      (list 'title (format-time-string "%F %T" .device_timestamp)
+            'link url
+            'updated .device_timestamp
+            'content (format "<a href=%S><img src=%S /></a>" url img)))))
 
 (add-hook 'page2feed-scrapers #'page2feed-instagram-scrape)
 
