@@ -20,64 +20,125 @@
     (overlay-put ov 'keymap map)
     ov))
 
-;; todo
-;;  (defconst org-babel-common-header-args-w-values
-;; -  '((cache	. ((no yes)))
-;; +  '((async      . ((yes no)))
-;; +    (cache	. ((no yes)))
+(defun org-babel--async-buffer (info)
+  (let ((buf (generate-new-buffer
+              (format "*ob-result:%s*" (md5 (pp-to-string info))))))
+    (prog1 buf
+      (with-current-buffer buf
+        (special-mode)
+        (setq buffer-read-only nil))
+      (display-buffer buf '(display-buffer-in-side-window)))))
+
+(defun org-babel--async-show-progress (buf output)
+  (when (buffer-live-p buf)
+    (with-current-buffer buf
+      (goto-char (point-max))
+      (insert output))))
 
 ;;;###autoload
 (defun org-babel-execute-async ()
   (when (org-in-src-block-p)
     (let* ((info (org-babel-get-src-block-info))
-           (params (nth 2 info)))
+           (lang (nth 0 info))
+           (params (nth 2 info))
+           (name (nth 4 info)))
       (when (cl-equalp (alist-get :async params) "yes")
         (let ((file buffer-file-name)  ;TODO handle case when it's nil
-              (sid (md5 (pp-to-string info)))
+              (buf (org-babel--async-buffer info))
               (frame (window-frame))
               (ov (org-babel--make-source-overlay (org-element-context))))
           (overlay-put ov 'face 'secondary-selection)
           (message "Executing async %s code block%s..."
-                   (nth 0 info)
-                   (let ((name (nth 4 info)))
-                     (if name (format " (%s)" name) "")))
-          (async-start
-           `(lambda ()
-              ,(async-inject-variables
-                (rx bos (or "load-path" "org-babel-library-of-babel") eos))
-              (require 'org)
-              (org-babel-do-load-languages 'org-babel-load-languages
-                                           ',org-babel-load-languages)
-              (with-current-buffer (find-file-noselect ,file)
-                (goto-char ,(nth 5 info))
-                (let ((org-confirm-babel-evaluate nil))
-                  (cons (org-babel-execute-src-block
-                         nil ',info
-                         ',(progn
-                             (nconc (assq :result-params params) '("silent"))
-                             params))
-                        (let ((ebuf (get-buffer org-babel-error-buffer-name)))
-                          (when ebuf
-                            (with-current-buffer ebuf
-                              (buffer-string))))))))
-           (pcase-lambda (`(,result . ,error))
-             (unwind-protect
-                  (with-selected-frame frame
-                    (if error
-                        (org-babel-eval-error-notify nil error)
-                      (display-buffer
-                       (with-current-buffer
-                           (generate-new-buffer (format "*ob-result:%s*" sid))
-                         (insert (if (stringp result)
-                                     result
-                                   (pp-to-string result)))
-                         (special-mode)
-                         (current-buffer))
-                       '(display-buffer-in-side-window))))
-               (delete-overlay ov)))))
+                   lang
+                   (if name (format " (%s)" name) ""))
+          (if (member lang '("sh"))
+              (org-babel-execute-async:shell lang info buf ov)
+            (async-start
+             `(lambda ()
+                ,(async-inject-variables
+                  (rx bos (or "load-path" "org-babel-library-of-babel") eos))
+                (require 'org)
+                (org-babel-do-load-languages 'org-babel-load-languages
+                                             ',org-babel-load-languages)
+                (with-current-buffer (find-file-noselect ,file)
+                  (goto-char ,(nth 5 info))
+                  (let ((org-confirm-babel-evaluate nil))
+                    (cons (org-babel-execute-src-block
+                           nil ',info
+                           ',(progn
+                               (nconc (assq :result-params params) '("silent"))
+                               params))
+                          (let ((ebuf (get-buffer org-babel-error-buffer-name)))
+                            (when ebuf
+                              (with-current-buffer ebuf
+                                (buffer-string))))))))
+             (pcase-lambda (`(,result . ,error))
+               (unwind-protect
+                    (with-selected-frame frame
+                      (cond (error
+                             (org-babel-eval-error-notify nil error))
+                            (result
+                             (with-current-buffer buf
+                               (erase-buffer)
+                               (insert (if (stringp result)
+                                           result
+                                         (pp-to-string result)))))
+                            ;; (t (kill-buffer buf))
+                            ))
+                 (delete-overlay ov))))
+            ;; Report progress
+            (set-process-filter async--procvar
+                                (lambda (proc output)
+                                  (org-babel--async-show-progress buf output)
+                                  (with-current-buffer (process-buffer proc)
+                                    (insert output))))))
         t))))
 
 ;;;###autoload(add-hook 'org-ctrl-c-ctrl-c-hook #'org-babel-execute-async)
+
+
+
+(require 'ob-shell)
+
+(defun org-babel-execute-async:shell (lang info buf ov)
+  (let* ((params (nth 2 info))
+         (body
+          (let ((coderef (nth 6 info))
+                (expand
+                 (if (org-babel-noweb-p params :eval)
+                     (org-babel-expand-noweb-references info)
+                   (nth 1 info))))
+            (if (not coderef)
+                expand
+              (replace-regexp-in-string
+               (org-src-coderef-regexp coderef) "" expand nil nil 1))))
+         ;; TODO handle these parameters.
+         ;; (session (org-babel-sh-initiate-session (alist-get :session params)))
+         ;; (stdin (when-let* ((stdin (alist-get :stdin params)))
+         ;;          (org-babel-sh-var-to-string (org-babel-ref-resolve stdin))))
+         ;; (cmdline (alist-get :cmdline params))
+         (full-body (org-babel-expand-body:generic
+                     body params (org-babel-variable-assignments:shell params))))
+    (let ((script (make-temp-file "ob-sh"))
+          (default-directory (or (alist-get :dir params) default-directory)))
+      (with-temp-file script
+        (insert full-body))
+      (set-file-modes script #o755)
+      (make-process :name "ob-sh"
+                    :buffer buf
+                    :stderr buf
+                    :command (list lang "--noediting" script)
+                    :filter (lambda (_proc output)
+                              (org-babel--async-show-progress buf output))
+                    :sentinel (lambda (proc _signal)
+                                ;; Make error messages visible.
+                                (unless (zerop (process-exit-status proc))
+                                  (when (buffer-live-p buf)
+                                    (with-current-buffer buf
+                                      (goto-char (point-min)))))
+                                (delete-overlay ov)
+                                (delete-file script)
+                                (kill-process proc))))))
 
 (provide 'ob-async)
 ;;; ob-async.el ends here
