@@ -76,11 +76,18 @@ _w_:start menu _o_:monitor _h_:standby
 ;;   ("m" set-mark-command "mark" :bind nil)
 ;;   ("z" nil))
 
-(defhydra hydra-goto-error (;; goto-map ""
-                            :pre (setq next-error-last-buffer nil))
+(defvar hydra-goto-error-function nil)
+
+(defhydra hydra-goto-error (:pre
+                            (unless hydra-goto-error-function
+                              (setq hydra-goto-error-function next-error-function)
+                              (setq next-error-last-buffer nil))
+                            :post (setq hydra-goto-error-function nil))
   "error"
-  ("n" next-error)
-  ("p" previous-error)
+  ("n" (let ((next-error-function hydra-goto-error-function))
+         (next-error)))
+  ("p" (let ((next-error-function hydra-goto-error-function))
+         (previous-error)))
   ("z" nil))
 
 (declare-function windmove-left "windmove")

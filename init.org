@@ -590,8 +590,8 @@ narrowed."
   :bind (("C-x l" . hydra-launch/body)
          ("C-x C-l" . hydra-launch/body)
          ("C-x t" . hydra-toggler/body)
-         ([remap next-error] . hydra-goto-error/next-error)
-         ([remap previous-error] . hydra-goto-error/previous-error)
+         ([remap next-error] . hydra-goto-error/lambda-n)
+         ([remap previous-error] . hydra-goto-error/lambda-p)
          :map ctl-x-map
          ("o" . hydra-window/body)))
 #+END_SRC
