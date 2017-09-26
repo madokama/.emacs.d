@@ -106,10 +106,12 @@ Preferring webm for cleaner cuts at keyframes.")
 (defun ytdl--dl-http (fmt file)
   (let ((script (make-temp-file "ytdl")))
     (with-temp-file script
-      (insert (format "wget -nv -O %s \\\n" file))
+      (insert (format "wget --no-check-certificate -nv -O %s \\\n" file))
       (let-alist fmt
         (cl-loop for (k . v) in .http_headers
-                 do (insert (format "  --header=\"%s: %s\" \\\n" k v)))
+                 do (insert (format "  --header=\"%s: %s\" \\\n"
+                                    k
+                                    (shell-quote-argument v))))
         (if (string= .protocol "http_dash_segments")
             (let ((url .fragment_base_url))
              (cl-loop for i downfrom (length .fragments)
