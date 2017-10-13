@@ -60,7 +60,8 @@
           (elshogi-mrec/count (elshogi-game-latest-move game)))))
 
 (defun recentb-elshogi-history ()
-  (when (derived-mode-p 'elshogi-mode)
+  (when (and (derived-mode-p 'elshogi-mode)
+             elshogi-current-game)
     (let ((hist
            (cl-delete-if-not (pcase-lambda (`(,kif . _))
                                (or (ffap-url-p kif)
