@@ -1979,9 +1979,10 @@ until we have some outputs"
 *** cookie-sync
 #+BEGIN_SRC emacs-lisp
 (use-package cookie-sync
-  :defer t
+  :after url-curl
   :config
-  (setq csync-profile-firefox "~/AppData/Roaming/Mozilla/Firefox/Profiles/shexl6o1.default"))
+  (setq csync-profile-firefox "~/AppData/Roaming/Mozilla/Firefox/Profiles/shexl6o1.default")
+  (cookie-sync-firefox))
 #+END_SRC
 
 *** moz
