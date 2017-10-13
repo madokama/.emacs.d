@@ -290,6 +290,17 @@
                                  (point)))))
 
 ;;;###autoload
+(defun org-ytdl-add-description ()
+  "Add video description at the cursor point."
+  (interactive)
+  (when-let* ((ctx (ignore-errors (org-ytdl-current-content))))
+    (let-alist (ytdl-get-json
+                (plist-get (car (alist-get 'link ctx)) :path))
+      (insert "#+BEGIN_QUOTE\n"
+              .description
+              "\n#+END_QUOTE\n"))))
+
+;;;###autoload
 (defun org-ytdl-link-handler (link)
   (youtube-dl/play (replace-regexp-in-string "^//" "ytdl:\\&" link)))
 
