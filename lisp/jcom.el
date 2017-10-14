@@ -193,20 +193,28 @@
      ,@params)
    nil t))
 
+(defun jcom--reserve-success-p (result)
+  (string= "リモート録画予約が完了しました。" (caddr (cadr result))))
+
 ;;;###autoload
 (defun jcom-make-reservation (data)
-  (mapcar (lambda (prog)
-            (sleep-for 0 300)
-            (with-temp-buffer
-              (jcom-ajax-post "http://tv.myjcom.jp/remoteRecSubmit.action"
-                              "http://tv.myjcom.jp/wishList.action?limit=100"
-                              (jcom--build-reserve-form (alist-get 'common data)
-                                                        prog))
-              (let ((dom (libxml-parse-html-region (point-min) (point-max))))
-                (list (alist-get 'title prog)
-                      (car (dom-by-id dom "recResultTitle"))
-                      (car (dom-by-class dom "cont"))))))
-          (alist-get 'programs data)))
+  (let ((results
+         (mapcar (lambda (prog)
+                   (sleep-for 0 300)
+                   (with-temp-buffer
+                     (jcom-ajax-post "http://tv.myjcom.jp/remoteRecSubmit.action"
+                                     "http://tv.myjcom.jp/wishList.action?limit=100"
+                                     (jcom--build-reserve-form
+                                      (alist-get 'common data)
+                                      prog))
+                     (let ((dom
+                            (libxml-parse-html-region (point-min) (point-max))))
+                       (list (alist-get 'title prog)
+                             (car (dom-by-id dom "recResultTitle"))
+                             (car (dom-by-class dom "cont"))))))
+                 (alist-get 'programs data))))
+    (or (seq-every-p #'jcom--reserve-success-p results)
+        results)))
 
 (defun jcom-search-id (id)
   (sleep-for 0 300)
