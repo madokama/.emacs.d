@@ -26,7 +26,7 @@
                                      "--no-resume-playback"
                                      "--msg-level=all=no,ytdl_hook=info"
                                      "--ytdl-raw-options=no-mark-watched="
-                                     lst)
+                                     (mpa-scrape lst))
                            " ")
                           "\n"))
     (set-process-filter proc #'mpa--filter)))
@@ -80,17 +80,17 @@ Return K if successfull, nil otherwise."
               .description
               "\n#+END_QUOTE\n"))))
 
-;;;###autoload
-(defun mpa-scrape (&rest urls)
+(defun mpa-scrape (urls)
   (mapcan (lambda (url)
-            (seq-some (pcase-lambda (`(,pat . ,fn))
-                        (when (string-match-p pat url)
-                          (with-temp-buffer
-                            (call-process "curl" nil t nil "-s" url)
-                            (goto-char (point-min))
-                            (save-match-data
-                              (funcall fn)))))
-                      mpa-scrapers-alist))
+            (or (seq-some (pcase-lambda (`(,pat . ,fn))
+                            (when (string-match-p pat url)
+                              (with-temp-buffer
+                                (call-process "curl" nil t nil "-s" url)
+                                (goto-char (point-min))
+                                (save-match-data
+                                  (funcall fn)))))
+                          mpa-scrapers-alist)
+                (list url)))
           urls))
 
 (defun mpa-scrape-pianeys ()
