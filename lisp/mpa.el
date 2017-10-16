@@ -58,6 +58,12 @@ Return K if successfull, nil otherwise."
 (defun mpa-next ()
   (mpa--send-key ">"))
 
+(defun mpa-pause ()
+  (mpa--send-key " "))
+
+(defun mpa-loop ()
+  (mpa--send-key "L"))
+
 (defun mpa-stop ()
   (when-let* ((p (mpa--current-process)))
     (delete-process p)
