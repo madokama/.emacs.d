@@ -8,6 +8,8 @@
 (require 'subr-x)
 (require 'multi-term)
 
+(defvar mpa-shuffle t)
+
 (defvar mpa-scrapers-alist nil)
 
 ;;;###autoload
@@ -21,7 +23,8 @@
     (process-send-string proc
                          (concat
                           (string-join
-                           (cl-list* "mpv" "--no-video" "--shuffle"
+                           (cl-list* "mpv" "--no-video"
+                                     (when mpa-shuffle "--shuffle")
                                      "--keep-open=no" "--volume=80"
                                      "--no-resume-playback"
                                      "--msg-level=all=no,ytdl_hook=info"
