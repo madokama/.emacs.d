@@ -38,13 +38,13 @@
          "-s" "--compressed" "-b" jcom-cookie "-c" jcom-cookie
          "-H" "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0"
          "-H" "DNT: 1"
-         (append (mapcan (pcase-lambda (`(,k . ,v))
-                           (list "-H" (format "%s: %s" k v)))
-                         headers)
-                 (when data
-                   (list
-                    "-H" "Content-Type: application/x-www-form-urlencoded; charset=UTF-8"
-                    "-d" data)))))
+         (nconc (mapcan (pcase-lambda (`(,k . ,v))
+                          (list "-H" (format "%s: %s" k v)))
+                        headers)
+                (when data
+                  (list
+                   "-H" "Content-Type: application/x-www-form-urlencoded; charset=UTF-8"
+                   "-d" data)))))
 
 (defun jcom--ajax-headers (referer)
   `(("X-Requested-With" . "XMLHttpRequest")
@@ -146,7 +146,7 @@
                                                 res))
                                  reserved))
                      (cl-delete-duplicates
-                      (append progs search)
+                      (nconc progs search)
                       :test (lambda (a b)
                               (string= (alist-get 'programId a)
                                        (alist-get 'programId b)))
@@ -166,15 +166,15 @@
                  (* 60 (string-to-number (match-string 2 dur))))))
         (apply #'encode-time
                (mapcar #'string-to-number
-                       (append (and (string-match "^\\(..\\)\\(..\\)" start)
-                                    (list "0"
-                                          (match-string 2 start)
-                                          (match-string 1 start)))
-                               (and (string-match "^\\(....\\)\\(..\\)\\(..\\)$"
-                                                  date)
-                                    (list (match-string 3 date)
-                                          (match-string 2 date)
-                                          (match-string 1 date)))))))))))
+                       (nconc (and (string-match "^\\(..\\)\\(..\\)" start)
+                                   (list "0"
+                                         (match-string 2 start)
+                                         (match-string 1 start)))
+                              (and (string-match "^\\(....\\)\\(..\\)\\(..\\)$"
+                                                 date)
+                                   (list (match-string 3 date)
+                                         (match-string 2 date)
+                                         (match-string 1 date)))))))))))
 
 (defun jcom--build-reserve-form (params prog)
   (url-build-query-string
@@ -235,7 +235,7 @@
                                 (dom-by-tag 'dd)
                                 dom-strings
                                 car)))
-                    (append json (list (cons 'commentary desc)))))
+                    (nconc json (list (cons 'commentary desc)))))
                 (cl-delete-if-not
                  (lambda (dom)
                    (seq-find (lambda (dom)
