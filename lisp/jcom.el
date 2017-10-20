@@ -35,7 +35,7 @@
     (jcom--prepare-cookie))
   (apply #'call-process "curl" nil t nil
          url
-         "-s" "--compressed" "-b" jcom-cookie "-c" jcom-cookie
+         "-sL" "--compressed" "-b" jcom-cookie "-c" jcom-cookie
          "-H" "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0"
          "-H" "DNT: 1"
          (nconc (mapcan (pcase-lambda (`(,k . ,v))
@@ -59,10 +59,10 @@
 (defun jcom-reserve-list ()
   (with-temp-buffer
     (save-match-data
-      (let ((location "http://tv.myjcom.jp/jcom-pc/remoteRecReservelist.action"))
+      (let ((location "https://tv.myjcom.jp/jcom-pc/remoteRecReservelist.action"))
         (jcom--http location)
         (erase-buffer)
-        (jcom-ajax-get "http://tv.myjcom.jp/jcom-pc/remoteRecList.action?recListType=1&limit=100"
+        (jcom-ajax-get "https://tv.myjcom.jp/jcom-pc/remoteRecList.action?recListType=1&limit=100"
                        location)
         (goto-char (point-min))
         (cl-loop while (re-search-forward (rx "detail.action?"
@@ -130,7 +130,7 @@
 (defun jcom-wish-list ()
   (with-temp-buffer
     (save-match-data
-      (jcom--http "http://tv.myjcom.jp/wishList.action?limit=100")
+      (jcom--http "https://tv.myjcom.jp/wishList.action?limit=100")
       (let ((params (jcom--device-params))
             (progs (jcom--wish-list))
             (search (jcom-search-list))
@@ -202,8 +202,8 @@
          (mapcar (lambda (prog)
                    (sleep-for 0 300)
                    (with-temp-buffer
-                     (jcom-ajax-post "http://tv.myjcom.jp/remoteRecSubmit.action"
-                                     "http://tv.myjcom.jp/wishList.action?limit=100"
+                     (jcom-ajax-post "https://tv.myjcom.jp/remoteRecSubmit.action"
+                                     "https://tv.myjcom.jp/wishList.action?limit=100"
                                      (jcom--build-reserve-form
                                       (alist-get 'common data)
                                       prog))
@@ -220,7 +220,7 @@
   (sleep-for 0 300)
   (with-temp-buffer
     (save-match-data
-      (jcom--http (format "http://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
+      (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
       (let ((dom
              (thread-first (libxml-parse-html-region (point-min) (point-max))
                (dom-by-id "resultArea")
@@ -247,7 +247,7 @@
 (defun jcom-search-list ()
   (with-temp-buffer
     (save-match-data
-      (jcom--http "http://tv.myjcom.jp/jcom-pc/mySearchList.action")
+      (jcom--http "https://tv.myjcom.jp/jcom-pc/mySearchList.action")
       (mapcan (lambda (dom)
                 (jcom-search-id (dom-attr (dom-by-tag dom 'input) 'value)))
               (dom-by-class (libxml-parse-html-region (point-min) (point-max))
