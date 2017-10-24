@@ -41,10 +41,13 @@
     (let* ((info (org-babel-get-src-block-info))
            (lang (nth 0 info))
            (params (nth 2 info))
-           (name (nth 4 info)))
+           (name (nth 4 info))
+           (quiet (cl-member-if (lambda (param)
+                                  (string= param "none"))
+                                (alist-get :result-params params))))
       (when (cl-equalp (alist-get :async params) "yes")
         (let ((file buffer-file-name)  ;TODO handle case when it's nil
-              (buf (org-babel--async-buffer info))
+              (buf (unless quiet (org-babel--async-buffer info)))
               (frame (window-frame))
               (ov (org-babel--make-source-overlay (org-element-context))))
           (overlay-put ov 'face 'secondary-selection)
@@ -78,20 +81,22 @@
                       (cond (error
                              (org-babel-eval-error-notify nil error))
                             (result
-                             (with-current-buffer buf
-                               (erase-buffer)
-                               (insert (if (stringp result)
-                                           result
-                                         (pp-to-string result)))))
+                             (unless quiet
+                               (with-current-buffer buf
+                                 (erase-buffer)
+                                 (insert (if (stringp result)
+                                             result
+                                           (pp-to-string result))))))
                             ;; (t (kill-buffer buf))
                             ))
                  (delete-overlay ov))))
             ;; Report progress
-            (set-process-filter async--procvar
-                                (lambda (proc output)
-                                  (org-babel--async-show-progress buf output)
-                                  (with-current-buffer (process-buffer proc)
-                                    (insert output))))))
+            (unless quiet
+              (set-process-filter async--procvar
+                                  (lambda (proc output)
+                                    (org-babel--async-show-progress buf output)
+                                    (with-current-buffer (process-buffer proc)
+                                      (insert output)))))))
         t))))
 
 ;;;###autoload(add-hook 'org-ctrl-c-ctrl-c-hook #'org-babel-execute-async)
@@ -128,8 +133,9 @@
                     :buffer buf
                     :stderr buf
                     :command (list lang "--noediting" script)
-                    :filter (lambda (_proc output)
-                              (org-babel--async-show-progress buf output))
+                    :filter (when buf
+                              (lambda (_proc output)
+                                (org-babel--async-show-progress buf output)))
                     :sentinel (lambda (proc _signal)
                                 ;; Make error messages visible.
                                 (unless (zerop (process-exit-status proc))
