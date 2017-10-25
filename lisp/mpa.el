@@ -4,8 +4,9 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'subr-x))
 (require 'seq)
-(require 'subr-x)
 (require 'multi-term)
 
 (defvar mpa-shuffle t)
