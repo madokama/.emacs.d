@@ -15,8 +15,8 @@
       (string-to-number (match-string 1)))))
 
 (defun url-curl-cookie ()
-  (when url-cookie-file
-    (concat url-cookie-file ".curl")))
+  (url-do-setup)
+  (concat url-cookie-file ".curl"))
 
 (defun url-curl--args (url referer)
   (let ((cache (url-cache-create-filename url)))

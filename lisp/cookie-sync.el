@@ -5,6 +5,7 @@
 ;;; Code:
 
 (require 'seq)
+(require 'url-curl)
 
 (defvar csync-sqlite "sqlite3")
 
@@ -52,10 +53,9 @@
         (let ((tmp (make-temp-file "csync"))
               (coding-system-for-write
                (if (eq system-type 'windows-nt) 'dos 'unix)))
-          (url-do-setup)
           (with-current-buffer buf
             (write-region nil nil tmp))
-          (rename-file tmp (concat url-cookie-file ".curl") t)
+          (rename-file tmp (url-curl-cookie) t)
           (kill-buffer buf)
           (message "Cookies synced."))
       (pop-to-buffer buf)
