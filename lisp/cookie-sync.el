@@ -86,13 +86,13 @@
 
 ;;; Firefox interface
 
-(defvar csync-profile-firefox nil)
+(require 'firefox)
 
 (defun csync-params-firefox ()
-  (unless (and csync-profile-firefox
-               (file-directory-p csync-profile-firefox))
-    (user-error "Set `csync-profile-firefox' to your profile directory"))
-  (list (expand-file-name "cookies.sqlite" csync-profile-firefox)
+  (unless (and firefox-profile-directory
+               (file-directory-p firefox-profile-directory))
+    (user-error "Set `firefox-profile-directory' to your profile directory"))
+  (list (expand-file-name "cookies.sqlite" firefox-profile-directory)
         "SELECT host, path, isSecure, expiry, name, value FROM moz_cookies;"))
 
 ;;;###autoload

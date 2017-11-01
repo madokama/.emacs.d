@@ -854,7 +854,7 @@ narrowed."
   :unless noninteractive
   :after ivy
   :config
-  (recentb-enable-plugins '(info shell elfeed eww man mpv firefox elshogi abema))
+  (recentb-enable-plugins '(info shell elfeed eww man mpv elshogi firefox abema))
   (use-package recentb-shell
     :config
     (setq recentb-shell-action-function #'recentb-shell-action-msys2
@@ -1976,12 +1976,21 @@ until we have some outputs"
   (unless (eq (server-running-p) t)
     (server-start)))
 #+END_SRC
+
+*** firefox
+#+BEGIN_SRC emacs-lisp
+(use-package firefox
+  :unless noninteractive
+  :defer t
+  :config
+  (setq firefox-profile-directory "~/AppData/Roaming/Mozilla/Firefox/Profiles/shexl6o1.default"))
+#+END_SRC
+
 *** cookie-sync
 #+BEGIN_SRC emacs-lisp
 (use-package cookie-sync
   :after url-curl
   :config
-  (setq csync-profile-firefox "~/AppData/Roaming/Mozilla/Firefox/Profiles/shexl6o1.default")
   (cookie-sync-firefox))
 #+END_SRC
 
