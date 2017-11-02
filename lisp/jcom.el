@@ -202,7 +202,7 @@
 (defun jcom-make-reservation (data)
   (let ((results
          (mapcar (lambda (prog)
-                   (sleep-for 0 300)
+                   (sleep-for (random 10) 600)
                    (with-temp-buffer
                      (jcom-ajax-post "https://tv.myjcom.jp/remoteRecSubmit.action"
                                      "https://tv.myjcom.jp/wishList.action?limit=100"
@@ -219,7 +219,7 @@
         results)))
 
 (defun jcom-search-id (id)
-  (sleep-for 0 300)
+  (sleep-for (random 10) 600)
   (with-temp-buffer
     (save-match-data
       (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
