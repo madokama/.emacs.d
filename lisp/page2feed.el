@@ -307,49 +307,31 @@
 
 (add-hook 'page2feed-scrapers #'page2feed-scrape-linelive)
 
-;;
+;; Instagram
 
+(require 'instagram)
 
-(defun page2feed-instagram-image (data)
-  (let-alist data
-    (let ((img
-           (format "<img src=%S />"
-                   (thread-last .images
-                     (alist-get 'thumbnail)
-                     (alist-get 'url)
-                     (replace-regexp-in-string "s[0-9]+x[0-9]+/" "")))))
-      (if (string= .type "video")
-          (format "<a href=%S> %s </a>"
-                  (alist-get 'url
-                             (cdr
-                              (cl-reduce (lambda (a b)
-                                           (if (> (alist-get 'width (cdr a))
-                                                  (alist-get 'width (cdr b)))
-                                               a
-                                             b))
-                                         .videos)))
-                  img)
-        img))))
+(defun page2feed-instagram-image (item)
+  (let ((img (instagram-item-image item)))
+    (format "<a href=%S><img src=%S /></a>"
+            (or (instagram-item-video item) img)
+            img)))
 
-(defun page2feed-instagram-entry (data)
-  (let-alist data
-    (let ((caption (split-string (alist-get 'text .caption) "\n")))
-      (list 'title (car caption)
-            'link .link
-            'updated (string-to-number .created_time)
-            'content
-            (concat (if (string= .type "carousel")
-                        (mapconcat #'page2feed-instagram-image .carousel_media "")
-                        (page2feed-instagram-image data))
-                    (mapconcat (lambda (line)
-                                 (format "<div>%s</div>" line))
-                               (cdr caption) "\n"))))))
-
-(defun page2feed-instagram-json (url)
-  (with-temp-buffer
-    (call-process "curl" nil t nil "-s" (format "%smedia/" url))
-    (goto-char (point-min))
-    (alist-get 'items (json-read))))
+(defun page2feed-instagram-entry (item)
+  (let ((caption
+         (split-string (instagram-item-caption item) "\n")))
+    (list 'title (car caption)
+          'link (instagram-item-link item)
+          'updated (instagram-item-time item)
+          'content
+          (concat (if (instagram-item-carousel-p item)
+                      (mapconcat #'page2feed-instagram-image
+                                 (instagram-item-carousel item)
+                                 "\n")
+                    (page2feed-instagram-image item))
+                  (mapconcat (lambda (line)
+                               (format "<div>%s</div>" line))
+                             (cdr caption) "\n")))))
 
 (defun page2feed-instagram-scrape ()
   (when (re-search-forward "<meta .*?content=\"Instagram\"" nil t)
@@ -358,73 +340,26 @@
                   (match-string 1))))
       ;; Order matters!
       (let ((user (re1 "<meta .*?username=\\(.+?\\)\""))
-            (url (re1 "<link rel=\"canonical\" href=\"\\(.+?\\)\"")))
+            (url (re1 "<link rel=\"canonical\" href=\"\\(.+?\\)\""))
+            (user-id (instagram-user-id))
+            (auth (instagram-credentials)))
         (list 'link url
               'author user
               'entries
-              (append (ignore-errors
-                        (when-let* ((story (page2feed-ig-story user)))
-                          (mapcar #'page2feed-ig-story-entry
-                                  (alist-get 'items story))))
+              (append (mapcar #'page2feed-ig-story-entry
+                              (instagram-user-story user-id auth))
                       (mapcar #'page2feed-instagram-entry
-                              (page2feed-instagram-json url))))))))
+                              (instagram-user-feed user-id auth))))))))
 
-(declare-function url-curl-cookie "url-curl")
-
-(defun page2feed-extract-cookies (host keys)
-  (string-join
-   (mapcar (pcase-lambda (`(,k . ,v))
-             (format "%s=%s;" k v))
-           (with-current-buffer
-               (find-file-noselect (expand-file-name (url-curl-cookie)))
-             (goto-char (point-min))
-             (prog1
-                 (cl-loop while (re-search-forward
-                                 (format "^%s\t.+?\t\\([^\t]+\\)\t\\([^\t]+\\)$"
-                                         (regexp-quote host))
-                                 nil t)
-                          when (member (match-string 1) keys)
-                            collect (cons (match-string 1) (match-string 2)))
-               (kill-buffer (current-buffer)))))
-   " "))
-
-(defun page2feed-ig-story (user)
-  (with-temp-buffer
-    (apply #'call-process "curl" nil t nil
-           "https://i.instagram.com/api/v1/feed/reels_tray/"
-           "-s" "--compressed"
-           (mapcan (lambda (header)
-                     (list "-H" header))
-                   (list "dnt: 1"
-                         "accept-encoding: gzip, deflate, br"
-                         "x-ig-capabilities: 36oD"
-                         "accept-language: en-US,en;q=0.8"
-                         "user-agent: Instagram 10.26.0 (iPhone7,2; iOS 10_1_1; en_US; en-US; scale=2.00; gamut=normal; 750x1334) AppleWebKit/420+"
-                         "accept: */*"
-                         "authority: i.instagram.com"
-                         (concat "cookie: "
-                                 (page2feed-extract-cookies
-                                  "www.instagram.com"
-                                  '("csrftoken" "ds_user_id" "sessionid"))))))
-    ;; (message "%s" (buffer-string))
-    (goto-char (point-min))
-    (seq-find (lambda (alst)
-                (thread-last alst
-                  (alist-get 'user)
-                  (alist-get 'username)
-                  (string= user)))
-              (alist-get 'tray (json-read)))))
-
-(defun page2feed-ig-story-entry (json)
-  (let-alist json
-    (let* ((img (alist-get 'url (aref (alist-get 'candidates .image_versions2) 0)))
-           (url (if (= .media_type 2)
-                    (alist-get 'url (aref .video_versions 0))
-                  img)))
-      (list 'title (format-time-string "%F %T" .device_timestamp)
-            'link url
-            'updated .device_timestamp
-            'content (format "<a href=%S><img src=%S /></a>" url img)))))
+(defun page2feed-ig-story-entry (item)
+  (let* ((img (instagram-item-image item))
+         (url (or (instagram-item-video item) img))
+         (time (instagram-item-time item))
+         (caption (instagram-item-caption item)))
+    (list 'title (or caption (format-time-string "%F %T" time))
+          'link url
+          'updated time
+          'content (format "<a href=%S><img src=%S /></a>" url img))))
 
 (add-hook 'page2feed-scrapers #'page2feed-instagram-scrape)
 

@@ -18,6 +18,24 @@
   (url-do-setup)
   (concat url-cookie-file ".curl"))
 
+;; Cookie utility
+(defun url-curl-extract-cookies (host keys)
+  (string-join
+   (mapcar (pcase-lambda (`(,k . ,v))
+             (format "%s=%s;" k v))
+           (with-current-buffer
+               (find-file-noselect (expand-file-name (url-curl-cookie)))
+             (goto-char (point-min))
+             (prog1
+                 (cl-loop while (re-search-forward
+                                 (format "^%s\t.+?\t\\([^\t]+\\)\t\\([^\t]+\\)$"
+                                         (regexp-quote host))
+                                 nil t)
+                          when (member (match-string 1) keys)
+                            collect (cons (match-string 1) (match-string 2)))
+               (kill-buffer (current-buffer)))))
+   " "))
+
 (defun url-curl--args (url referer)
   (let ((cache (url-cache-create-filename url)))
     `("-X" ,url-request-method
