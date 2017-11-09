@@ -11,6 +11,7 @@
 (require 'seq)
 (require 'shr)
 (require 'url-expand)
+(require 'json)
 
 (defvar page2feed-scrapers nil)
 
@@ -281,28 +282,33 @@
                            .shareURL
                            (alist-get 'swipe .thumbnailURLs)))))
 
-(declare-function json-read-from-string "json")
-
 (defun page2feed-scrape-linelive ()
-  (when (and (re-search-forward "<meta .+?og:site_name.+?content=\"LINE LIVE\"" nil t)
-             (search-forward "data-channel=" nil t))
-    (require 'json)
-    (let-alist (json-read-from-string
-                (replace-regexp-in-string "&quot;" "\"" (read (current-buffer))))
-      (list 'link .shareURL
-            'author (and (string-match "\?id=\\(.+\\)$" .lineScheme)
-                         (match-string 1 .lineScheme))
-            'entries
-            (thread-last .archivedBroadcasts
-              (assq 'rows)
-              cdr
-              (mapcar #'page2feed-scrape-linelive-entry))))))
+  (when (re-search-forward "<meta .+?og:site_name.+?content=\"LINE LIVE\"" nil t)
+    (let ((start (and (search-forward "data-channel=\"" nil t)
+                      (match-end 0)))
+          (end (and (search-forward "\"")
+                    (match-beginning 0))))
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (while (search-forward "&quot;" nil t)
+        (replace-match "\""))
+      (goto-char (point-min)))
+    (prog1
+        (let-alist (json-read)
+          (list 'link .shareURL
+                'author (and (string-match "\?id=\\(.+\\)$" .lineScheme)
+                             (match-string 1 .lineScheme))
+                'entries
+                (thread-last .archivedBroadcasts
+                  (assq 'rows)
+                  cdr
+                  (mapcar #'page2feed-scrape-linelive-entry))))
+      (widen))))
 
 (add-hook 'page2feed-scrapers #'page2feed-scrape-linelive)
 
 ;;
 
-(require 'json)
 
 (defun page2feed-instagram-image (data)
   (let-alist data
