@@ -85,9 +85,8 @@
           .endAt
           .title
           (format "https://abema.tv/channels/%s/slots/%s" .channelId .id)
-          (thread-last (aref .programs 0)
-            (alist-get 'credit)
-            (alist-get 'casts)))))
+          (let-alist (aref .programs 0)
+            .credit.casts))))
 
 ;;; Entry points
 

@@ -155,44 +155,42 @@
                       :from-end t))))))))
 
 (defun jcom--end-time (params)
-  (let ((date (alist-get 'date params))
-        (start (alist-get 'startTime params))
-        (dur (alist-get 'airTime params)))
+  (let-alist params
     (save-match-data
       (format-time-string
        "%H%M%S"
        (time-add
-        (and (string-match "^\\(..\\)\\(..\\)" dur)
+        (and (string-match "^\\(..\\)\\(..\\)" .airTime)
              (seconds-to-time
-              (+ (* 3600 (string-to-number (match-string 1 dur)))
-                 (* 60 (string-to-number (match-string 2 dur))))))
+              (+ (* 3600 (string-to-number (match-string 1 .airTime)))
+                 (* 60 (string-to-number (match-string 2 .airTime))))))
         (apply #'encode-time
                (mapcar #'string-to-number
-                       (nconc (and (string-match "^\\(..\\)\\(..\\)" start)
+                       (nconc (and (string-match "^\\(..\\)\\(..\\)" .startTime)
                                    (list "0"
-                                         (match-string 2 start)
-                                         (match-string 1 start)))
+                                         (match-string 2 .startTime)
+                                         (match-string 1 .startTime)))
                               (and (string-match "^\\(....\\)\\(..\\)\\(..\\)$"
-                                                 date)
-                                   (list (match-string 3 date)
-                                         (match-string 2 date)
-                                         (match-string 1 date)))))))))))
+                                                 .date)
+                                   (list (match-string 3 .date)
+                                         (match-string 2 .date)
+                                         (match-string 1 .date)))))))))))
 
 (defun jcom--build-reserve-form (params prog)
   (url-build-query-string
-   `((broadCastType ,(alist-get 'channelType prog))
-     (startDate ,(alist-get 'date prog))
-     (startTime ,(alist-get 'startTime prog))
-     (endTime ,(jcom--end-time prog))
-     (duration ,(alist-get 'airTime prog))
-     (networkId ,(alist-get 'networkId prog))
-     (serviceId ,(alist-get 'serviceId prog))
-     (eventId ,(alist-get 'eventId prog))
-     (title ,(alist-get 'title prog))
-     (genreId ,(alist-get 'genreId prog))
-     (chName ,(concat (alist-get 'channelName prog)
-                      (alist-get 'channelNo prog)))
-     ,@params)
+   (let-alist prog
+     `((broadCastType , .channelType)
+       (startDate , .date)
+       (startTime , .startTime)
+       (endTime ,(jcom--end-time prog))
+       (duration , .airTime)
+       (networkId , .networkId)
+       (serviceId , .serviceId)
+       (eventId , .eventId)
+       (title , .title)
+       (genreId , .genreId)
+       (chName ,(concat .channelName .channelNo))
+       ,@params))
    nil t))
 
 (defun jcom--reserve-success-p (result)

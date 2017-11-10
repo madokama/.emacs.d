@@ -18,12 +18,10 @@
 (defun instagram-user-id ()
   (goto-char (point-min))
   (when (search-forward "window._sharedData = " nil t)
-    (thread-last (aref (thread-last (json-read)
-                         (alist-get 'entry_data)
-                         (alist-get 'ProfilePage))
-                       0)
-      (alist-get 'user)
-      (alist-get 'id))))
+    (let-alist (aref (let-alist (json-read)
+                       .entry_data.ProfilePage)
+                     0)
+      .user.id)))
 
 (defun instagram-api/user-feed (endpoint user-id)
   (format "https://i.instagram.com/api/v1/feed/user/%s/%s"
@@ -53,10 +51,9 @@
                                  credentials)))
 
 (defun instagram-user-story (user-id credentials)
-  (thread-last (instagram-json-api (instagram-api/user-feed "story/" user-id)
-                                   credentials)
-    (alist-get 'reel)
-    (alist-get 'items)))
+  (let-alist (instagram-json-api (instagram-api/user-feed "story/" user-id)
+                                 credentials)
+    .reel.items))
 
 ;; Media item APIs
 
@@ -74,9 +71,8 @@
 
 (defun instagram-item-image (item)
   (instagram--first-url
-   (thread-last item
-     (alist-get 'image_versions2)
-     (alist-get 'candidates))))
+   (let-alist item
+     .image_versions2.candidates)))
 
 (defun instagram-item-carousel (item)
   (alist-get 'carousel_media item))
@@ -86,10 +82,9 @@
     (instagram--first-url (alist-get 'video_versions item))))
 
 (defun instagram-item-caption (item)
-  (when-let* ((caption (thread-last item
-                         (alist-get 'caption)
-                         (alist-get 'text))))
-    (xml-escape-string caption)))
+  (let-alist item
+    (when .caption.text
+      (xml-escape-string .caption.text))))
 
 (defun instagram-item-time (item)
   (alist-get 'taken_at item))
