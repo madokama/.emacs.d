@@ -283,27 +283,17 @@
                            (alist-get 'swipe .thumbnailURLs)))))
 
 (defun page2feed-scrape-linelive ()
-  (when (re-search-forward "<meta .+?og:site_name.+?content=\"LINE LIVE\"" nil t)
-    (let ((start (and (search-forward "data-channel=\"" nil t)
-                      (match-end 0)))
-          (end (and (search-forward "\"")
-                    (match-beginning 0))))
-      (narrow-to-region start end)
-      (goto-char (point-min))
-      (while (search-forward "&quot;" nil t)
-        (replace-match "\""))
-      (goto-char (point-min)))
-    (prog1
-        (let-alist (json-read)
-          (list 'link .shareURL
-                'author (and (string-match "\?id=\\(.+\\)$" .lineScheme)
-                             (match-string 1 .lineScheme))
-                'entries
-                (thread-last .archivedBroadcasts
-                  (assq 'rows)
-                  cdr
-                  (mapcar #'page2feed-scrape-linelive-entry))))
-      (widen))))
+  (when (re-search-forward "<meta .+?og:site_name.+?content=\"LINE LIVE" nil t)
+    (let-alist (thread-first (libxml-parse-html-region (point-min) (point-max))
+                 (dom-by-id "data")
+                 (dom-attr 'data-channel)
+                 json-read-from-string)
+      (list 'link .shareURL
+            'author (and (string-match "\?id=\\(.+\\)$" .lineScheme)
+                         (match-string 1 .lineScheme))
+            'entries
+            (mapcar #'page2feed-scrape-linelive-entry
+                    .archivedBroadcasts.rows)))))
 
 (add-hook 'page2feed-scrapers #'page2feed-scrape-linelive)
 
