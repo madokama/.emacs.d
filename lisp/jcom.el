@@ -219,39 +219,37 @@
 (defun jcom-search-id (id)
   (sleep-for (random 10) 600)
   (with-temp-buffer
-    (save-match-data
-      (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
-      (let ((dom
-             (thread-first (libxml-parse-html-region (point-min) (point-max))
-               (dom-by-id "resultArea")
-               (dom-by-tag 'tbody)
-               (dom-by-tag 'table))))
-        (mapcar (lambda (dom)
-                  (let ((json
-                         (json-read-from-string
-                          (dom-attr (dom-by-class dom "inner")
-                                    'data-program-json)))
-                        (desc (thread-first (dom-by-class dom "desbox")
-                                (dom-by-tag 'dd)
-                                dom-strings
-                                car)))
-                    (nconc json (list (cons 'commentary desc)))))
-                (cl-delete-if-not
-                 (lambda (dom)
-                   (seq-find (lambda (dom)
-                               (when-let* ((onclick (dom-attr dom 'onclick)))
-                                 (string-match-p "^doRemoteRec" onclick)))
-                             (dom-by-tag (dom-by-class dom "resBox02") 'img)))
-                 dom))))))
+    (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
+    (let ((dom
+           (thread-first (libxml-parse-html-region (point-min) (point-max))
+             (dom-by-id "resultArea")
+             (dom-by-tag 'tbody)
+             (dom-by-tag 'table))))
+      (mapcar (lambda (dom)
+                (let ((json
+                       (json-read-from-string
+                        (dom-attr (dom-by-class dom "inner")
+                                  'data-program-json)))
+                      (desc (thread-first (dom-by-class dom "desbox")
+                              (dom-by-tag 'dd)
+                              dom-strings
+                              car)))
+                  (nconc json (list (cons 'commentary desc)))))
+              (cl-delete-if-not
+               (lambda (dom)
+                 (seq-find (lambda (dom)
+                             (when-let* ((onclick (dom-attr dom 'onclick)))
+                               (string-match-p "^doRemoteRec" onclick)))
+                           (dom-by-tag (dom-by-class dom "resBox02") 'img)))
+               dom)))))
 
 (defun jcom-search-list ()
   (with-temp-buffer
-    (save-match-data
-      (jcom--http "https://tv.myjcom.jp/jcom-pc/mySearchList.action")
-      (mapcan (lambda (dom)
-                (jcom-search-id (dom-attr (dom-by-tag dom 'input) 'value)))
-              (dom-by-class (libxml-parse-html-region (point-min) (point-max))
-                            "mySearchListBox")))))
+    (jcom--http "https://tv.myjcom.jp/jcom-pc/mySearchList.action")
+    (mapcan (lambda (dom)
+              (jcom-search-id (dom-attr (dom-by-tag dom 'input) 'value)))
+            (dom-by-class (libxml-parse-html-region (point-min) (point-max))
+                          "mySearchListBox"))))
 
 (provide 'jcom)
 ;;; jcom.el ends here
