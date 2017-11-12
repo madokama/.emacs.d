@@ -5,11 +5,10 @@
 ;;; Code:
 
 (require 'seq)
+(require 'async)
 (require 'url-curl)
 
 (defvar csync-sqlite "sqlite3")
-
-(defvar csync--midline nil)
 
 (defun csync--prepare-buffer ()
   (let ((buf (generate-new-buffer " *csync*")))
@@ -17,57 +16,42 @@
       (insert "# Netscape HTTP Cookie File\n# http://www.netscape.com/newsref/std/cookie_spec.html\n# This is a generated file!  Do not edit.\n\n"))
     buf))
 
-(defun csync--filter (proc output)
-  (when csync--midline
-    (setq output (concat csync--midline output)
-          csync--midline nil))
-  (let ((start 0)
-        (len (length output)))
-    (cl-block nil
-      (with-current-buffer (process-buffer proc)
-        (while (< start len)
-          (let ((cookie (and (string-match (rx (+ nonl)) output start)
-                             (match-string 0 output))))
-            (if (string-match "\n" output start)
-                (progn
-                  (setq start (match-end 0))
-                  (seq-let (host path secure expire name value)
-                      (split-string cookie " ")
-                    (insert
-                     (format "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
-                             host
-                             (if (string-prefix-p "." host) "TRUE" "FALSE")
-                             path
-                             (if (string= secure "1") "TRUE" "FALSE")
-                             expire name value))))
-              ;; The batch ends prematurely.
-              (setq csync--midline cookie)
-              (cl-return))))))))
-
-(defvar url-cookie-file)
-(declare-function url-do-setup "url")
-
-(defun csync--sentinel (proc signal)
-  (let ((buf (process-buffer proc)))
-    (if (zerop (process-exit-status proc))
-        (let ((tmp (make-temp-file "csync"))
-              (coding-system-for-write
-               (if (eq system-type 'windows-nt) 'dos 'unix)))
-          (with-current-buffer buf
-            (write-region nil nil tmp))
-          (rename-file tmp (url-curl-cookie) t)
-          (kill-buffer buf)
-          (message "Cookies synced."))
-      (pop-to-buffer buf)
-      (error "Sync failed: %s" signal))))
+(defun cookie-sync--internal (params)
+  (let ((tmpbuf (csync--prepare-buffer)))
+    (with-temp-buffer
+      (apply #'call-process csync-sqlite nil t nil
+             "-separator" " " params)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (seq-let (host path secure expire name value)
+            (split-string (buffer-substring-no-properties (line-beginning-position)
+                                                          (line-end-position))
+                          " ")
+          (with-current-buffer tmpbuf
+            (insert
+             (format "%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+                     host
+                     (if (string-prefix-p "." host) "TRUE" "FALSE")
+                     path
+                     (if (string= secure "1") "TRUE" "FALSE")
+                     expire name value))))
+        (goto-char (1+ (line-end-position)))))
+    (let ((tmpfile (make-temp-file "csync"))
+          (coding-system-for-write
+           (if (eq system-type 'windows-nt) 'dos 'unix)))
+      (with-current-buffer tmpbuf
+        (write-region nil nil tmpfile))
+      (kill-buffer tmpbuf)
+      (rename-file tmpfile (url-curl-cookie) t))))
 
 (defun cookie-sync (params)
-  ;; Not thread safe.
-  (make-process :name "csync-sqlite"
-                :buffer (csync--prepare-buffer)
-                :command (cl-list* csync-sqlite "-separator" " " params)
-                :filter #'csync--filter
-                :sentinel #'csync--sentinel))
+  (async-start
+   `(lambda ()
+      ,(async-inject-variables "\\`load-path\\'")
+      (require 'cookie-sync)
+      (cookie-sync--internal ',params))
+   (lambda (_)
+     (message "Cookies synced."))))
 
 ;;; Chrome
 
