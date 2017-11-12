@@ -8,18 +8,17 @@
 (require 'async)
 (require 'url-curl)
 
-(defvar csync-sqlite "sqlite3")
+(defvar cookie-sync-sqlite "sqlite3")
 
-(defun csync--prepare-buffer ()
-  (let ((buf (generate-new-buffer " *csync*")))
-    (with-current-buffer buf
-      (insert "# Netscape HTTP Cookie File\n# http://www.netscape.com/newsref/std/cookie_spec.html\n# This is a generated file!  Do not edit.\n\n"))
-    buf))
+(defun cookie-sync--prepare-buffer ()
+  (with-current-buffer (generate-new-buffer " *csync*")
+    (insert "# Netscape HTTP Cookie File\n# http://www.netscape.com/newsref/std/cookie_spec.html\n# This is a generated file!  Do not edit.\n\n")
+    (current-buffer)))
 
 (defun cookie-sync--internal (params)
-  (let ((tmpbuf (csync--prepare-buffer)))
+  (let ((tmpbuf (cookie-sync--prepare-buffer)))
     (with-temp-buffer
-      (apply #'call-process csync-sqlite nil t nil
+      (apply #'call-process cookie-sync-sqlite nil t nil
              "-separator" " " params)
       (goto-char (point-min))
       (while (not (eobp))
@@ -55,24 +54,24 @@
 
 ;;; Chrome
 
-(defvar csync-profile-chrome
+(defvar cookie-sync-chrome-directory
   ;; "~/AppData/Local/Vivaldi/User Data/Default/"
   )
 
-(defun csync-params-chrome ()
-  (list (expand-file-name "Cookies" csync-profile-chrome)
+(defun cookie-sync-chrome-params ()
+  (list (expand-file-name "Cookies" cookie-sync-chrome-directory)
         "SELECT host_key, path, secure, expires_utc, name, value FROM cookies;"))
 
 (defun cookie-sync-chrome ()
   "Sync cookies with Chrome."
   (interactive)
-  (cookie-sync (csync-params-chrome)))
+  (cookie-sync (cookie-sync-chrome-params)))
 
 ;;; Firefox interface
 
 (require 'firefox)
 
-(defun csync-params-firefox ()
+(defun cookie-sync-firefox-params ()
   (unless (and firefox-profile-directory
                (file-directory-p firefox-profile-directory))
     (user-error "Set `firefox-profile-directory' to your profile directory"))
@@ -83,7 +82,7 @@
 (defun cookie-sync-firefox ()
   "Sync cookies with Firefox."
   (interactive)
-  (cookie-sync (csync-params-firefox)))
+  (cookie-sync (cookie-sync-firefox-params)))
 
 (provide 'cookie-sync)
 ;;; cookie-sync.el ends here
