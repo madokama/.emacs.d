@@ -7,6 +7,7 @@
 (eval-when-compile
   (require 'subr-x))
 (require 'seq)
+(require 'url-vars)
 (require 'json)
 
 (defvar browse-url-generic-program)
@@ -26,30 +27,12 @@
 (defun abema-tomorrow ()
   (abema-date (time-add (current-time) (* 24 60 60))))
 
-(defun abema-schedule-json (from to chan)
+(defun abema-json-api (url)
   (with-temp-buffer
     (call-process "curl" nil t nil
                   "-s" "--compressed"
                   "-H" "Host: api.abema.io"
-                  "-H" "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0"
-                  "-H" "Accept: */*"
-                  "-H" "Accept-Language: en-US,en;q=0.7,ja;q=0.3"
-                  "-H" "Content-Type: application/json"
-                  "-H" (format "Authorization: bearer %s" abema-auth)
-                  "-H" "Origin: https://abema.tv"
-                  "-H" "DNT: 1"
-                  "-H" "Connection: keep-alive"
-                  (format "https://api.abema.io/v1/media?dateFrom=%s&dateTo=%s&channelIds=%s"
-                          from to chan))
-    (goto-char (point-min))
-    (json-read)))
-
-(defun abema-token ()
-  (with-temp-buffer
-    (call-process "curl" nil t nil
-                  "-s" "--compressed"
-                  "-H" "Host: api.abema.io"
-                  "-H" "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0"
+                  "-H" (format "User-Agent: %s" url-user-agent)
                   "-H" "Accept: */*"
                   "-H" "Accept-Language: en-US,en;q=0.7,ja;q=0.3"
                   "-H" "Content-Type: application/json"
@@ -58,9 +41,18 @@
                   "-H" "DNT: 1"
                   "-H" "Connection: keep-alive"
                   "-H" "Cache-Control: max-age=0"
-                  "https://api.abema.io/v1/media/token?osName=pc&osVersion=1.0.0&osLang=en-US&osTimezone=Asia%2FTokyo&appVersion=v3.2.3")
+                  url)
     (goto-char (point-min))
     (json-read)))
+
+(defun abema-schedule-json (from to chan)
+  (abema-json-api
+   (format "https://api.abema.io/v1/media?dateFrom=%s&dateTo=%s&channelIds=%s"
+           from to chan)))
+
+(defun abema-token ()
+  (abema-json-api
+   "https://api.abema.io/v1/media/token?osName=pc&osVersion=1.0.0&osLang=en-US&osTimezone=Asia%2FTokyo&appVersion=v3.2.3"))
 
 (defun abema-fresh-p (chan)
   (and abema-json
