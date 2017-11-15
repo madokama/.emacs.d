@@ -9,7 +9,18 @@
 (require 'seq)
 (require 'multi-term)
 
-(defvar mpa-shuffle t)
+(defgroup mpa ()
+  "Audio player interface for mpv."
+  :prefix "mpa-"
+  :group 'multimedia)
+
+(defcustom mpa-shuffle t
+  "Special option to turn shuffle mode on or off."
+  :type 'boolean)
+
+(defcustom mpa-options nil
+  "Command-line options to pass to mpv."
+  :type '(repeat string))
 
 (defvar mpa-scrapers-alist nil)
 
@@ -24,13 +35,11 @@
     (process-send-string proc
                          (concat
                           (string-join
-                           (cl-list* "mpv" "--no-video"
-                                     (when mpa-shuffle "--shuffle")
-                                     "--keep-open=no" "--volume=80"
-                                     "--no-resume-playback"
-                                     "--msg-level=all=no,ytdl_hook=info"
-                                     "--ytdl-raw-options=no-mark-watched="
-                                     (mpa-scrape lst))
+                           `("mpv" ,@(when mpa-shuffle '("--shuffle"))
+                                   ,@mpa-options
+                                   "--no-video" "--keep-open=no"
+                                   ;; "--msg-level=all=no,ytdl_hook=info"
+                                   ,@(mpa-scrape lst))
                            " ")
                           "\n"))
     (set-process-filter proc #'mpa--filter)))
