@@ -198,6 +198,7 @@
  '(powerline-default-separator (quote chamfer))
  '(proced-auto-update-flag t)
  '(proced-tree-flag t)
+ '(recentb-abema-channels (quote (shogi)))
  '(recenter-positions (quote (top middle bottom)))
  '(recentf-exclude (quote ("~\\'")))
  '(recentf-max-saved-items 999)

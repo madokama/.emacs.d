@@ -6,7 +6,15 @@
 
 (require 'recentb)
 
-(defvar recentb-abema-channels nil)
+(defgroup recentb-abema nil
+  "Show Abema TV schedule."
+  :prefix "recentb-abema-"
+  :group 'recentb
+  :group 'abema)
+
+(defcustom recentb-abema-channels nil
+  "List of Abema TV channels."
+  :type '(repeat symbol))
 
 (recentb-define-mode abema
   :history recentb-abema-history

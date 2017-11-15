@@ -12,6 +12,11 @@
 
 (defvar browse-url-generic-program)
 (defvar abema-watch-browser browse-url-generic-program)
+(defgroup abema nil
+  "Abema TV schedules."
+  :prefix "abema-"
+  :group 'external
+  :group 'comm)
 
 (defvar abema-json nil)
 (defvar abema-auth nil)

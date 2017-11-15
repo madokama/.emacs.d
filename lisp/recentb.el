@@ -14,7 +14,14 @@
 (require 'savehist)
 (require 'ivy)
 
-(defvar recentb-max-saved-items 100)
+(defgroup recentb nil
+  "Ivy plugin for managing history or schedule of anything."
+  :prefix "recentb-"
+  :group 'convenience)
+
+(defcustom recentb-max-saved-items 100
+  "Max number of recentb items to be saved."
+  :type 'integer)
 
 (defvar recentb-mode-alist nil)
 
