@@ -10,8 +10,24 @@
 (require 'json)
 (require 'url-curl)
 
-(defvar jcom-device-name "stb1")
-(defvar jcom-record-mode "DR")
+(defgroup jcom nil
+  "Abema TV schedules."
+  :prefix "jcom-"
+  :group 'external
+  :group 'comm)
+
+(defcustom jcom-device-name "stb1"
+  "Name of the primary JCOM recording device."
+  :type 'string)
+
+(defcustom jcom-record-mode "DR"
+  "Preferred recording mode."
+  :type '(choice
+          (const "DR")
+          (const "2倍")
+          (const "3倍")
+          (const "5倍")
+          (const "7倍")))
 
 (defvar jcom-cookie nil)
 
