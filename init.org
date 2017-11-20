@@ -118,7 +118,7 @@ to view the log.
 (load (file-name-sans-extension custom-file) nil t)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (load (expand-file-name "private/private" user-emacs-directory) t t)
 #+END_SRC
 

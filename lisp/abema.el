@@ -9,6 +9,7 @@
 (require 'seq)
 (require 'url-vars)
 (require 'json)
+(require 'auth-source)
 
 (defvar browse-url-generic-program)
 (defvar abema-watch-browser browse-url-generic-program)
@@ -19,7 +20,6 @@
   :group 'comm)
 
 (defvar abema-json nil)
-(defvar abema-auth nil)
 
 ;;
 
@@ -32,23 +32,42 @@
 (defun abema-tomorrow ()
   (abema-date (time-add (current-time) (* 24 60 60))))
 
+(defun abema-auth ()
+  (let* ((auth-source-creation-prompts
+          '((secret . "AbemaTV auth key: ")))
+         (auth
+          (car (auth-source-search :host "abema.tv"
+                                   :require '(:secret)
+                                   :create t)))
+         (secret (plist-get auth :secret)))
+    (when (functionp secret)
+      (plist-put auth :secret (funcall secret)))
+    auth))
+
 (defun abema-json-api (url)
   (with-temp-buffer
-    (call-process "curl" nil t nil
-                  "-s" "--compressed"
-                  "-H" "Host: api.abema.io"
-                  "-H" (format "User-Agent: %s" url-user-agent)
-                  "-H" "Accept: */*"
-                  "-H" "Accept-Language: en-US,en;q=0.7,ja;q=0.3"
-                  "-H" "Content-Type: application/json"
-                  "-H" (format "Authorization: bearer %s" abema-auth)
-                  "-H" "Origin: https://abema.tv"
-                  "-H" "DNT: 1"
-                  "-H" "Connection: keep-alive"
-                  "-H" "Cache-Control: max-age=0"
-                  url)
-    (goto-char (point-min))
-    (json-read)))
+    (let ((auth (abema-auth)))
+      (call-process "curl" nil t nil
+                    "-s" "--compressed"
+                    "-H" "Host: api.abema.io"
+                    "-A" url-user-agent
+                    "-H" "Accept: */*"
+                    "-H" "Accept-Language: en-US,en;q=0.7,ja;q=0.3"
+                    "-H" "Content-Type: application/json"
+                    "-H" (format "Authorization: bearer %s"
+                                 (plist-get auth :secret))
+                    "-H" "Origin: https://abema.tv"
+                    "-H" "DNT: 1"
+                    "-H" "Connection: keep-alive"
+                    "-H" "Cache-Control: max-age=0"
+                    url)
+      (goto-char (point-min))
+      (let ((json (json-read)))
+        (when (assq 'message json)
+          (error "Authentication failed: %S" json))
+        (when-let* ((save (plist-get auth :save-function)))
+          (funcall save))
+        json))))
 
 (defun abema-schedule-json (from to chan)
   (abema-json-api
