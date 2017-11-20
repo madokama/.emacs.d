@@ -150,20 +150,22 @@
 
 (defun page2feed-shogi-games/jt (plst)
   (save-match-data
-    (let* ((dom
-            (page2feed-shogi-jt-dom
-             (url-expand-file-name "../professional/live/index.html"
-                                   (plist-get plst :url))))
-           (kif (page2feed-shogi-jt-kif dom)))
-      (list
-       (list 'title (page2feed-shogi-jt-title dom)
-             'link kif
-             'updated
-             (apply #'encode-time
-                    0
-                    (append (page2feed-shogi-jt-time dom)
-                            (page2feed-shogi-kif-date "jt" kif)))
-             'content (page2feed-shogi-watch-link kif))))))
+    (let ((dom
+           (page2feed-shogi-jt-dom
+            (url-expand-file-name "../professional/live/index.html"
+                                  (plist-get plst :url)))))
+      ;; Time may be nil after the match.
+      (when-let* ((time (page2feed-shogi-jt-time dom))
+                  (kif (page2feed-shogi-jt-kif dom)))
+        (list
+         (list 'title (page2feed-shogi-jt-title dom)
+               'link kif
+               'updated
+               (apply #'encode-time
+                      0
+                      (append time
+                              (page2feed-shogi-kif-date "jt" kif)))
+               'content (page2feed-shogi-watch-link kif)))))))
 
 ;; 
 (defun page2feed-shogi-games (plst)
