@@ -9,6 +9,7 @@
 (require 'dom)
 (require 'json)
 (require 'url-curl)
+(require 'async)
 
 (defgroup jcom nil
   "Abema TV schedules."
@@ -149,12 +150,13 @@
 (defun jcom-wish-list ()
   (with-temp-buffer
     (save-match-data
-      (jcom--http "https://tv.myjcom.jp/wishList.action?limit=100")
+      (jcom--http "https://tv.myjcom.jp/wishList.action")
       (let ((params (jcom--device-params))
             (progs (jcom--wish-list))
             (search (jcom-search-list))
             (reserved (jcom-reserve-list)))
         (list (cons 'common params)
+              (cons 'cookie jcom-cookie)
               (cons 'programs
                     ;; Remove already reserved programs
                     (cl-delete-if
@@ -213,24 +215,25 @@
 (defun jcom--reserve-success-p (result)
   (string= "リモート録画予約が完了しました。" (caddr (cadr result))))
 
+(defun jcom--reserve1 (params)
+  (lambda (prog)
+    (let-alist prog
+      (with-temp-buffer
+        (jcom-ajax-post "https://tv.myjcom.jp/remoteRecSubmit.action"
+                        "https://tv.myjcom.jp/wishList.action"
+                        (jcom--build-reserve-form params prog))
+        (let ((dom
+               (libxml-parse-html-region (point-min) (point-max))))
+          (list .title
+                (car (dom-by-id dom "recResultTitle"))
+                (car (dom-by-class dom "cont"))))))))
+
 ;;;###autoload
 (defun jcom-make-reservation (data)
-  (let ((results
-         (mapcar (lambda (prog)
-                   (with-temp-buffer
-                     (jcom-ajax-post "https://tv.myjcom.jp/remoteRecSubmit.action"
-                                     "https://tv.myjcom.jp/wishList.action?limit=100"
-                                     (jcom--build-reserve-form
-                                      (alist-get 'common data)
-                                      prog))
-                     (let ((dom
-                            (libxml-parse-html-region (point-min) (point-max))))
-                       (list (alist-get 'title prog)
-                             (car (dom-by-id dom "recResultTitle"))
-                             (car (dom-by-class dom "cont"))))))
-                 (alist-get 'programs data))))
-    (or (seq-every-p #'jcom--reserve-success-p results)
-        results)))
+  (let-alist data
+    (when .cookie
+      (setq jcom-cookie .cookie))
+    (mapcar (jcom--reserve1 .common) .programs)))
 
 (defun jcom-search-id (id)
   (with-temp-buffer
@@ -265,6 +268,125 @@
               (jcom-search-id (dom-attr (dom-by-tag dom 'input) 'value)))
             (dom-by-class (libxml-parse-html-region (point-min) (point-max))
                           "mySearchListBox"))))
+
+(defun jcom-program-page (prog)
+  (let-alist prog
+    (format "https://tv.myjcom.jp/jcom-pc/detail.action?channelType=%s&serviceCode=%s_%s&eventId=%s&programDate=%s"
+            .channelType .serviceId .networkId .eventId .date)))
+
+;;; Major mode
+
+(defvar-local jcom-meta nil)
+
+(defvar jcom-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "RET") #'jcom-mode-enter)
+    (define-key map (kbd "m") #'jcom-mode-mark)
+    (define-key map (kbd "t") #'jcom-mode-mark-all)
+    (define-key map (kbd "R") #'jcom-mode-do-reserve)
+    (define-key map (kbd "C-d") #'jcom-mode-delete)
+    map))
+
+(defun jcom--program-at-point ()
+  (get-text-property (point) 'jcom))
+
+(defun jcom--marked-programs ()
+  ;; List program at point if none marked.
+  (or (save-excursion
+        (goto-char (point-min))
+        (cl-loop while (not (eobp))
+                 if (eq (following-char) ?\*)
+                   collect (jcom--program-at-point)
+                 end
+                 do (goto-char (1+ (line-end-position)))))
+      (when-let* ((prog (jcom--program-at-point)))
+        (list prog))))
+
+(defun jcom-mode-mark ()
+  "Mark/unmark the program at point."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (let ((mark (following-char)))
+        (subst-char-in-region (point) (1+ (point))
+                              mark
+                              (if (eq mark ?\ ) ?\* ?\ )
+                              t)))))
+
+(defun jcom-mode-mark-all ()
+  "Toggle marks for all programs."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (jcom-mode-mark)
+      (goto-char (1+ (line-end-position))))))
+
+(defun jcom-mode-do-reserve ()
+  "Reserve marked programs.  If none, reserve the program at point."
+  (interactive)
+  (async-start
+   `(lambda ()
+      ,(async-inject-variables "\\`load-path\\'")
+      (require 'jcom)
+      (jcom-make-reservation
+       ',(list (cons 'common jcom-meta)
+               (cons 'cookie jcom-cookie)
+               (cons 'programs (jcom--marked-programs)))))
+   (lambda (results)
+     (if (seq-every-p #'jcom--reserve-success-p results)
+         (message "[JCOM] Done.")
+       (error "[JCOM] %S" results)))))
+
+(define-derived-mode jcom-mode
+  special-mode "JCOM"
+  "Major mode for JCOM online reservation interface.
+
+\\{jcom-mode-map}"
+  (setq-local revert-buffer-function #'jcom-list-programs))
+
+(defun jcom-mode-enter ()
+  "Reserve program at point."
+  (interactive)
+  (browse-url (jcom-program-page (jcom--program-at-point))))
+
+(defun jcom-mode-delete ()
+  "Delete program at point."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (delete-region (line-beginning-position) (1+ (line-end-position)))))
+
+;;;###autoload
+(defun jcom-list-programs ()
+  "Show JCOM TV programs for online reservation."
+  (interactive)
+  (async-start
+   `(lambda ()
+      ,(async-inject-variables "\\`load-path\\'")
+      (require 'jcom)
+      (jcom-wish-list))
+   (lambda (result)
+     (let-alist result
+       (if .programs
+           (let ((buf (get-buffer-create "*jcom schedule*")))
+             (with-current-buffer buf
+               (unless (derived-mode-p 'jcom-mode)
+                 (jcom-mode))
+               (setq jcom-meta .common)
+               (setq jcom-cookie .cookie)
+               (let ((inhibit-read-only t))
+                 (erase-buffer)
+                 (mapc (lambda (prog)
+                         (let-alist prog
+                           (insert
+                            (propertize (format " %s|%s\n" .channelName .title)
+                                        'jcom prog
+                                        'help-echo .commentary))))
+                       .programs))
+               (goto-char (point-min)))
+             (pop-to-buffer buf))
+         (message "No programs found."))))))
 
 (provide 'jcom)
 ;;; jcom.el ends here
