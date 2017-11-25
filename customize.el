@@ -245,6 +245,8 @@
  '(url-mime-language-string "en-US,en")
  '(url-queue-parallel-processes 2)
  '(url-queue-timeout 60)
+ '(url-user-agent
+   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0")
  '(user-full-name "Madoka Machitani")
  '(windmove-window-distance-delta 2)
  '(windmove-wrap-around t)

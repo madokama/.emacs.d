@@ -56,7 +56,7 @@
   (apply #'call-process "curl" nil t nil
          url
          "-sL" "--compressed" "-b" jcom-cookie "-c" jcom-cookie
-         "-H" "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0"
+         "-A" url-user-agent
          "-H" "DNT: 1"
          (nconc (mapcan (pcase-lambda (`(,k . ,v))
                           (list "-H" (format "%s: %s" k v)))
