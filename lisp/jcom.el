@@ -51,6 +51,7 @@
 (defun jcom--http (url &optional headers data)
   (unless jcom-cookie
     (jcom--prepare-cookie))
+  (sleep-for (random 10) 600)
   (apply #'call-process "curl" nil t nil
          url
          "-sL" "--compressed" "-b" jcom-cookie "-c" jcom-cookie
@@ -216,7 +217,6 @@
 (defun jcom-make-reservation (data)
   (let ((results
          (mapcar (lambda (prog)
-                   (sleep-for (random 10) 600)
                    (with-temp-buffer
                      (jcom-ajax-post "https://tv.myjcom.jp/remoteRecSubmit.action"
                                      "https://tv.myjcom.jp/wishList.action?limit=100"
@@ -233,7 +233,6 @@
         results)))
 
 (defun jcom-search-id (id)
-  (sleep-for (random 10) 600)
   (with-temp-buffer
     (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
     (let ((dom
