@@ -49,6 +49,10 @@
     (setq jcom-cookie nil))
   (jcom--prepare-cookie))
 
+(defun jcom--async-common ()
+  (list (async-inject-variables "\\`\\(?:load-path\\|url-user-agent\\)\\'")
+        '(require 'jcom)))
+
 (defun jcom--http (url &optional headers data)
   (unless jcom-cookie
     (jcom--prepare-cookie))
@@ -328,8 +332,7 @@
   (interactive)
   (async-start
    `(lambda ()
-      ,(async-inject-variables "\\`load-path\\'")
-      (require 'jcom)
+      ,@(jcom--async-common)
       (jcom-make-reservation
        ',(list (cons 'common jcom-meta)
                (cons 'cookie jcom-cookie)
@@ -363,8 +366,7 @@
   (interactive)
   (async-start
    `(lambda ()
-      ,(async-inject-variables "\\`load-path\\'")
-      (require 'jcom)
+      ,@(jcom--async-common)
       (jcom-wish-list))
    (lambda (result)
      (let-alist result
