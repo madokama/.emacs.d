@@ -2053,6 +2053,15 @@ until we have some outputs"
   :defer t)
 #+END_SRC
 
+*** ping-mode
+#+BEGIN_SRC emacs-lisp
+(use-package ping
+  :unless noninteractive
+  :defer 10
+  :config
+  (ping-mode))
+#+END_SRC
+
 ** Development Tools
 *** iedit
 #+BEGIN_SRC emacs-lisp
