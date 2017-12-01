@@ -82,15 +82,16 @@ git update-index --assume-unchanged init.el
 ** Init of Inits
 #+BEGIN_SRC emacs-lisp
 ;; -*- lexical-binding: t; -*-
-(eval-when-compile
-  (require 'cl)
-  (require 'subr-x))
-
 (eval-and-compile
   (mapc (lambda (path)
           (push (expand-file-name path user-emacs-directory) load-path))
-        '("site-lisp" "lisp" "site-lisp/use-package"))
+        '("site-lisp" "lisp" "site-lisp/use-package")))
+
+(eval-when-compile
+  (require 'cl)
+  (require 'subr-x)
   (require 'use-package))
+(require 'bind-key)
 #+END_SRC
 
 ** Profiling
@@ -558,7 +559,7 @@ narrowed."
 * Packages
 ** Utilities
 *** diminish
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package diminish
   :load-path "site-lisp/diminish"
   :init
@@ -566,6 +567,18 @@ narrowed."
   :config
   (diminish 'visual-line-mode)
   (diminish 'isearch-mode))
+#+END_SRC
+*** delight
+#+BEGIN_SRC emacs-lisp
+(use-package delight
+  :unless noninteractive
+  :load-path "site-lisp/delight"
+  :defer t)
+
+(use-package emacs
+  :delight
+  (visual-line-mode)
+  (isearch-mode))
 #+END_SRC
 
 *** major-diminish
@@ -617,7 +630,7 @@ narrowed."
 #+BEGIN_SRC emacs-lisp
 (use-package abbrev
   :defer t
-  :diminish " ⒜"
+  :delight " ⒜"
   ;; :config
   )
 #+END_SRC
@@ -650,7 +663,7 @@ narrowed."
 #+BEGIN_SRC emacs-lisp
 (use-package swiper
   :load-path "site-lisp/swiper"
-  :diminish ivy-mode
+  :delight ivy-mode
   :defer 2
   :bind ( ;; ("C-s" . swiper)
          ("C-s" . counsel-grep-or-swiper)
@@ -719,7 +732,7 @@ narrowed."
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
   :after ivy
-  :diminish ""
+  :delight
   ;; :commands counsel-ace-link
   :config
   (ivy-add-actions
@@ -810,7 +823,7 @@ narrowed."
 (use-package helm
   :load-path "site-lisp/helm"
   :defer t
-  :diminish ""
+  :delight
   :config
   ;; (setq helm-candidate-number-limit 200
   ;;       helm-command-prefix-key "C-c h"
@@ -827,7 +840,7 @@ narrowed."
 #+BEGIN_SRC emacs-lisp
 (use-package autorevert
   :defer t
-  :diminish (auto-revert-mode . " "))
+  :delight (auto-revert-mode " "))
 #+END_SRC
 
 *** saveplace
@@ -871,7 +884,7 @@ narrowed."
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package view
   :defer t
-  :diminish " ")
+  :delight " ")
 #+END_SRC
 
 *** scratch
@@ -916,7 +929,7 @@ narrowed."
   :load-path "site-lisp/ace-window"
   :defer t
   :defines aw-ignored-buffers
-  :diminish ace-window-mode
+  :delight
   :config
   (add-to-list 'aw-ignored-buffers "*compilation*")
   (setq aw-background nil
@@ -992,8 +1005,9 @@ From [[http://endlessparentheses.com/disable-mouse-only-inside-emacs.html][Disab
   :if (and (window-system) (not noninteractive))
   :load-path "site-lisp/disable-mouse"
   :defer 3
-  :diminish ((disable-mouse-mode . "")
-             (global-disable-mouse-mode . ""))
+  :delight
+  (disable-mouse-mode "")
+  (global-disable-mouse-mode "")
   :config
   (global-disable-mouse-mode))
 #+END_SRC
@@ -1018,7 +1032,7 @@ From [[http://endlessparentheses.com/disable-mouse-only-inside-emacs.html][Disab
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package beacon
   :defer 3
-  :diminish beacon-mode
+  :delight
   :config
   (beacon-mode 1)
   ;; (with-eval-after-load 'elscreen
@@ -1033,7 +1047,7 @@ From [[http://endlessparentheses.com/disable-mouse-only-inside-emacs.html][Disab
   :load-path "site-lisp/volatile-highlights"
   :defer 10
   :commands (volatile-highlights-mode vhl/define-extension vhl/install-extension)
-  :diminish volatile-highlights-mode
+  :delight
   :config
   (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
   (vhl/install-extension 'undo-tree)
@@ -1047,7 +1061,7 @@ Just to suppress lighter
 #+BEGIN_SRC emacs-lisp
 (use-package hi-lock
   :defer t
-  :diminish "")
+  :delight)
 #+END_SRC
 
 *** highlight-thing
@@ -1057,7 +1071,7 @@ Just to suppress lighter
   :load-path "site-lisp/highlight-thing"
   :commands highlight-thing-mode
   :defer t
-  :diminish highlight-thing-mode
+  :delight highlight-thing-mode
   ;;:init (add-hook 'prog-mode-hook 'highlight-thing-mode)
   )
 #+END_SRC
@@ -1512,7 +1526,7 @@ until we have some outputs"
   :unless noninteractive
   :load-path "site-lisp/evil"
   :defer t
-  ;; :diminish ""
+  ;; :delight ""
   ;; :commands ()
   ;; :bind ()
   ;; :init
@@ -1607,7 +1621,7 @@ until we have some outputs"
 (use-package yasnippet
   :load-path "site-lisp/yasnippet"
   :defer 5
-  :diminish (yas-minor-mode . " Ⓨ")
+  :delight (yas-minor-mode " Ⓨ")
   :config
   (bind-key "C-c y" #'hydra-yasnippet/body)
   (add-hook 'yas-dont-activate-functions (lambda () buffer-read-only))
@@ -1631,13 +1645,13 @@ until we have some outputs"
 (use-package org
   :defer t
   :load-path "site-lisp/org-mode/lisp"
-  :diminish ((org-src-mode . "") (outline-minor-mode . " "))
+  :delight ((org-src-mode "") (outline-minor-mode " "))
   :init
   ;; (declare-function org-capture "ext:org-capture")
   (info-add-manual "site-lisp/org-mode/doc/")
   :config
   (use-package org-indent
-    :diminish "")
+    :delight)
   (use-package org-bullets
     :load-path "site-lisp/org-bullets"
     :config
@@ -2016,7 +2030,7 @@ until we have some outputs"
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package moz-controller
   :load-path "site-lisp/moz-controller"
-  :diminish " "
+  :delight " "
   :after eww
   ;; :commands ()
   :config
@@ -2080,7 +2094,7 @@ until we have some outputs"
 #+BEGIN_SRC emacs-lisp
 (use-package lispy
   :load-path "site-lisp/lispy"
-  :diminish (lispy-other-mode lispy-goto-mode)
+  :delight ((lispy-other-mode) (lispy-goto-mode))
   :bind (("C-," . lispy-kill-at-point)
          ("C-M-," . lispy-mark)
          ;;("M-m" . lispy-mark-symbol)
@@ -2125,7 +2139,7 @@ until we have some outputs"
   :unless noninteractive
   :load-path "site-lisp/names"
   :defer t
-  ;; :diminish ""
+  ;; :delight ""
   )
 #+END_SRC
 *** flycheck
@@ -2190,7 +2204,7 @@ until we have some outputs"
 (use-package ggtags
   :unless noninteractive
   :load-path "site-lisp/ggtags"
-  ;;:diminish "Ⓖ"
+  ;;:delight "Ⓖ"
   :defer t
   :init
   (add-hook 'c-mode-common-hook
@@ -2203,7 +2217,7 @@ until we have some outputs"
 (use-package counsel-gtags
   :unless noninteractive
   :load-path "site-lisp/counsel-gtags"
-  :diminish " Ⓖ"
+  :delight " Ⓖ"
   :bind (:map counsel-gtags-mode-map
               ("M-." . counsel-gtags-dwim)
               ;; ("M-r" . counsel-gtags-find-reference)
@@ -2232,7 +2246,7 @@ until we have some outputs"
 *** eldoc
 #+BEGIN_SRC emacs-lisp
 (use-package eldoc
-  :diminish eldoc-mode
+  :delight
   :defer t
   :config
   ;; (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
@@ -2262,7 +2276,7 @@ until we have some outputs"
 (use-package company
   :load-path "site-lisp/company"
   :defer 3
-  :diminish " Ⓒ"
+  :delight " Ⓒ"
   ;;:init (add-hook 'prog-mode-hook #'company-mode-on)
   :config
   ;; (bind-keys :map company-active-map
@@ -2341,7 +2355,7 @@ keybind definition: (\"key\" . func)"
   :defer t
 ;;  :commands (magit-version magit-status magit-blame)
   :load-path "site-lisp/magit/lisp"
-  ;;:diminish (magit-auto-revert-mode . " μρ")
+  ;;:delight (magit-auto-revert-mode " μρ")
   :init
   (info-add-manual "site-lisp/magit/Documentation/")
   ;;:config
@@ -2375,7 +2389,7 @@ keybind definition: (\"key\" . func)"
 *** smartparens
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package smartparens
-  :diminish smartparens-mode;" π"
+  :delight smartparens-mode;" π"
   :commands smartparens-mode
   ;;:init
   ;;(add-hook 'emacs-lisp-mode-hook #'show-smartparens-mode)
@@ -2960,7 +2974,7 @@ Indentation
 (use-package so-long
   ;; :unless noninteractive
   ;; :defer t
-  ;; :diminish ""
+  ;; :delight
   ;; :commands ()
   ;; :bind ()
   ;; :init

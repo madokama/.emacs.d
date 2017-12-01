@@ -8,7 +8,7 @@
   :unless noninteractive
   :load-path "site-lisp/$1"
   :defer t
-  :diminish ""
+  :delight
   :commands ()
   :bind ()
   :init
