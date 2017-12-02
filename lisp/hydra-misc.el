@@ -42,6 +42,25 @@
   ("m" alpha-frame-max "max")
   ("z" nil))
 
+
+
+(require 'ivy-view)
+
+(defun launch-elfeed ()
+  "Launch elfeed."
+  (interactive)
+  (let* ((buf-name "*elfeed-search*")
+         (view-name (format "{} %s" buf-name)))
+    (ivy-view-update)
+    (unless (get-buffer buf-name)
+      (cl-loop for win being the windows
+               unless (window-parameter win 'window-side)
+                 do (delete-other-windows)
+                    (cl-return))
+      (elfeed)
+      (add-to-list 'ivy-views `(,view-name (buffer ,buf-name))))
+    (ivy--switch-buffer-action view-name)))
+
 (defhydra hydra-launch (:idle 1.0 :foreign-keys warn :exit t :hint nil)
   "
 _b_rowse _e_xplore _f_eed   _j_unk   s_c_ratch
@@ -51,12 +70,7 @@ _w_:start menu _o_:monitor _h_:standby
   ("b" browse-url-at-point)
   ("c" pop-scratch)
   ("e" (start-process "explorer" nil "explorer" "."))
-  ("f" (progn
-         (require 'elfeed)
-         (require 'elscreen)
-         (elscreen-find-and-goto-by-buffer
-          (elfeed-search-buffer) 'create)
-         (elfeed)))
+  ("f" launch-elfeed)
   ("h" (start-process "nircmd" nil "nircmd" "standby"))
   ("j" open-junk-file)
   ("m" counsel-magit-repos)

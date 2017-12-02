@@ -542,7 +542,7 @@ narrowed."
            ([remap move-beginning-of-line] . move-beginning-of-line-dwim)
            ;; ("C-s" . isearch-forward-regexp)
            ;; ("C-r" . isearch-backward-regexp)
-           ("C-z" . hydra-elscreen/body))
+           )
 
 (bind-keys :map ctl-x-map
            ("C-r" . revert-buffer)
@@ -728,6 +728,16 @@ narrowed."
 
   (ivy-mode))
 #+END_SRC
+*** ivy-view
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-view
+  :unless noninteractive
+  :bind ("C-z" . (lambda ()
+                   (interactive)
+                   (ivy-view-update)
+                   (ivy-switch-view))))
+#+END_SRC
+
 *** counsel
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
@@ -948,7 +958,7 @@ narrowed."
 #+END_SRC
 
 *** elscreen
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package elscreen
   ;; http://rubikitch.com/2014/09/05/elscreen/
   :defer t
