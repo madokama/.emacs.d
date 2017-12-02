@@ -57,8 +57,8 @@
                unless (window-parameter win 'window-side)
                  do (delete-other-windows)
                     (cl-return))
-      (elfeed)
-      (add-to-list 'ivy-views `(,view-name (buffer ,buf-name))))
+      (elfeed))
+    (add-to-list 'ivy-views `(,view-name (buffer ,buf-name)))
     (ivy--switch-buffer-action view-name)))
 
 (defhydra hydra-launch (:idle 1.0 :foreign-keys warn :exit t :hint nil)
