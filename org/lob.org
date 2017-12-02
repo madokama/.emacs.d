@@ -81,11 +81,12 @@
 
 ** batch command
 #+name: batch
-#+BEGIN_SRC emacs-lisp :var cmds='() :results code
-(with-temp-buffer
-  (mapc (lambda (cmd)
-          (call-process "cmd.exe" nil t nil "/C" cmd))
-        cmds)
-  (message "%s" (buffer-string)))
+#+BEGIN_SRC emacs-lisp :var cmds='()
+(mapc (lambda (cmd)
+        (with-temp-buffer
+          (call-process "cmd.exe" nil t nil "/C" cmd)
+          (message "%s" (buffer-string))))
+      cmds)
+nil
 #+END_SRC
 
