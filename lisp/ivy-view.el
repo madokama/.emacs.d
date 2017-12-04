@@ -34,23 +34,40 @@
                            (list 'buffer (buffer-name) (point))))))))
     (ft (car (window-tree)))))
 
+(defun ivy-view-contents (tr)
+  (pcase (car tr)
+    ((or 'buffer 'file) (list (cadr tr)))
+    ((or 'vert 'horz)
+     (mapcan #'ivy-view-contents (cdr tr)))))
+
+(defun ivy-view-cleanup ()
+  "Delete views with killed buffers."
+  (cl-labels ((killed (tr)
+                (pcase (car tr)
+                  ('buffer (null (get-buffer (cadr tr))))
+                  ((or 'vert 'horz)
+                   (cl-some #'killed (cdr tr)))
+                  ((pred stringp) (killed (cadr tr))))))
+    (setq ivy-views (cl-delete-if #'killed ivy-views))))
+
+(defun ivy-view-dedupe (view)
+  (let ((contents (ivy-view-contents view)))
+    (setq ivy-views
+          (cl-delete-if (pcase-lambda (`(_ ,view))
+                          (cl-subsetp (ivy-view-contents view) contents
+                                      :test #'string=))
+                        ivy-views))))
+
 (defun ivy-view-update ()
   (unless (cl-some (lambda (win)
                      (with-selected-window win
                        (memq major-mode ivy-view-no-update-modes)))
                    (window-list))
-    (when-let* ((name (ivy-default-view-name))
-                (name
-                 (save-match-data
-                   (and (string-match "\\`\\(.+\\) [[:digit:]]+\\'" name)
-                        (match-string 1 name)))))
-      (setq ivy-views
-            (cl-delete-if (lambda (view)
-                            (string-prefix-p name (car view)))
-                          ivy-views)))
-    (push (list (ivy-default-view-name)
-                (ivy-view-view))
-          ivy-views)))
+    (ivy-view-cleanup)
+    (let ((view (ivy-view-view)))
+      (ivy-view-dedupe view)
+      (push (list (ivy-default-view-name) view)
+            ivy-views))))
 
 (defun ivy-view--kill-action (x)
   (if-let* ((view (assoc x ivy-views)))
