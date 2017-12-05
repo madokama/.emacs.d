@@ -40,16 +40,6 @@
     ((or 'vert 'horz)
      (mapcan #'ivy-view-contents (cdr tr)))))
 
-(defun ivy-view-cleanup ()
-  "Delete views with killed buffers."
-  (cl-labels ((killed (tr)
-                (pcase (car tr)
-                  ('buffer (null (get-buffer (cadr tr))))
-                  ((or 'vert 'horz)
-                   (cl-some #'killed (cdr tr)))
-                  ((pred stringp) (killed (cadr tr))))))
-    (setq ivy-views (cl-delete-if #'killed ivy-views))))
-
 (defun ivy-view-dedupe (view)
   (let ((contents (ivy-view-contents view)))
     (setq ivy-views
@@ -58,16 +48,33 @@
                                       :test #'string=))
                         ivy-views))))
 
+(defun ivy-view--no-update ()
+  (cl-some (lambda (win)
+             (with-selected-window win
+               (memq major-mode ivy-view-no-update-modes)))
+           (window-list)))
+
 (defun ivy-view-update ()
-  (unless (cl-some (lambda (win)
-                     (with-selected-window win
-                       (memq major-mode ivy-view-no-update-modes)))
-                   (window-list))
-    (ivy-view-cleanup)
+  "Register current view."
+  (unless (ivy-view--no-update)
     (let ((view (ivy-view-view)))
+      ;; Prevent views from growing indefinitely.
       (ivy-view-dedupe view)
       (push (list (ivy-default-view-name) view)
             ivy-views))))
+
+(defun ivy-view-discard ()
+  "Delete views containing buffers being killed."
+  (unless (ivy-view--no-update)
+    (let ((contents (ivy-view-contents (ivy-view-view))))
+      (when (member (buffer-name) contents)
+        (setq ivy-views
+              (cl-delete-if (pcase-lambda (`(_ ,view))
+                              (cl-subsetp contents (ivy-view-contents view)
+                                          :test #'string=))
+                            ivy-views))))))
+
+(add-hook 'kill-buffer-hook #'ivy-view-discard)
 
 (defun ivy-view--kill-action (x)
   (if-let* ((view (assoc x ivy-views)))
