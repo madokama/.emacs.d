@@ -27,23 +27,28 @@
   (format "https://i.instagram.com/api/v1/feed/user/%s/%s"
           user-id (or endpoint "")))
 
+(defvar instagram-user-agent
+  "Instagram 10.26.0 (iPhone7,2; iOS 10_1_1; en_US; en-US; scale=2.00; gamut=normal; 750x1334) AppleWebKit/420+")
+
 (defun instagram-json-api (url credentials)
   (with-temp-buffer
     (apply #'call-process "curl" nil t nil
            url
            "-s" "--compressed"
+           "-A" instagram-user-agent
            (mapcan (lambda (header)
                      (list "-H" header))
                    (list "dnt: 1"
                          "accept-encoding: gzip, deflate, br"
                          "x-ig-capabilities: 36oD"
                          "accept-language: en-US,en;q=0.8"
-                         "user-agent: Instagram 10.26.0 (iPhone7,2; iOS 10_1_1; en_US; en-US; scale=2.00; gamut=normal; 750x1334) AppleWebKit/420+"
                          "accept: */*"
                          "authority: i.instagram.com"
                          (concat "cookie: " credentials))))
     (goto-char (point-min))
     (json-read)))
+
+;;; IG Private APIs
 
 (defun instagram-user-feed (user-id credentials)
   (alist-get 'items
@@ -55,7 +60,42 @@
                                  credentials)
     .reel.items))
 
-;; Media item APIs
+;;; IG Public APIs
+
+(defun instagram-shortcode-json (code)
+  (with-temp-buffer
+    (apply #'call-process "curl" nil t nil
+           (format "https://www.instagram.com/p/%s/?__a=1&__b=1" code)
+           "-s" "--compressed"
+           "-A" instagram-user-agent
+           (mapcan (apply-partially #'list "-H")
+                   '("Accept: */*"
+                     "Accept-Language: en-US"
+                     "Accept-Encoding: gzip, deflate"
+                     "Connection: close"
+                     "Referer: https://www.instagram.com"
+                     "x-requested-with: XMLHttpRequest")))
+    (goto-char (point-min))
+    (let-alist (json-read)
+      .graphql.shortcode_media)))
+
+(defun instagram-shortcode-media (json)
+  (let-alist json
+    (pcase .__typename
+      ("GraphImage" .display_url)
+      ("GraphSidecar"
+       (mapcar (lambda (node)
+                 (let-alist (alist-get 'node node)
+                   .display_url))
+               .edge_sidecar_to_children.edges))
+      ("GraphVideo"
+       (list .video_url .display_url)))))
+
+(defun instagram-media-source (code)
+  ;; "shortcode" media info
+  (instagram-shortcode-media (instagram-shortcode-json code)))
+
+;;; Media item APIs
 
 (defsubst instagram--media-type (item)
   (alist-get 'media_type item))
