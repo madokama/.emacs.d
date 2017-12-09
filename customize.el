@@ -121,6 +121,7 @@
  '(ivy-magic-slash-non-match-action (quote ivy-magic-slash-non-match-create))
  '(ivy-use-selectable-prompt t)
  '(ivy-use-virtual-buffers t)
+ '(ivy-view-ignore-modes (quote (elfeed-search-mode)))
  '(ivy-virtual-abbreviate (quote full))
  '(ivy-wrap nil)
  '(jit-lock-stealth-load 200)

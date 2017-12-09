@@ -13,7 +13,7 @@
   :prefix "ivy-view-"
   :group 'ivy)
 
-(defcustom ivy-view-no-update-modes nil
+(defcustom ivy-view-ignore-modes nil
   "List of major modes not to register views."
   :type '(repeat symbol))
 
@@ -51,7 +51,7 @@
 (defun ivy-view--no-update ()
   (cl-some (lambda (win)
              (with-selected-window win
-               (memq major-mode ivy-view-no-update-modes)))
+               (memq major-mode ivy-view-ignore-modes)))
            (window-list)))
 
 (defun ivy-view-update ()
