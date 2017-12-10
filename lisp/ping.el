@@ -40,22 +40,24 @@
     (delq 'ping-mode-lighter global-mode-string)))
 
 (defun ping-monitor ()
-  (async-start
-   `(lambda ()
-      ,(async-inject-variables "\\`load-path\\'")
-      (require 'ping)
-      (ping-responsive-p ,ping-address))
-   (lambda (result)
-     (if result
-         (setq ping-mode-lighter "")
-       (setq ping-mode-lighter
-             (propertize (if (char-displayable-p #xf071)
-                             (string #xf071)
-                           " No connection")
-                         'face 'error
-                         'help-echo "No network connection")))
-     (when ping-mode
-       (run-with-idle-timer 60 nil #'ping-monitor)))))
+  (set-process-query-on-exit-flag
+   (async-start
+    `(lambda ()
+       ,(async-inject-variables "\\`load-path\\'")
+       (require 'ping)
+       (ping-responsive-p ,ping-address))
+    (lambda (result)
+      (if result
+          (setq ping-mode-lighter "")
+        (setq ping-mode-lighter
+              (propertize (if (char-displayable-p #xf071)
+                              (string #xf071)
+                            " No connection")
+                          'face 'error
+                          'help-echo "No network connection")))
+      (when ping-mode
+        (run-with-idle-timer 60 nil #'ping-monitor))))
+   nil))
 
 (provide 'ping)
 ;;; ping.el ends here
