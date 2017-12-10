@@ -214,19 +214,14 @@
                    (elfeed-entry-title entry)
                    (remq 'unread (elfeed-entry-tags entry)))))
 
-(advice-add 'elfeed--search-toggle-star :before
-            (lambda (&rest _)
-              (mapc #'elfeed-save-pocket (elfeed-search-selected))))
-
-(advice-add 'elfeed--show-toggle-star :before
-            (lambda (&rest _)
-              (elfeed-save-pocket elfeed-show-entry)))
-
-(advice-add 'elfeed--search-toggle-junk :before
-            (lambda (&rest _)
-              (dolist (entry (elfeed-search-selected))
-                (when (elfeed-tagged-p 'unread entry)
-                  (elfeed-untag entry 'unread)))))
+(add-hook 'elfeed-tag-hooks
+          (lambda (entries tags)
+            (cond ((memq 'star tags)
+                   (mapc #'elfeed-save-pocket entries))
+                  ((memq 'junk tags)
+                   (dolist (entry entries)
+                     (when (elfeed-tagged-p 'unread entry)
+                       (elfeed-untag entry 'unread)))))))
 
 (declare-function ffedit-url "ffedit")
 
