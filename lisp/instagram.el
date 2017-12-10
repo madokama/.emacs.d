@@ -8,7 +8,8 @@
   (require 'subr-x))
 (require 'json)
 (require 'xml)
-(require 'url-curl)
+
+(autoload 'url-curl-extract-cookies "url-curl")
 
 (defun instagram-credentials ()
   (url-curl-extract-cookies
