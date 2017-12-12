@@ -44,16 +44,18 @@
 (defun ivy-view-dedupe (view)
   (let ((contents (ivy-view-contents view)))
     (setq ivy-views
-          (cl-delete-if (pcase-lambda (`(_ ,view))
-                          (cl-subsetp (ivy-view-contents view) contents
-                                      :test #'string=))
+          (cl-delete-if (pcase-lambda (`(_ ,v))
+                          (let ((c (ivy-view-contents v)))
+                            (or (cl-subsetp c contents :test #'string=)
+                                (cl-subsetp contents c :test #'string=))))
                         ivy-views))))
 
 (defun ivy-view--no-update ()
-  (cl-some (lambda (win)
-             (with-selected-window win
-               (memq major-mode ivy-view-ignore-modes)))
-           (window-list)))
+  (or (string-prefix-p " *" (buffer-name))
+      (cl-some (lambda (win)
+                 (with-selected-window win
+                   (memq major-mode ivy-view-ignore-modes)))
+               (window-list))))
 
 (defun ivy-view-update ()
   "Register current view."
@@ -67,13 +69,11 @@
 (defun ivy-view-discard ()
   "Delete views containing buffers being killed."
   (unless (ivy-view--no-update)
-    (let ((contents (ivy-view-contents (ivy-view-view))))
-      (when (member (buffer-name) contents)
-        (setq ivy-views
-              (cl-delete-if (pcase-lambda (`(_ ,view))
-                              (cl-subsetp contents (ivy-view-contents view)
-                                          :test #'string=))
-                            ivy-views))))))
+    (let ((killed (or (buffer-file-name) (buffer-name))))
+      (setq ivy-views
+            (cl-delete-if (pcase-lambda (`(_ ,view))
+                            (member killed (ivy-view-contents view)))
+                          ivy-views)))))
 
 (add-hook 'kill-buffer-hook #'ivy-view-discard)
 
