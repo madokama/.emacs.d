@@ -75,11 +75,10 @@
 (defun ffedit--update-timebase (time-base)
   ;; Ffprobe and ffmpeg may report different values on `time_base'.
   ;; Prefer the latter.
-  (unless (string= time-base (alist-get 'time_base ffedit-video-info))
-    (message "[FF]%S" (cons time-base (assq 'time_base ffedit-video-info)))
-    (setq ffedit-video-info
-          (cons (cons 'time_base time-base)
-                (assq-delete-all 'time_base ffedit-video-info)))))
+  (let-hash ffedit-video-info
+    (unless (string= time-base .time_base)
+      (message "[FF]Updating timebase %s->%s" time-base .time_base)
+      (puthash "time_base" time-base ffedit-video-info))))
 
 (defun ffedit--thumbs-pre (video thumbs-buf)
   (with-current-buffer thumbs-buf
@@ -193,7 +192,7 @@
                            (format ",length=%s" (- end start))))))))
 
 (defun ffedit--dash-segments (fmt segs)
-  (let-alist fmt
+  (let-hash fmt
     (cl-loop with starts = nil
              for d across .timeline
              for u across .segment_urls
@@ -216,7 +215,7 @@
   ;; TODO: Do this async'ly. Possibly useful info:
   ;; (info "(elisp)Accepting Output")
   (message "[ds]%S" dsegs)
-  (let-alist fmt
+  (let-hash fmt
     (when (or (not (file-exists-p file))
               (zerop (file-attribute-size (file-attributes file))))
       (let ((script (make-temp-file "edl")))
@@ -233,7 +232,7 @@
         (call-process shell-file-name script)))))
 
 (defun ffedit--dash-segs-edl (url fmt segs)
-  (let-alist fmt
+  (let-hash fmt
     (let ((file
             (expand-file-name (format "%s.%s"
                                       (md5 (format "%s%s%s" url .format_id segs))
@@ -261,7 +260,7 @@
                  ";"))))
 
 (defun ffedit-preview--edl-uri (url fmt segs)
-  (let-alist fmt
+  (let-hash fmt
     (concat "edl://"
             (if (string= .protocol "http_dash_segments")
                 (ffedit--dash-segs-edl url fmt segs)
@@ -287,8 +286,7 @@
 
 (defun ffedit-preview-sources/mpv (path segs)
   (if (ffap-url-p path)
-      (let ((json
-             (ytdl-get-json path ytdl-format/hd)))
+      (let ((json (ytdl-get-json path ytdl-format/hd)))
         (cons (format "--title=%S" (ytdl-json/title json))
               (mapcar (lambda (fmt)
                         (concat
@@ -398,7 +396,7 @@ With prefix argument ARG, play through to the end."
 (defun ffedit-save-remote-video (url segs callback)
   (let* ((json (ytdl-get-json url ytdl-format/hd))
          (fmts (ytdl-requested-formats json)))
-      (let-alist json
+      (let-hash json
         (let* ((frags
                 (cl-loop for i from 1 to (length segs)
                          collect
@@ -411,13 +409,9 @@ With prefix argument ARG, play through to the end."
                               (t nil))))
                (cmdline
                 (append (list "ffmpeg" "-nostats" "-y"
-                              "-headers"
-                              (let-alist (car fmts)
-                                (mapconcat (pcase-lambda (`(,k . ,v))
-                                             (format "%s: %s\r\n" k v))
-                                           .http_headers "")))
+                              "-headers" (ytdl-http-headers (car fmts)))
                         (mapcan (lambda (fmt)
-                                  (let-alist fmt
+                                  (let-hash fmt
                                     (list "-i" .url)))
                                 fmts)
                         (ffmpeg-normalize-params
