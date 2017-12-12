@@ -8,7 +8,6 @@
   (require 'subr-x))
 (require 'seq)
 (require 'url-vars)
-(require 'json)
 (require 'auth-source)
 
 (defvar browse-url-generic-program)
@@ -62,8 +61,8 @@
                     "-H" "Cache-Control: max-age=0"
                     url)
       (goto-char (point-min))
-      (let ((json (json-read)))
-        (when (assq 'message json)
+      (let ((json (json-parse-buffer)))
+        (when (gethash "message" json)
           (error "Authentication failed: %S" json))
         (when-let* ((save (plist-get auth :save-function)))
           (funcall save))
@@ -88,20 +87,20 @@
   (unless (abema-fresh-p chan)
     (setq abema-json
           (cons (cons chan
-                      (alist-get 'channelSchedules
-                                 (abema-schedule-json
-                                  (abema-today) (abema-tomorrow) chan)))
+                      (let-hash (abema-schedule-json
+                                 (abema-today) (abema-tomorrow) chan)
+                        .channelSchedules))
                 (assq-delete-all chan abema-json)))
     (put chan 'abema (current-time)))
   (alist-get chan abema-json))
 
 (defun abema-program (json)
-  (let-alist json
+  (let-hash json
     (list .startAt
           .endAt
           .title
           (format "https://abema.tv/channels/%s/slots/%s" .channelId .id)
-          (let-alist (aref .programs 0)
+          (let-hash (aref .programs 0)
             .credit.casts))))
 
 ;;; Entry points
@@ -113,7 +112,7 @@
                     ;; FIXME can't do this inside abema-json
                     (mapcan (lambda (date)
                               (mapcar #'abema-program
-                                      (alist-get 'slots date)))
+                                      (gethash "slots" date)))
                             (abema-json chan)))))
 
 (defun abema-watch (url)
