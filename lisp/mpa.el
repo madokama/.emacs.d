@@ -92,7 +92,7 @@ Return K if successfull, nil otherwise."
 
 (defun mpa-now-playing ()
   (when-let* ((url (mpa-recv-url #'mpa--send-key)))
-    (let-alist (ytdl-get-json url)
+    (let-hash (ytdl-get-json url)
       (insert "\n"
               (org-make-link-string url .title)
               "\n#+BEGIN_QUOTE\n"
