@@ -214,7 +214,7 @@
                    with temps = nil
                    do (condition-case nil
                           (let* ((json
-                                  (ytdl-get-json (alist-get 'url entry)))
+                                  (ytdl-get-json (gethash "url" entry)))
                                  (thumb-file
                                   (file-name-nondirectory
                                    (org-ytdl--thumb-file json))))
@@ -270,7 +270,7 @@
                                          (delete-file video-file)))))
           ((and start (not end))
            (ffmpeg-screenshot (1+ start)
-                              (alist-get 'url (ytdl-format-mq json))
+                              (gethash "url" (ytdl-format-mq json))
                               thumb-file
                               (org-ytdl-display-thumbnail)))
           (t
@@ -294,7 +294,7 @@
   "Add video description at the cursor point."
   (interactive)
   (when-let* ((ctx (ignore-errors (org-ytdl-current-content))))
-    (let-alist (ytdl-get-json
+    (let-hash (ytdl-get-json
                 (plist-get (car (alist-get 'link ctx)) :path))
       (insert "#+BEGIN_QUOTE\n"
               .description
