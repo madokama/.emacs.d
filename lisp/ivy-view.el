@@ -26,12 +26,13 @@
                       (cons 'horz
                             (mapcar #'ft (cddr tr))))
                   (with-current-buffer (window-buffer tr)
-                    (cond ((buffer-file-name)
-                           (list 'file (buffer-file-name) (point)))
-                          ((eq major-mode 'dired-mode)
-                           (list 'file default-directory (point)))
-                          (t
-                           (list 'buffer (buffer-name) (point))))))))
+                    (let ((file (buffer-file-name)))
+                      (cond ((and file (file-exists-p file))
+                             (list 'file file (point)))
+                            ((eq major-mode 'dired-mode)
+                             (list 'file default-directory (point)))
+                            (t
+                             (list 'buffer (buffer-name) (point)))))))))
     (ft (car (window-tree)))))
 
 (defun ivy-view-contents (tr)
