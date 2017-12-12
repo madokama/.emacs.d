@@ -11,7 +11,6 @@
 (require 'seq)
 (require 'shr)
 (require 'url-expand)
-(require 'json)
 
 (defvar page2feed-scrapers nil)
 
@@ -274,20 +273,20 @@
 ;;     (page2feed-sxmlize (page2feed-scrape-morcoff))))
 
 (defun page2feed-scrape-linelive-entry (entry)
-  (let-alist entry
+  (let-hash entry
     (list 'title .title
           'link .shareURL
           'updated .createdAt
           'content (format "<a href=%S><img src=%S /></a>"
                            .shareURL
-                           (alist-get 'swipe .thumbnailURLs)))))
+                           .thumbnailURLs.swipe))))
 
 (defun page2feed-scrape-linelive ()
   (when (re-search-forward "<meta .+?og:site_name.+?content=\"LINE LIVE" nil t)
-    (let-alist (thread-first (libxml-parse-html-region (point-min) (point-max))
+    (let-hash (thread-first (libxml-parse-html-region (point-min) (point-max))
                  (dom-by-id "data")
                  (dom-attr 'data-channel)
-                 json-read-from-string)
+                 json-parse-string)
       (list 'link .shareURL
             'author (and (string-match "\?id=\\(.+\\)$" .lineScheme)
                          (match-string 1 .lineScheme))
