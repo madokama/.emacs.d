@@ -6,7 +6,6 @@
 
 (eval-when-compile
   (require 'subr-x))
-(require 'json)
 
 (defun ffprobe-video (video)
   ;; TODO Parse time_base from ffmpeg dumps
@@ -19,12 +18,13 @@
                     "-of" "json"
                     video)
       (goto-char (point-min))
-      (json-read))))
+      (json-parse-buffer))))
 
 (defun ffprobe-video-info (video)
-  (let-alist (ffprobe-video video)
-    (cons (cons 'pts-shift (ffprobe-first-frame-pts video))
-          (aref .streams 0))))
+  (let-hash (ffprobe-video video)
+    (let ((info (aref .streams 0)))
+      (puthash "pts-shift" (ffprobe-first-frame-pts video) info)
+      info)))
 
 (defun ffprobe-first-frame-pts (video)
   (with-temp-buffer
@@ -58,11 +58,11 @@
   (ffprobe--compute-ratio (split-string rat-str "/") inverse))
 
 (defun ffprobe-time-base (json)
-  (let-alist json
+  (let-hash json
     (ffprobe--eval-ratio .time_base)))
 
 (defun ffprobe-frame-delta (json)
-  (let-alist json
+  (let-hash json
     (ffprobe--compute-ratio (list .duration_ts .nb_frames))))
 
 (defun ffprobe-pts-time (json pts &optional delta)
@@ -70,15 +70,15 @@
     (+ (* pts time-base) (or delta 0))))
 
 (defun ffprobe-pts-shift (json)
-  (let-alist json
+  (let-hash json
     (or .pts-shift 0)))
 
 (defun ffprobe-has-bframe-p (json)
-  (let-alist json
+  (let-hash json
     (< 0 .has_b_frames)))
 
 (defun ffprobe-start-pts (json)
-  (or (let-alist json .start_pts) 0))
+  (or (let-hash json .start_pts) 0))
 
 (defun ffprobe-start-offset (json)
   (let ((start (ffprobe-start-pts json)))
