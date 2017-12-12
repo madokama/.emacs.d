@@ -8,38 +8,38 @@
   (require 'subr-x))
 (require 'url-parse)
 (require 'dom)
-(require 'json)
+(require 'seq)
 
 (defun page2feed-shogi-watch-link (url)
   (format "<a href=\"%s\">棋譜を見る</a>" url))
 
 (defun page2feed-shogi-json-game (title date game)
-  (let-alist game
+  (let-hash game
     (let* ((body (aref .gamebodies 0))
-           (url (alist-get 'url body)))
+           (url (gethash "url" body)))
       (list 'title (format "%s%s%s―%s%s %s%s%s"
-                           (if-let* ((status (alist-get 'status body)))
+                           (if-let* ((status (gethash "status" body)))
                                (format "*%s " status)
                              "")
-                           (alist-get 'name .player1)
-                           (alist-get 'grade .player1)
-                           (alist-get 'name .player2)
-                           (alist-get 'grade .player2)
+                           .player1.name
+                           .player1.grade
+                           .player2.name
+                           .player2.grade
                            .kaiki
                            title
-                           (alist-get 'name .division))
+                           .division.name)
             'link url
-            'updated (format "%s %s" date (alist-get 'starttime .division))
+            'updated (format "%s %s" date .division.starttime)
             'content (page2feed-shogi-watch-link url)))))
 
 (defun page2feed-shogi-json-games/date (title games)
-  (let-alist games
+  (let-hash games
     (mapcar (apply-partially #'page2feed-shogi-json-game title .matchdate)
             .gameheads)))
 
 (defun page2feed-shogi-json-games (title json)
   (mapcan (apply-partially #'page2feed-shogi-json-games/date title)
-          (alist-get 'games json)))
+          (gethash "games" json)))
 
 (defun page2feed-shogi-dom-find (dom stop)
   (when-let* ((tag (dom-tag dom)))
@@ -174,16 +174,12 @@
          (host (url-host urlobj)))
     (pcase host
       ("live.shogi.or.jp"
-       (if (string= (car (url-path-and-query urlobj)) "/denou/")
-           (progn
-             (message "[p2f]Not supported yet: %s" url)
-             nil)
-         (page2feed-shogi-json-games
-          ;; Strip the match number, which we obtain from JSON later.
-          (replace-regexp-in-string (rx (1+ blank) "第" (1+ anything) "局" eos)
-                                    ""
-                                    (plist-get plst :match))
-          (url-curl-sync (concat url "index.json") #'json-read))))
+       (page2feed-shogi-json-games
+        ;; Strip the match number, which we obtain from JSON later.
+        (replace-regexp-in-string (rx (1+ blank) "第" (1+ anything) "局" eos)
+                                  ""
+                                  (plist-get plst :match))
+        (url-curl-sync (concat url "index.json") #'json-parse-buffer)))
       ("mynavi-open.jp"
        (page2feed-shogi-games/mynavi plst))
       ("www.jti.co.jp"
