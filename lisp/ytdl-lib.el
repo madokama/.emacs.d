@@ -6,7 +6,6 @@
 
 (require 'seq)
 (require 'subr-x)
-(require 'json)
 (require 'spinner)
 
 (defvar ytdl--debug nil)
@@ -44,15 +43,14 @@ Preferring webm for cleaner cuts at keyframes.")
                                "--no-mark-watched" "--no-color"
                                "--" ,url))
     (goto-char (point-min))
-    (json-read)))
+    (json-parse-buffer)))
 
 (defmacro ytdl--define-json-refs (&rest keys)
   `(progn
      ,@(mapcar (lambda (key)
-                 (let ((funsym (intern (format "ytdl-json/%s" key)))
-                       (keysym (intern (format ".%s" key))))
+                 (let ((funsym (intern (format "ytdl-json/%s" key))))
                    `(defun ,funsym (json)
-                      (let-alist json ,keysym))))
+                      (gethash ,(symbol-name key) json))))
                keys)))
 
 (ytdl--define-json-refs
@@ -73,8 +71,8 @@ Preferring webm for cleaner cuts at keyframes.")
 (ytdl--define-extractors youtube twitter)
 
 (defun ytdl-requested-formats (json)
-  (or (let-alist json
-        (mapcar #'identity .requested_formats)) ;vec->list
+  (or (let-hash json
+        (append .requested_formats nil)) ;vec->list
       (list json)))
 
 (defun ytdl-requested-video (json)
@@ -91,12 +89,16 @@ Preferring webm for cleaner cuts at keyframes.")
                  (ytdl-video-file json)
                  callback))
 
+(defun ytdl-http-headers (fmt)
+  (let-hash fmt
+    (cl-loop for k being the hash-keys of .http_headers
+               using (hash-values v)
+             collect (format "%s: %s\r\n" k v))))
+
 (defun ytdl--dl-hls (fmt file)
-  (let-alist fmt
+  (let-hash fmt
     (list "ffmpeg" "-y"
-          "-headers" (mapconcat (pcase-lambda (`(,k . ,v))
-                                  (format "%s: %s\r\n" k v))
-                                .http_headers "")
+          "-headers" (ytdl-http-headers fmt)
           "-i" .url
           "-c" "copy"
           "-f" "mp4"
@@ -107,25 +109,26 @@ Preferring webm for cleaner cuts at keyframes.")
   (let ((script (make-temp-file "ytdl")))
     (with-temp-file script
       (insert (format "wget --no-check-certificate -nv -O %s \\\n" file))
-      (let-alist fmt
-        (cl-loop for (k . v) in .http_headers
+      (let-hash fmt
+        (cl-loop for k being the hash-keys of .http_headers
+                   using (hash-values v)
                  do (insert (format "  --header=\"%s: %s\" \\\n"
                                     k
                                     (shell-quote-argument v))))
         (if (string= .protocol "http_dash_segments")
             (let ((url .fragment_base_url))
-             (cl-loop for i downfrom (length .fragments)
-                      for frag across .fragments
-                      do (insert
-                          (format "  %S %s\n"
-                                  (concat url (alist-get 'path frag))
-                                  (if (= i 1) "" "\\")))))
+              (cl-loop for i downfrom (length .fragments)
+                       for frag across .fragments
+                       do (insert
+                           (format "  %S %s\n"
+                                   (concat url (gethash "path" frag))
+                                   (if (= i 1) "" "\\")))))
           (insert (format "  %S\n" .url))))
       (insert "rm $0\n"))
     (list shell-file-name script)))
 
 (defun ytdl-protocol-hls-p (json)
-  (let-alist json
+  (let-hash json
     (string-match-p "\\`m3u8" .protocol)))
 
 (defun ytdl-download (fmt file callback)
@@ -152,11 +155,11 @@ Preferring webm for cleaner cuts at keyframes.")
   (let ((fmts (ytdl-json/formats json)))
     (or (seq-find pred
                   (seq-sort-by (lambda (fmt)
-                                 (alist-get 'height fmt))
+                                 (gethash "height" fmt))
                                cmp
                                (seq-filter
                                 (lambda (fmt)
-                                  (let-alist fmt
+                                  (let-hash fmt
                                     (and .height
                                          ;; reject m3u8 format dumped
                                          ;; by dailymotion, vimeo etc.
@@ -170,7 +173,7 @@ Preferring webm for cleaner cuts at keyframes.")
   (ytdl--format json
                 #'>
                 (lambda (fmt)
-                  (let-alist fmt
+                  (let-hash fmt
                     (and (<= .height 480)
                          (if (ytdl-youtube-p json)
                              ;; We choose webm for the sake of instant seeks
@@ -181,7 +184,7 @@ Preferring webm for cleaner cuts at keyframes.")
   (ytdl--format json
                 #'<
                 (lambda (fmt)
-                  (let-alist fmt
+                  (let-hash fmt
                     (if (ytdl-youtube-p json)
                         (and (> .height 144)
                              (not (member .ext '("3gp" "flv"))))
