@@ -150,7 +150,6 @@
                      caddr
                      json-read-from-string)))
 
-;;;###autoload
 (defun jcom-wish-list ()
   (with-temp-buffer
     (save-match-data
@@ -232,21 +231,34 @@
                 (car (dom-by-id dom "recResultTitle"))
                 (car (dom-by-class dom "cont"))))))))
 
-;;;###autoload
 (defun jcom-make-reservation (data)
   (let-alist data
     (when .cookie
       (setq jcom-cookie .cookie))
     (mapcar (jcom--reserve1 .common) .programs)))
 
+(defun jcom--search-keyword (dom)
+  "Extract search condition from the DOM of the searchId page."
+  (seq-let (key _date _chan genre)
+      (mapcan #'dom-strings
+              (thread-first dom
+                (dom-by-class "\\`condition\\'")
+                (dom-by-class "value")))
+    (if (string= key "なし")
+        genre
+      key)))
+
 (defun jcom-search-id (id)
   (with-temp-buffer
     (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
-    (let ((dom
-           (thread-first (libxml-parse-html-region (point-min) (point-max))
-             (dom-by-id "resultArea")
-             (dom-by-tag 'tbody)
-             (dom-by-tag 'table))))
+    (let* ((dom
+            (libxml-parse-html-region (point-min) (point-max)))
+           (key (jcom--search-keyword dom))
+           (dom-result
+            (thread-first dom
+              (dom-by-id "resultArea")
+              (dom-by-tag 'tbody)
+              (dom-by-tag 'table))))
       (mapcar (lambda (dom)
                 (let ((json
                        (json-read-from-string
@@ -256,14 +268,15 @@
                               (dom-by-tag 'dd)
                               dom-strings
                               car)))
-                  (nconc json (list (cons 'commentary desc)))))
+                  (nconc json (list (cons 'commentary desc)
+                                    (cons 'keyword key)))))
               (cl-delete-if-not
                (lambda (dom)
                  (seq-find (lambda (dom)
                              (when-let* ((onclick (dom-attr dom 'onclick)))
                                (string-match-p "^doRemoteRec" onclick)))
                            (dom-by-tag (dom-by-class dom "resBox02") 'img)))
-               dom)))))
+               dom-result)))))
 
 (defun jcom-search-list ()
   (with-temp-buffer
@@ -330,6 +343,7 @@
 (defun jcom-mode-do-reserve ()
   "Reserve marked programs.  If none, reserve the program at point."
   (interactive)
+  (message "[JCOM] Making reservations...")
   (async-start
    `(lambda ()
       ,@(jcom--async-common)
@@ -382,7 +396,10 @@
                  (mapc (lambda (prog)
                          (let-alist prog
                            (insert
-                            (propertize (format " %s|%s\n" .channelName .title)
+                            (propertize (format " %s|[%s]%s\n"
+                                                .channelName
+                                                (or .keyword "")
+                                                .title)
                                         'jcom prog
                                         'help-echo .commentary))))
                        .programs))
