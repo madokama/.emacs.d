@@ -6,8 +6,8 @@
 
 (eval-when-compile
   (require 'subr-x))
+(require 'seq)
 (require 'async)
-(require 'json)
 
 (defgroup firefox nil
   "Firefox utilities."
@@ -28,7 +28,7 @@
             "out.flush()\n")
     (call-process-region (point-min) (point-max) "python3" t t nil)
     (goto-char (point-min))
-    (json-read)))
+    (json-parse-buffer)))
 
 (defun firefox-session-tabs (json)
   (cl-flet ((normalize (url)
@@ -38,14 +38,14 @@
                                   #'string=))
                 url)))
     (thread-last json
-      (alist-get 'windows)
+      (gethash "windows")
       (mapcan (lambda (window)
                 (mapcar (lambda (tab)
-                          (let-alist tab
+                          (let-hash tab
                             (cons .lastAccessed
-                                  (let-alist (aref .entries (1- .index))
+                                  (let-hash (aref .entries (1- .index))
                                     (cons (normalize .url) .title)))))
-                        (alist-get 'tabs window))))
+                        (gethash "tabs" window))))
       (seq-sort-by #'car #'>))))
 
 (defun firefox-tabs (callback)
