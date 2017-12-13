@@ -299,6 +299,8 @@
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "RET") #'jcom-mode-enter)
     (define-key map (kbd "m") #'jcom-mode-mark)
+    (define-key map (kbd "n") #'next-line)
+    (define-key map (kbd "p") #'previous-line)
     (define-key map (kbd "t") #'jcom-mode-mark-all)
     (define-key map (kbd "R") #'jcom-mode-do-reserve)
     (define-key map (kbd "C-d") #'jcom-mode-delete)
@@ -315,7 +317,7 @@
                  if (eq (following-char) ?\*)
                    collect (jcom--program-at-point)
                  end
-                 do (goto-char (1+ (line-end-position)))))
+                 do (forward-line 1)))
       (when-let* ((prog (jcom--program-at-point)))
         (list prog))))
 
@@ -329,7 +331,8 @@
         (subst-char-in-region (point) (1+ (point))
                               mark
                               (if (eq mark ?\ ) ?\* ?\ )
-                              t)))))
+                              t))
+      (forward-line 1))))
 
 (defun jcom-mode-mark-all ()
   "Toggle marks for all programs."
