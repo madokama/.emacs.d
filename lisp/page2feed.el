@@ -121,6 +121,14 @@
                             (list :updated time))))
                        (plist-get parsed 'entries))))
 
+(defun page2feed--entry-id (url)
+  (let ((url (xml-escape-string url)))
+    (cond ((string-match "\\`\\(https://scontent.+?cdninstagram\\.com/\\).+/\\([^/]+\\)\\?"
+                         url)
+           (concat (match-string 1 url)
+                   (match-string 2 url)))
+          (t url))))
+
 (defun page2feed-sxmlize (parsed)
   (let ((entries (page2feed-entries parsed)))
     `(feed ((xmlns . "http://www.w3.org/2005/Atom"))
@@ -141,7 +149,7 @@
                                                      (plist-get entry 'enclosure)))
                                           `((rel . "enclosure")
                                             (type . ,type)))))
-                                (id nil ,(xml-escape-string elink))
+                                (id nil ,(page2feed--entry-id elink))
                                 (updated nil ,(plist-get entry 'updated))
                                 ,@(when-let* ((summary (plist-get entry 'summary)))
                                    `((summary nil ,summary)))
