@@ -1657,7 +1657,6 @@ until we have some outputs"
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :defer t
-  :load-path "site-lisp/org-mode/lisp"
   :delight ((org-src-mode "") (outline-minor-mode " "))
   :init
   ;; (declare-function org-capture "ext:org-capture")
@@ -1671,10 +1670,14 @@ until we have some outputs"
     (setcdr org-bullets-bullet-map nil)
     (add-hook 'org-mode-hook #'org-bullets-mode))
 
-  (setq ;;org-directory "~/Dropbox/emacs/org"
-   org-default-notes-file (expand-file-name "notes.org" org-directory))
+  (setq org-default-notes-file (expand-file-name "notes.org" org-directory))
 
-  (add-hook 'org-mode-hook #'hl-line-mode)
+  (defun my-org-mode-hook ()
+    (hl-line-mode)
+    (add-hook 'completion-at-point-functions
+              #'pcomplete-completions-at-point nil t))
+
+  (add-hook 'org-mode-hook #'my-org-mode-hook)
 
   (font-lock-add-keywords 'org-mode
                           '(("^ +\\([-*]\\) "
@@ -1786,7 +1789,8 @@ until we have some outputs"
 #+BEGIN_SRC emacs-lisp
 (use-package hydra-org
   :after org
-  :bind ("C-c c" . hydra-org-capture/body))
+  :config
+  (bind-key "C-c c" #'hydra-org-capture/body))
 #+END_SRC
 *** org-eldoc
 #+BEGIN_SRC emacs-lisp
