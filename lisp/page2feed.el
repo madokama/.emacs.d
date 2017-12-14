@@ -341,14 +341,12 @@
                               (instagram-user-feed user-id auth))))))))
 
 (defun page2feed-ig-story-entry (item)
-  (let* ((img (instagram-item-image item))
-         (url (or (instagram-item-video item) img))
-         (time (instagram-item-time item))
-         (caption (instagram-item-caption item)))
+  (let ((time (instagram-item-time item))
+        (caption (instagram-item-caption item)))
     (list 'title (or caption (format-time-string "%F %T" time))
-          'link url
+          'link (or (instagram-item-video item) (instagram-item-image item))
           'updated time
-          'content (format "<a href=%S><img src=%S /></a>" url img))))
+          'content (page2feed-instagram-image item))))
 
 (add-hook 'page2feed-scrapers #'page2feed-instagram-scrape)
 
