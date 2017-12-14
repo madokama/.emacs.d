@@ -33,15 +33,21 @@ Preferring webm for cleaner cuts at keyframes.")
       (cons "setsid" cmd)
     cmd))
 
+(defun ytdl--normalize-url (url)
+  (save-match-data
+    (if (string-match (rx bos "ytdl://" (group (+ (any graph)))) url)
+        (format "http://youtu.be/%s" (match-string 1 url))
+      url)))
+
 ;;;###autoload
 (defun ytdl-get-json (url &optional fmt)
   (with-temp-buffer
-      (apply #'call-process ytdl-command nil t nil
-             `("--no-warnings" "-J" "--flat-playlist" "--no-playlist"
-                               ,@(when fmt
-                                   (list (format "--format=%s" fmt)))
-                               "--no-mark-watched" "--no-color"
-                               "--" ,url))
+    (apply #'call-process ytdl-command nil t nil
+           `("--no-warnings" "-J" "--flat-playlist" "--no-playlist"
+                             ,@(when fmt
+                                (list (format "--format=%s" fmt)))
+                             "--no-mark-watched" "--no-color"
+                             "--" ,(ytdl--normalize-url url)))
     (goto-char (point-min))
     (json-parse-buffer)))
 
