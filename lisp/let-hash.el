@@ -38,11 +38,16 @@ symbol, and each cdr is the same symbol without the `.'."
 
 (defun let-hash--list-to-sexp (list var)
   "Turn symbols LIST into recursive calls to `gethash' on VAR."
-  `(let ((hash ,(if (cdr list)
-                    (let-hash--list-to-sexp (cdr list) var)
-                  var)))
-     (and (hash-table-p hash)
-          (gethash ,(symbol-name (car list)) hash))))
+  (let ((hvar (make-symbol "hash"))
+        (vvar (make-symbol "val")))
+    `(let ((,hvar ,(if (cdr list)
+                      (let-hash--list-to-sexp (cdr list) var)
+                    var)))
+       (when (hash-table-p ,hvar)
+         (let ((,vvar (gethash ,(symbol-name (car list)) ,hvar)))
+           (if (eq ,vvar :null)
+               nil
+             ,vvar))))))
 
 ;;;###autoload
 (defmacro let-hash (hash &rest body)
