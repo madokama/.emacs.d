@@ -661,16 +661,12 @@ narrowed."
 #+END_SRC
 *** swiper
 #+BEGIN_SRC emacs-lisp
-(use-package swiper
+(use-package ivy
+  :unless noninteractive
   :load-path "site-lisp/swiper"
-  :delight ivy-mode
   :defer 2
-  :bind ( ;; ("C-s" . swiper)
-         ("C-s" . counsel-grep-or-swiper)
-         ("C-c s" . swiper-all)
-         ;;("C-r" . swiper)
-         ("C-c C-r" . ivy-resume)
-         )
+  :delight
+  :bind (("C-c C-r" . ivy-resume))
   :config
   (setq ivy-initial-inputs-alist nil
         ;; ivy-re-builders-alist '((swiper . ivy--regex-plus)
@@ -690,6 +686,29 @@ narrowed."
   (push '(emacs-lisp-mode . swiper-match-face-1)
         ivy-switch-buffer-faces-alist)
 
+  (defun ivy-dired ()
+    (interactive)
+    (if ivy--directory
+        (ivy-quit-and-run
+         (dired ivy--directory)
+         (goto-char (point-min))
+         (when (re-search-forward
+                (regexp-quote (substring (ivy-state-current ivy-last) 0 -1)) nil t)
+           (goto-char (match-beginning 0))))
+      (user-error
+       "Not completing files currently")))
+
+  (bind-key "C-:" #'ivy-dired ivy-minibuffer-map)
+
+  (ivy-mode))
+
+(use-package swiper
+  :load-path "site-lisp/swiper"
+  :bind (("C-s" . swiper)
+         ("C-c s" . swiper-all)
+         ;;("C-r" . swiper)
+         )
+  :config
   (defun ad-swiper-all-buffer-p (oldfun buf)
     (with-current-buffer buf
       (cond ((derived-mode-p 'pdf-view-mode) nil)
@@ -710,28 +729,12 @@ narrowed."
     (cl-remove-if (lambda (cand)
                     (memq (cddr cand) '(disable-mouse--handle ignore)))
                   cands))
-  (advice-add 'counsel--descbinds-cands :filter-return #'ad-counsel-descbinds-ignore)
-
-  (defun ivy-dired ()
-    (interactive)
-    (if ivy--directory
-        (ivy-quit-and-run
-         (dired ivy--directory)
-         (goto-char (point-min))
-         (when (re-search-forward
-                (regexp-quote (substring (ivy-state-current ivy-last) 0 -1)) nil t)
-           (goto-char (match-beginning 0))))
-      (user-error
-       "Not completing files currently")))
-
-  (bind-key "C-:" #'ivy-dired ivy-minibuffer-map)
-
-  (ivy-mode))
+  (advice-add 'counsel--descbinds-cands :filter-return #'ad-counsel-descbinds-ignore))
 #+END_SRC
 *** ivy-view
 #+BEGIN_SRC emacs-lisp
 (use-package ivy-view
-  :unless noninteractive
+  :commands ivy-view-update
   :bind ("C-z" . (lambda ()
                    (interactive)
                    (ivy-view-update)
