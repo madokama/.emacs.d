@@ -2117,21 +2117,21 @@ until we have some outputs"
          ;;("M-m" . lispy-mark-symbol)
          ("P" . special-lispy-paste)
          :map lispy-mode-map-special
-         ("L" . lispy-wrap-round))
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
+         ("L" . lispy-wrap-round)
+         :map lispy-mode-map
+         ("M-r" . lispy-raise-sexp))
+  :hook ((emacs-lisp-mode command-history) . lispy-mode)
   :config
   (defun lispy-visualize-mode ()
-    (concat " "
-            (propertize (format "Ⓛ%s"
-                                (cond (lispy-other-mode "ο")
-                                      (lispy-goto-mode "γ")
-                                      (t "")))
-                        'face
-                        (when (or (region-active-p)
-                                  (lispy-left-p) (lispy-right-p)
-                                  (looking-at-p "^;;"))
-                          'region))))
+    (propertize (format " Ⓛ%s"
+                        (cond (lispy-other-mode "ο")
+                              (lispy-goto-mode "γ")
+                              (t "")))
+                'face
+                (when (or (region-active-p)
+                          (lispy-left-p) (lispy-right-p)
+                          (looking-at-p "^;;"))
+                  'region)))
 
   ;; Since `diminish' only accepts string as the second argument
   (setq minor-mode-alist
@@ -2144,9 +2144,7 @@ until we have some outputs"
       ;; (local-set-key "β" 'counsel-el)
       ))
   (add-hook 'minibuffer-setup-hook #'conditionally-enable-lispy)
-  (add-hook 'command-history-hook #'lispy-mode)
 
-  (define-key lispy-mode-map (kbd "M-r") #'lispy-raise-sexp)
   ;; (advice-add 'lispy--ensure-visible :after #'recenter)
   )
 #+END_SRC
