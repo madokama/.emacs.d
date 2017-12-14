@@ -48,9 +48,10 @@ Preferring webm for cleaner cuts at keyframes.")
 (defmacro ytdl--define-json-refs (&rest keys)
   `(progn
      ,@(mapcar (lambda (key)
-                 (let ((funsym (intern (format "ytdl-json/%s" key))))
+                 (let ((funsym (intern (format "ytdl-json/%s" key)))
+                       (keysym (intern (format ".%s" key))))
                    `(defun ,funsym (json)
-                      (gethash ,(symbol-name key) json))))
+                      (let-hash json ,keysym))))
                keys)))
 
 (ytdl--define-json-refs
@@ -91,9 +92,8 @@ Preferring webm for cleaner cuts at keyframes.")
 
 (defun ytdl-http-headers (fmt)
   (let-hash fmt
-    (cl-loop for k being the hash-keys of .http_headers
-               using (hash-values v)
-             collect (format "%s: %s\r\n" k v))))
+    (map-hash (k v) .http_headers
+      (format "%s: %s\r\n" k v))))
 
 (defun ytdl--dl-hls (fmt file)
   (let-hash fmt
@@ -110,11 +110,10 @@ Preferring webm for cleaner cuts at keyframes.")
     (with-temp-file script
       (insert (format "wget --no-check-certificate -nv -O %s \\\n" file))
       (let-hash fmt
-        (cl-loop for k being the hash-keys of .http_headers
-                   using (hash-values v)
-                 do (insert (format "  --header=\"%s: %s\" \\\n"
-                                    k
-                                    (shell-quote-argument v))))
+        (for-hash (k v) .http_headers
+          (insert (format "  --header=\"%s: %s\" \\\n"
+                          k
+                          (shell-quote-argument v))))
         (if (string= .protocol "http_dash_segments")
             (let ((url .fragment_base_url))
               (cl-loop for i downfrom (length .fragments)

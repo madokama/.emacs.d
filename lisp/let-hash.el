@@ -58,5 +58,19 @@ symbol, and each cdr is the same symbol without the `.'."
                      (delete-dups (let-hash--deep-dot-search body)))
          ,@body))))
 
+;;;###autoload
+(defmacro map-hash (binding hash &rest body)
+  (declare (indent 2))
+  `(cl-loop for ,(car binding) being the hash-keys of ,hash
+              using (hash-values ,(cadr binding))
+            collect (progn ,@body)))
+
+;;;###autoload
+(defmacro for-hash (binding hash &rest body)
+  (declare (indent 2))
+  `(cl-loop for ,(car binding) being the hash-keys of ,hash
+              using (hash-values ,(cadr binding))
+            do ,@body))
+
 (provide 'let-hash)
 ;;; let-hash.el ends here
