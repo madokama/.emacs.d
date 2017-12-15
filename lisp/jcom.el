@@ -161,20 +161,27 @@
         (list (cons 'common params)
               (cons 'cookie jcom-cookie)
               (cons 'programs
-                    ;; Remove already reserved programs
-                    (cl-delete-if
+                    (seq-sort-by
                      (lambda (prog)
-                       (seq-find (lambda (res)
-                                   (seq-every-p (pcase-lambda (`(,k . ,v))
-                                                  (string= v (alist-get k prog)))
-                                                res))
-                                 reserved))
-                     (cl-delete-duplicates
-                      (nconc progs search)
-                      :test (lambda (a b)
-                              (string= (alist-get 'programId a)
-                                       (alist-get 'programId b)))
-                      :from-end t))))))))
+                       (let-alist prog
+                         (if .date
+                             (string-to-number .date)
+                           0)))
+                     #'<
+                     ;; Remove already reserved programs
+                     (cl-delete-if
+                      (lambda (prog)
+                        (seq-find (lambda (res)
+                                    (seq-every-p (pcase-lambda (`(,k . ,v))
+                                                   (string= v (alist-get k prog)))
+                                                 res))
+                                  reserved))
+                      (cl-delete-duplicates
+                       (nconc progs search)
+                       :test (lambda (a b)
+                               (string= (alist-get 'programId a)
+                                        (alist-get 'programId b)))
+                       :from-end t)))))))))
 
 (defun jcom--end-time (params)
   (let-alist params
@@ -378,7 +385,7 @@
     (delete-region (line-beginning-position) (1+ (line-end-position)))))
 
 ;;;###autoload
-(defun jcom-list-programs ()
+(defun jcom-list-programs (&rest _)
   "Show JCOM TV programs for online reservation."
   (interactive)
   (async-start
