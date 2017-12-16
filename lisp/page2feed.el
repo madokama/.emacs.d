@@ -315,8 +315,8 @@
             img)))
 
 (defun page2feed-instagram-entry (item)
-  (let ((caption
-         (split-string (instagram-item-caption item) "\n")))
+  (let* ((caption (instagram-item-caption item))
+         (caption (and caption (split-string caption "\n"))))
     (list 'title (car caption)
           'link (instagram-item-link item)
           'updated (instagram-item-time item)
