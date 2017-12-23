@@ -874,6 +874,17 @@ narrowed."
   (savehist-mode))
 #+END_SRC
 
+*** recentf
+#+BEGIN_SRC emacs-lisp
+(use-package recentf
+  :after ivy
+  :config
+  (advice-add 'recentf-cleanup :around
+              (lambda (oldfun &rest r)
+                (let ((message-log-max nil))
+                  (with-temp-message (current-message)
+                    (apply oldfun r))))))
+#+END_SRC
 *** recentb
 #+BEGIN_SRC emacs-lisp
 (use-package recentb
