@@ -22,14 +22,14 @@
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
  '(confirm-kill-emacs (quote y-or-n-p))
+ '(counsel-describe-function-preselect (quote ivy-function-called-at-point))
  '(counsel-find-file-at-point t)
- '(counsel-find-file-ignore-regexp
-   "\\(?:\\.\\(?:386\\|aux\\|b\\(?:ak\\|bl\\|in\\|lg\\|zr/\\)\\|c\\(?:lass\\|ps?\\)\\|d\\(?:64fsl\\|fsl\\|ll\\|rv\\|x\\(?:\\(?:\\(?:32\\|64\\)fs\\)?l\\)\\)\\|elc\\|f\\(?:asl?\\|mt\\|ns?\\|\\(?:x\\(?:\\(?:32\\|64\\)f\\)\\)?sl\\)\\|g\\(?:it/\\|[lm]o\\)\\|hg/\\|i\\(?:co\\|dx\\)\\|kys?\\|l\\(?:ib\\|nk\\|o[ft]\\|x\\(?:\\(?:32\\|64\\)fsl\\)\\|[ano]\\)\\|m\\(?:ap\\|em\\|o\\)\\|obj\\|p\\(?:64fsl\\|fsl\\|gs?\\|if\\|y[co]\\)\\|s\\(?:parcf\\|vn/\\|x\\(?:\\(?:32\\|64\\)fsl\\)\\)\\|t\\(?:fm\\|oc\\|ps?\\)\\|ufsl\\|v\\(?:rs?\\|xd\\)\\|wx\\(?:\\(?:32\\|64\\)fsl\\)\\|x86f\\|[ao]\\)\\|CVS/\\|_\\(?:\\(?:MTN\\|darcs\\)/\\)\\|~\\)")
  '(counsel-git-grep-skip-counting-lines nil)
  '(counsel-grep-base-command
    "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
  '(counsel-grep-post-action-hook (quote (recenter)))
  '(counsel-mode-override-describe-bindings t)
+ '(counsel-yank-pop-preselect-last t)
  '(create-lockfiles nil)
  '(cursor-in-non-selected-windows nil)
  '(custom-raised-buttons nil)

@@ -747,6 +747,8 @@ narrowed."
   :after ivy
   :delight
   ;; :commands counsel-ace-link
+  :bind (:map read-expression-map
+              ("C-r" . counsel-minibuffer-history))
   :config
   (ivy-add-actions
    'counsel-find-file
@@ -780,6 +782,12 @@ narrowed."
 
   (with-eval-after-load 'comint
     (bind-key "C-r" #'counsel-shell-history comint-mode-map))
+
+  (add-to-list 'counsel-url-expansions-alist
+               '("bug#\\([[:digit:]]+\\)" .
+                 (lambda (word)
+                   (format "http://debbugs.gnu.org/cgi/bugreport.cgi?bug=%s"
+                           (match-string 1 word)))))
 
   (counsel-mode))
 #+END_SRC
