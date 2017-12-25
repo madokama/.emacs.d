@@ -306,11 +306,12 @@
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "RET") #'jcom-mode-enter)
     (define-key map (kbd "m") #'jcom-mode-mark)
-    (define-key map (kbd "n") #'next-line)
-    (define-key map (kbd "p") #'previous-line)
+    (define-key map (kbd "n") #'jcom-mode-next-line)
+    (define-key map (kbd "p") #'jcom-mode-prev-line)
     (define-key map (kbd "t") #'jcom-mode-mark-all)
     (define-key map (kbd "R") #'jcom-mode-do-reserve)
     (define-key map (kbd "C-d") #'jcom-mode-delete)
+    (define-key map [remap undo] #'jcom-mode-undo)
     map))
 
 (defun jcom--program-at-point ()
@@ -338,8 +339,8 @@
         (subst-char-in-region (point) (1+ (point))
                               mark
                               (if (eq mark ?\ ) ?\* ?\ )
-                              t))
-      (forward-line 1))))
+                              t)))
+    (forward-line 1)))
 
 (defun jcom-mode-mark-all ()
   "Toggle marks for all programs."
@@ -347,8 +348,23 @@
   (save-excursion
     (goto-char (point-min))
     (while (not (eobp))
-      (jcom-mode-mark)
-      (goto-char (1+ (line-end-position))))))
+      (jcom-mode-mark))))
+
+(defun jcom-mode-next-line ()
+  "Move cursor down."
+  (interactive)
+  (forward-line 1))
+
+(defun jcom-mode-prev-line ()
+  "Move cursor up."
+  (interactive)
+  (forward-line -1))
+
+(defun jcom-mode-undo ()
+  "Undo in a JCOM buffer."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (undo)))
 
 (defun jcom-mode-do-reserve ()
   "Reserve marked programs.  If none, reserve the program at point."
