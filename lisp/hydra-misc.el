@@ -6,7 +6,6 @@
 
 (require 'hydra)
 
-(declare-function elscreen-find-and-goto-by-buffer "ext:elscreen")
 (declare-function elfeed "ext:elfeed")
 (declare-function elfeed-search-buffer "ext:elfeed-search")
 
