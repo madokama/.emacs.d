@@ -35,11 +35,26 @@
                              (list 'buffer (buffer-name) (point)))))))))
     (ft (car (window-tree)))))
 
-(defun ivy-view-contents (tr)
-  (pcase (car tr)
-    ((or 'buffer 'file) (list (cadr tr)))
-    ((or 'vert 'horz)
-     (mapcan #'ivy-view-contents (cdr tr)))))
+(defun ivy-view-iterate (fold f tr)
+  (cl-labels ((iter (tr)
+                (pcase (car tr)
+                  ((or 'buffer 'file) (funcall f tr))
+                  ((or 'vert 'horz)
+                   (funcall fold #'iter (cdr tr))))))
+    (iter tr)))
+
+(defun ivy-view-contents (view)
+  (ivy-view-iterate #'mapcan
+                    (pcase-lambda (`(_ ,content _))
+                      (list content))
+                    view))
+
+(defun ivy-view-buffers (view)
+  (ivy-view-iterate #'mapcan
+                    (pcase-lambda (`(,type ,content _))
+                      (when (eq type 'buffer)
+                        (list content)))
+                    view))
 
 (defun ivy-view-dedupe (view)
   (let ((contents (ivy-view-contents view)))
@@ -57,11 +72,18 @@
                    (memq major-mode ivy-view-ignore-modes)))
                (window-list))))
 
+(defun ivy-view-cleanup ()
+  (setq ivy-views
+        (cl-delete-if (pcase-lambda (`(_ ,view))
+                        (cl-find-if-not #'get-buffer (ivy-view-buffers view)))
+                      ivy-views)))
+
 (defun ivy-view-update ()
   "Register current view."
   (unless (ivy-view--no-update)
     (let ((view (ivy-view-view)))
       ;; Prevent views from growing indefinitely.
+      (ivy-view-cleanup)
       (ivy-view-dedupe view)
       (push (list (ivy-default-view-name) view)
             ivy-views))))
