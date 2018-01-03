@@ -13,10 +13,6 @@
   :prefix "ivy-view-"
   :group 'ivy)
 
-(defcustom ivy-view-ignore-modes nil
-  "List of major modes not to register views."
-  :type '(repeat symbol))
-
 (defun ivy-view-view ()
   (cl-labels ((ft (tr)
                 (if (consp tr)
@@ -65,13 +61,6 @@
                                 (cl-subsetp contents c :test #'string=))))
                         ivy-views))))
 
-(defun ivy-view--no-update ()
-  (or (string-prefix-p " *" (buffer-name))
-      (cl-some (lambda (win)
-                 (with-selected-window win
-                   (memq major-mode ivy-view-ignore-modes)))
-               (window-list))))
-
 (defun ivy-view-cleanup ()
   (setq ivy-views
         (cl-delete-if (pcase-lambda (`(_ ,view))
@@ -80,24 +69,12 @@
 
 (defun ivy-view-update ()
   "Register current view."
-  (unless (ivy-view--no-update)
-    (let ((view (ivy-view-view)))
-      ;; Prevent views from growing indefinitely.
-      (ivy-view-cleanup)
-      (ivy-view-dedupe view)
-      (push (list (ivy-default-view-name) view)
-            ivy-views))))
-
-(defun ivy-view-discard ()
-  "Delete views containing buffers being killed."
-  (unless (ivy-view--no-update)
-    (let ((killed (or (buffer-file-name) (buffer-name))))
-      (setq ivy-views
-            (cl-delete-if (pcase-lambda (`(_ ,view))
-                            (member killed (ivy-view-contents view)))
-                          ivy-views)))))
-
-(add-hook 'kill-buffer-hook #'ivy-view-discard)
+  (let ((view (ivy-view-view)))
+    ;; Prevent views from growing indefinitely.
+    (ivy-view-cleanup)
+    (ivy-view-dedupe view)
+    (push (list (ivy-default-view-name) view)
+          ivy-views)))
 
 (defun ivy-view--kill-action (x)
   (if-let* ((view (assoc x ivy-views)))
