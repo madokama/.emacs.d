@@ -15,7 +15,7 @@
     (insert "# Netscape HTTP Cookie File\n# http://www.netscape.com/newsref/std/cookie_spec.html\n# This is a generated file!  Do not edit.\n\n")
     (current-buffer)))
 
-(defun cookie-sync--internal (params)
+(defun cookie-sync--internal (params cookie)
   (let ((tmpbuf (cookie-sync--prepare-buffer)))
     (with-temp-buffer
       (apply #'call-process cookie-sync-sqlite nil t nil
@@ -41,14 +41,14 @@
       (with-current-buffer tmpbuf
         (write-region nil nil tmpfile))
       (kill-buffer tmpbuf)
-      (rename-file tmpfile (url-curl-cookie) t))))
+      (rename-file tmpfile cookie t))))
 
-(defun cookie-sync (params)
+(defun cookie-sync (params &optional cookie)
   (async-start
    `(lambda ()
       ,(async-inject-variables "\\`load-path\\'")
       (require 'cookie-sync)
-      (cookie-sync--internal ',params))
+      (cookie-sync--internal ',params (or ,cookie (url-curl-cookie))))
    (lambda (_)
      (message "Cookies synced."))))
 
