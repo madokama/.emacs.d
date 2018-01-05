@@ -95,14 +95,15 @@
       " "))))
 
 (elfeed--define-filter-toggle
-    ("B" "blog")
-    ;; ("E" "emacs")
-    ("H" "hello")
-    ("N" "news")
-    ;; ("P" "pocket")
-    ("T" "tech")
-    ("U" "unread")
-    ("V" "video"))
+  ("B" "blog")
+  ("D" "disclosure")
+  ;; ("E" "emacs")
+  ("H" "hello")
+  ("N" "news")
+  ;; ("P" "pocket")
+  ("T" "tech")
+  ("U" "unread")
+  ("V" "video"))
 
 (defun elfeed--entries-equal (a b)
   (and (equal (elfeed-entry-title a)
