@@ -739,7 +739,11 @@ narrowed."
   :bind ("C-z" . (lambda ()
                    (interactive)
                    (ivy-view-update)
-                   (ivy-switch-view))))
+                   (cl-loop for w being the windows
+                            unless (window-parameter w 'window-side)
+                              do (with-selected-window w
+                                   (ivy-switch-view))
+                                 (cl-return)))))
 #+END_SRC
 
 *** counsel
