@@ -2042,7 +2042,7 @@ until we have some outputs"
 (use-package cookie-sync
   :after url-curl
   :config
-  (cookie-sync-firefox))
+  (cookie-sync))
 #+END_SRC
 
 *** moz
