@@ -8,11 +8,11 @@
   (require 'subr-x))
 (require 'dom)
 (require 'json)
-(require 'url-curl)
+(require 'cookie-sync)
 (require 'async)
 
 (defgroup jcom nil
-  "Abema TV schedules."
+  "JCOM TV schedules."
   :prefix "jcom-"
   :group 'external
   :group 'comm)
@@ -32,30 +32,19 @@
 
 (defvar jcom-cookie nil)
 
-(defun jcom--prepare-cookie ()
+(defun jcom-prepare-cookie ()
   (let ((tmp (make-temp-file "jcom")))
-    (with-temp-buffer
-      (insert-file-contents-literally (expand-file-name (url-curl-cookie)))
-      (goto-char (point-min))
-      (while (re-search-forward (rx bol "#") nil t))
-      (re-search-forward "\\(?:\r?\n\\)+")
-      (keep-lines (rx bol (opt ".tv") ".myjcom.jp"))
-      (write-region nil nil tmp))
+    (cookie-sync-try (cookie-sync-params-list '(".myjcom.jp" ".tv.myjcom.jp"))
+                     tmp)
     (setq jcom-cookie tmp)))
-
-(defun jcom-refresh-cookie ()
-  (when jcom-cookie
-    (delete-file jcom-cookie)
-    (setq jcom-cookie nil))
-  (jcom--prepare-cookie))
 
 (defun jcom--async-common ()
   (list (async-inject-variables "\\`\\(?:load-path\\|url-user-agent\\)\\'")
         '(require 'jcom)))
 
+(defvar url-user-agent)
+
 (defun jcom--http (url &optional headers data)
-  (unless jcom-cookie
-    (jcom--prepare-cookie))
   (sleep-for (random 10) 600)
   (apply #'call-process "curl" nil t nil
          url
@@ -404,9 +393,11 @@
 (defun jcom-list-programs (&rest _)
   "Show JCOM TV programs for online reservation."
   (interactive)
+  (jcom-prepare-cookie)
   (async-start
    `(lambda ()
       ,@(jcom--async-common)
+      (setq jcom-cookie ,jcom-cookie)
       (jcom-wish-list))
    (lambda (result)
      (let-alist result
@@ -416,7 +407,6 @@
                (unless (derived-mode-p 'jcom-mode)
                  (jcom-mode))
                (setq jcom-meta .common)
-               (setq jcom-cookie .cookie)
                (let ((inhibit-read-only t))
                  (erase-buffer)
                  (mapc (lambda (prog)
