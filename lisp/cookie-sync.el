@@ -5,7 +5,6 @@
 ;;; Code:
 
 (require 'async)
-(require 'url-curl)
 
 (defvar cookie-sync-sqlite "sqlite3")
 
@@ -54,16 +53,26 @@
                   (ignore-errors (funcall f hosts)))
                 cookie-sync-browsers)))
 
+(defun cookie-sync-try (params-list cookie)
+  (cl-find-if (lambda (params)
+                (ignore-errors (cookie-sync--internal params cookie)))
+              params-list))
+
 (defun cookie-sync (&optional hosts cookie)
+  "Synchronize curl cookies with external browsers.
+If the optional first argument HOSTS is specified, only cookies
+exactly matching those names will be synced.
+
+The second argument COOKIE specifies the file to which the
+cookies will be written."
+  (interactive)
   (let ((cookie (or cookie (url-curl-cookie)))
         (params-list (cookie-sync-params-list hosts)))
     (async-start
      `(lambda ()
         ,(async-inject-variables "\\`load-path\\'")
         (require 'cookie-sync)
-        (cl-find-if (lambda (params)
-                      (ignore-errors (cookie-sync--internal params ,cookie)))
-                    ',params-list))
+        (cookie-sync-try ',params-list ,cookie))
      (lambda (_)
        (message "Cookies synced.")))))
 
