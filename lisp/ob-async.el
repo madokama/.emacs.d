@@ -55,7 +55,8 @@
                    lang
                    (if name (format " (%s)" name) ""))
           (pcase lang
-            ((or "sh" "cmd") (org-babel-execute-async:shell lang info buf ov))
+            ((or "sh" "cmd" "bat")
+             (org-babel-execute-async:shell lang info buf ov))
             (_
              (async-start
               `(lambda ()
@@ -108,7 +109,7 @@
 
 (defun ob-async--shell-cmdline (lang script)
   (pcase lang
-    ("cmd"
+    ((or "cmd" "bat")
      (let ((bat (concat script ".bat")))
        (rename-file script bat)
        (list "cmd.exe" "/C" bat)))
