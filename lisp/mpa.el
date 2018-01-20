@@ -65,11 +65,27 @@ Return K if successfull, nil otherwise."
       (term-send-raw-string key))
     key))
 
+(defun mpa-interact ()
+  (cl-block nil
+    (while t
+      (if-let* ((char (read-char "mpa>")))
+          (progn
+            (mpa--send-key (string char))
+            (when (memq char '(?q ?Q))
+              (cl-return)))
+        (cl-return)))))
+
 (defun mpa-next ()
   (mpa--send-key ">"))
 
 (defun mpa-pause ()
   (mpa--send-key " "))
+
+(defun mpa-volume-down ()
+  (mpa--send-key "/"))
+
+(defun mpa-volume-up ()
+  (mpa--send-key "*"))
 
 (defun mpa-loop ()
   (mpa--send-key "L"))
