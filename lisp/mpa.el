@@ -46,9 +46,16 @@
 
 (defun mpa--filter (_proc output)
   (save-match-data
-    (when (string-match (rx "[ytdl_hook] " (group (* (not (any control))))) output)
-      (message "[mpa] %s" (decode-coding-string (match-string 1 output)
-                                                locale-coding-system)))))
+    (cond ((string-match (rx "Volume: " (group (+ digit))) output)
+           (message "[mpa] vol: %s" (match-string 1 output)))
+          ((string-match (rx "[ytdl_hook] " (group (+? anything)) "[0K")
+                         output)
+           (message "[mpa] %s"
+                    (decode-coding-string
+                     (replace-regexp-in-string (rx (or "[0K" "\r" "\n"))
+                                               ""
+                                               (match-string 1 output))
+                     locale-coding-system))))))
 
 (defun mpa--current-process ()
   (car
