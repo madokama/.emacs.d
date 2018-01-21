@@ -29,7 +29,7 @@
          `("-n" "--no-heading"
                 ,@counsel-rg-params
                 "-e" ,(counsel-unquote-regex-parens regex)
-                ,(expand-file-name counsel--git-dir))))
+                ,(expand-file-name (ivy-state-directory ivy-last)))))
     (if no-async
         (split-string (with-output-to-string
                         (with-current-buffer standard-output
@@ -53,11 +53,11 @@
                      (when current-prefix-arg
                        (read-directory-name "rg in directory: "))))
   (setq counsel-grep-last-line nil)
-  (setq counsel--git-dir (or initial-directory
-                                  (locate-dominating-file default-directory ".git")
-                                  default-directory))
   (ivy-set-prompt 'counsel-rg #'counsel-prompt-function-default)
-  (let ((init-point (point))
+  (let ((default-directory (or initial-directory
+                               (locate-dominating-file default-directory ".git")
+                               default-directory))
+        (init-point (point))
         res)
     (unwind-protect
          (setq res (ivy-read "rg" #'counsel-rg-function
@@ -82,7 +82,7 @@
 ;; (defun counsel-rg-occur ()
 ;;   (unless (eq major-mode 'ivy-occur-grep-mode)
 ;;     (ivy-occur-grep-mode))
-;;   (setq default-directory counsel--git-dir)
+;;   (setq default-directory (ivy-state-directory ivy-last))
 ;;   (let ((cands nil))
 ;;     (insert
 ;;      (format "-*- mode:grep; default-directory: %S -*-\n\n\n" default-directory))
@@ -95,7 +95,7 @@
 ;;   "Generate a custom occur buffer for `counsel-rg'."
 ;;   (unless (eq major-mode 'ivy-occur-grep-mode)
 ;;     (ivy-occur-grep-mode))
-;;   (setq default-directory counsel--git-dir)
+;;   (setq default-directory (ivy-state-directory ivy-last))
 ;;   (let* ((regex
 ;;           (counsel-unquote-regex-parens
 ;;            (setq ivy--old-re
