@@ -275,11 +275,6 @@
 
 (add-hook 'page2feed-scrapers #'page2feed-scrape-morcoff)
 
-;; (with-current-buffer (get-buffer "radio.html")
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (page2feed-sxmlize (page2feed-scrape-morcoff))))
-
 (defun page2feed-scrape-linelive-entry (entry)
   (let-hash entry
     (list 'title .title

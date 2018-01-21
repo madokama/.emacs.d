@@ -4,8 +4,6 @@
 
 ;;; Code:
 
-;; (require 'cl-lib)
-                                        ; for cl-caddr
 (require 'seq)
 (require 'dash)
 (require 'dash-functional)

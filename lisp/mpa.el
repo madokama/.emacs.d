@@ -66,7 +66,7 @@
 
 (defun mpa--send-key (key)
   "Send input KEY to the mpa process.
-Return K if successfull, nil otherwise."
+Return KEY if successfull, nil otherwise."
   (when-let* ((p (mpa--current-process)))
     (with-current-buffer (process-buffer p)
       (term-send-raw-string key))

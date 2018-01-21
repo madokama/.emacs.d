@@ -50,7 +50,6 @@
     (plist-get plst key)))
 
 (defun recentb-save-on-kill-buffer ()
-  ;; (message "[!] %s(%s)" (buffer-name) major-mode)
   ;; Register the hook only when the mode defines a variable to save.
   (when (recentb-mode-ref :var)
     (add-hook 'kill-buffer-hook #'recentb-save1 nil t)))

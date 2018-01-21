@@ -14,6 +14,7 @@
     (when (search-forward-regexp "^HTTP/[0-9.]+ \\([0-9]+\\)" nil t)
       (string-to-number (match-string 1)))))
 
+;;;###autoload
 (defun url-curl-cookie ()
   (url-do-setup)
   (concat url-cookie-file ".curl"))
@@ -65,7 +66,6 @@
     (kill-line)))
 
 (defvar url-http-response-status)
-;; (defvar elfeed-curl-status-code)
 
 (defun url-curl--parse-header ()
   (url-curl--clean-header)
@@ -125,8 +125,7 @@
             (status (url-curl-parse-headers nil))
             (inhibit-message t))
         (when (plist-get status :error)
-          ;; noop
-          )
+          (ignore))
         (unless (= url-http-response-status 304)
           (write-region (point-min) (point-max) (concat cache ".h")))
         (when (file-exists-p cache)
@@ -135,7 +134,7 @@
                        (progn
                          (goto-char (point-min))
                          (funcall callback))
-                       (buffer-string))
+                     (buffer-substring-no-properties (point-min) (point-max)))
               (kill-buffer))))))))
 
 (defun url-curl (url callback cbargs &rest _)

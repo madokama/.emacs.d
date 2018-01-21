@@ -10,8 +10,6 @@
 (require 'url-vars)
 (require 'auth-source)
 
-(defvar browse-url-generic-program)
-(defvar abema-watch-browser browse-url-generic-program)
 (defgroup abema nil
   "Abema TV schedules."
   :prefix "abema-"
@@ -116,8 +114,7 @@
                             (abema-json chan)))))
 
 (defun abema-watch (url)
-  (let ((browse-url-generic-program abema-watch-browser))
-    (browse-url-generic url)))
+  (browse-url-generic url))
 
 (provide 'abema)
 ;;; abema.el ends here
