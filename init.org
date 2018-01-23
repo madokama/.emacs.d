@@ -2393,17 +2393,27 @@ keybind definition: (\"key\" . func)"
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :defer t
-;;  :commands (magit-version magit-status magit-blame)
   :load-path "site-lisp/magit/lisp"
   ;;:delight (magit-auto-revert-mode " μρ")
   :init
   (info-add-manual "site-lisp/magit/Documentation/")
-  ;;:config
-  ;;(setq magit-auto-revert-mode nil)
-  )
+  :config
+  (advice-add 'magit-version :around
+              (lambda (&rest ignore)
+                magit-version)))
+#+END_SRC
 
-;; (use-package counsel-magit
-;;   :commands counsel-magit-repos)
+#+BEGIN_SRC emacs-lisp
+(use-package magit-popup
+  :unless noninteractive
+  :load-path "site-lisp/magit-popup"
+  :defer t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package ghub
+  :load-path "site-lisp/ghub"
+  :defer t)
 #+END_SRC
 
 *** vc-git
