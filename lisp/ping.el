@@ -33,11 +33,10 @@
   (if ping-mode
       (progn
         (setq ping-mode-lighter "")
-        (unless global-mode-string
-          (setq global-mode-string '("")))
-        (add-to-list 'global-mode-string 'ping-mode-lighter t)
+        (add-to-list 'global-mode-string '(:eval ping-mode-lighter) t)
         (ping-monitor))
-    (delq 'ping-mode-lighter global-mode-string)))
+    (setq global-mode-string
+          (delete '(:eval ping-mode-lighter) global-mode-string))))
 
 (defun ping-monitor ()
   (set-process-query-on-exit-flag
