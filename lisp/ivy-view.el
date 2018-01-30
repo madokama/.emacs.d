@@ -76,6 +76,17 @@
     (push (list (ivy-default-view-name) view)
           ivy-views)))
 
+(defun ivy-view-switch-view ()
+  "Switch views as well as register the current view."
+  (interactive)
+  (ivy-view-update)
+  ;; `ivy-switch-view' must be called on non-side-windows.
+  (cl-loop for w being the windows
+           unless (window-parameter w 'window-side)
+             do (with-selected-window w
+                  (ivy-switch-view))
+                (cl-return)))
+
 (defun ivy-view--kill-action (x)
   (if-let* ((view (assoc x ivy-views)))
       (ivy-pop-view-action view)
