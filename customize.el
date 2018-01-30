@@ -140,19 +140,11 @@
  '(org-babel-hash-show-time t)
  '(org-babel-shell-names '("sh" "bash" "cmd" "bat"))
  '(org-capture-templates
-   '(("p" "Protocol" entry
+   '(("l" "Link" entry
       (file+olp+datetree "")
-      "* %^{Title}
-Source: %u, %c
- #+BEGIN_QUOTE
-%i
-#+END_QUOTE
-%?")
-     ("L" "Protocol Link" entry
-      (file+olp+datetree "")
-      "* %(org-make-link-string \"%:link\" \"%:description\")
-%?
-Captured On: %U")
+      "* %:description  %^g
+%(org-capture--quote)%?Source: %:link
+%U")
      ("y" "YouTube" entry
       (file+olp+datetree "vids.org")
       "* %(org-ytdl-capture)  %^g
