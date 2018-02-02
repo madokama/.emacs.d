@@ -61,7 +61,11 @@
              (async-start
               `(lambda ()
                  ,(async-inject-variables
-                   (rx bos (or "load-path" "org-babel-library-of-babel") eos))
+                   (rx bos
+                       (or "load-path"
+                           "org-babel-library-of-babel"
+                           "org-babel-default-header-args")
+                       eos))
                  (require 'org)
                  (org-babel-do-load-languages 'org-babel-load-languages
                                               ',org-babel-load-languages)
