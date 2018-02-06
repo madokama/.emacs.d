@@ -168,8 +168,10 @@
                       (cl-delete-duplicates
                        (nconc progs search)
                        :test (lambda (a b)
-                               (string= (alist-get 'programId a)
-                                        (alist-get 'programId b)))
+                               (and (string= (alist-get 'programId a)
+                                             (alist-get 'programId b))
+                                    (string= (alist-get 'eventId a)
+                                             (alist-get 'eventId b))))
                        :from-end t)))))))))
 
 (defun jcom--end-time (params)
