@@ -76,10 +76,11 @@
     (push (list (ivy-default-view-name) view)
           ivy-views)))
 
+(advice-add 'ivy-switch-buffer :before #'ivy-view-update)
+
 (defun ivy-view-switch-view ()
   "Switch views as well as register the current view."
   (interactive)
-  (ivy-view-update)
   ;; `ivy-switch-view' must be called on non-side-windows.
   (cl-loop for w being the windows
            unless (window-parameter w 'window-side)
