@@ -55,8 +55,7 @@
                (when (url-cache-prepare cache)
                  (list "-o" cache)))
            ,@(when-let* ((cookie (expand-file-name (url-curl-cookie))))
-               (list "-b" cookie ;; "-c" cookie
-                     ))
+               (list "-b" cookie "-c" cookie))
            ,@(mapcan (pcase-lambda (`(,name . ,value))
                        (list "-H" (format "%s: %s" name value)))
                      url-request-extra-headers)
