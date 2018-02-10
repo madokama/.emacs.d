@@ -19,6 +19,12 @@
   (url-do-setup)
   (concat url-cookie-file ".curl"))
 
+(defun url-curl--host-regexp (host)
+  (let ((parts (split-string host "\\.")))
+    (if (cddr parts)
+        (regexp-opt (list host (concat "." (string-join (cdr parts) "."))))
+      (regexp-quote host))))
+
 ;; Cookie utility
 (defun url-curl-extract-cookies (host keys)
   (string-join
@@ -29,8 +35,8 @@
              (goto-char (point-min))
              (prog1
                  (cl-loop while (re-search-forward
-                                 (format "^%s\t.+?\t\\([^\t]+\\)\t\\([^\t]+\\)$"
-                                         (regexp-quote host))
+                                 (format "^%s\t.+?\t\\([^\t]+\\)\t\\([^\t\n]+\\)$"
+                                         (url-curl--host-regexp host))
                                  nil t)
                           when (member (match-string 1) keys)
                             collect (cons (match-string 1) (match-string 2)))
