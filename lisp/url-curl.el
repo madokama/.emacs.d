@@ -21,9 +21,12 @@
 
 (defun url-curl--host-regexp (host)
   (let ((parts (split-string host "\\.")))
-    (if (cddr parts)
-        (regexp-opt (list host (concat "." (string-join (cdr parts) "."))))
-      (regexp-quote host))))
+    (regexp-opt
+     (mapcan (lambda (host)
+               (list (concat "#HttpOnly_" host) host))
+             (if (cddr parts)
+                 (list host (concat "." (string-join (cdr parts) ".")))
+               (list host))))))
 
 ;; Cookie utility
 (defun url-curl-extract-cookies (host keys)
