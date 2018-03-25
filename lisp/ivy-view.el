@@ -45,10 +45,10 @@
                       (list content))
                     view))
 
-(defun ivy-view-buffers (view)
+(defun ivy-view-extract (type view)
   (ivy-view-iterate #'mapcan
-                    (pcase-lambda (`(,type ,content _))
-                      (when (eq type 'buffer)
+                    (pcase-lambda (`(,type~ ,content _))
+                      (when (eq type~ type)
                         (list content)))
                     view))
 
@@ -64,7 +64,10 @@
 (defun ivy-view-cleanup ()
   (setq ivy-views
         (cl-delete-if (pcase-lambda (`(_ ,view))
-                        (cl-find-if-not #'get-buffer (ivy-view-buffers view)))
+                        (or (cl-find-if-not #'get-buffer
+                                            (ivy-view-extract 'buffer view))
+                            (cl-find-if-not #'get-file-buffer
+                                            (ivy-view-extract 'file view))))
                       ivy-views)))
 
 (defun ivy-view-update ()
