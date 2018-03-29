@@ -78,24 +78,28 @@
         (jcom-ajax-get "https://tv.myjcom.jp/jcom-pc/remoteRecList.action?recListType=1&limit=100"
                        location)
         (goto-char (point-min))
-        (cl-loop while (re-search-forward (rx "detail.action?"
-                                              (group (+ (not (any "\"")))))
-                                          nil t)
-                 collect (let ((params
-                                (url-parse-query-string (match-string 1))))
-                           (cl-flet ((get (k)
-                                       (cadr (assoc k params))))
-                             (let ((serviceCode
-                                    (split-string (get "serviceCode") "_")))
-                               ;; Collect program data to later weed
-                               ;; out reserved programs from the wish
-                               ;; list. Since `eventId' is not unique
-                               ;; enough, we record several other
-                               ;; parameters as well.
-                               `((channelType . ,(get "channelType"))
-                                 (serviceId . ,(car serviceCode))
-                                 (networkId . ,(cadr serviceCode))
-                                 (eventId . ,(get "eventId")))))))))))
+        (if-let* ((progs
+                   (cl-loop while (re-search-forward (rx "detail.action?"
+                                                         (group (+ (not (any "\"")))))
+                                                     nil t)
+                            collect (let ((params
+                                           (url-parse-query-string (match-string 1))))
+                                      (cl-flet ((get (k)
+                                                  (cadr (assoc k params))))
+                                        (let ((serviceCode
+                                               (split-string (get "serviceCode") "_")))
+                                          ;; Collect program data to later weed
+                                          ;; out reserved programs from the wish
+                                          ;; list. Since `eventId' is not unique
+                                          ;; enough, we record several other
+                                          ;; parameters as well.
+                                          `((channelType . ,(get "channelType"))
+                                            (serviceId . ,(car serviceCode))
+                                            (networkId . ,(cadr serviceCode))
+                                            (eventId . ,(get "eventId")))))))))
+            progs
+          (message "WARN:%s" (buffer-string))
+          nil)))))
 
 (defsubst jcom--parse-html-region (begin end)
   (thread-last (libxml-parse-html-region begin end)
@@ -257,6 +261,7 @@
               (dom-by-id "resultArea")
               (dom-by-tag 'tbody)
               (dom-by-tag 'table))))
+      (message "INFO:%s" key)
       (mapcar (lambda (dom)
                 (let ((json
                        (json-read-from-string
@@ -369,9 +374,9 @@
                (cons 'cookie jcom-cookie)
                (cons 'programs (jcom--marked-programs)))))
    (lambda (results)
-     (if (seq-every-p #'jcom--reserve-success-p results)
-         (message "[JCOM] Done.")
-       (error "[JCOM] %S" results)))))
+     (if-let* ((failed (cl-delete-if #'jcom--reserve-success-p results)))
+         (error "[JCOM] %S" failed)
+       (message "[JCOM] Done.")))))
 
 (define-derived-mode jcom-mode
   special-mode "JCOM"
@@ -423,7 +428,22 @@
                        .programs))
                (goto-char (point-min)))
              (pop-to-buffer buf))
-         (message "No programs found."))))))
+         (message "[JCOM] No programs found.")))))
+  (set-process-filter async--procvar
+                      (lambda (proc output)
+                        (save-match-data
+                          (cond ((string-prefix-p "INFO:" output)
+                                 (let ((message-log-max nil))
+                                   (message "[JCOM:P]%s"
+                                            (string-trim-right
+                                             (substring output 5)))))
+                                ((string-prefix-p "WARN:" output)
+                                 (with-current-buffer
+                                     (pop-to-buffer "*jcom warning*")
+                                   (insert (substring output 5))))
+                                (t
+                                 (with-current-buffer (process-buffer proc)
+                                   (insert output))))))))
 
 (provide 'jcom)
 ;;; jcom.el ends here
