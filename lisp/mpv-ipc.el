@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'cl-macs))
 (require 'subr-x)
 
 (defun mpv-ipc--sockpath ()
@@ -35,9 +37,9 @@
     (process-put sock :sock path)
     sock))
 
-(defun mpv-ipc-watch (args &optional cb)
+(defun mpv-ipc-watch (args &optional ev-handler)
   (let ((path (mpv-ipc--sockpath))
-        (cb (or cb #'mpv-ipc-receive)))
+        (cb (mpv-ipc-receive (or ev-handler #'ignore))))
     (cl-block nil
       ;; Returns socket process if successful.
       (accept-process-output
@@ -57,12 +59,15 @@
                             (lambda (_proc _signal)
                               (delete-process sock)))
                            (cl-return sock)))))
-       1))))
+       10))))
 
-(defun mpv-ipc-receive (tag json)
-  (let-hash json
-    (when .request_id
-      (throw tag .data))))
+(defun mpv-ipc-receive (ev-handler)
+  (lambda (tag json)
+    (let-hash json
+      (cond (.event
+             (funcall ev-handler json))
+            (.request_id
+             (throw tag .data))))))
 
 (defun mpv-ipc-inputcmd (cmd &rest params)
   (format "%s%s\n"
@@ -126,6 +131,9 @@
 (defun mpv-ipc:volume (ipc amount)
   (mpv-ipc--do ipc "add" "volume" amount))
 
+(defun mpv-ipc:mute (ipc)
+  (mpv-ipc--do ipc "cycle" "mute"))
+
 (defun mpv-ipc:keypress (ipc key)
   (mpv-ipc--do ipc "keypress" key))
 
@@ -137,6 +145,16 @@
 
 (defun mpv-ipc:loop (ipc)
   (mpv-ipc--do ipc "cycle-values" "loop-file" "inf" "no"))
+
+(defun mpv-ipc-interact (ipc)
+  (cl-block nil
+    (while t
+      (if-let* ((char (read-char "mpv>")))
+          (progn
+            (mpv-ipc:keypress ipc (string char))
+            (when (memq char '(?q ?Q ?))
+              (cl-return)))
+        (cl-return)))))
 
 (provide 'mpv-ipc)
 ;;; mpv-ipc.el ends here
