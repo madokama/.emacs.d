@@ -13,10 +13,10 @@ symbol, and each cdr is the same symbol without the `.'."
   (cond
     ((symbolp data)
      (let ((name (symbol-name data)))
-       (when (string-match "\\`\\." name)
+       (when (string-prefix-p "." name)
          ;; Return the cons cell inside a list, so it can be appended
          ;; with other results in the clause below.
-         (list (cons data (intern (replace-match "" nil nil name)))))))
+         (list (cons data (intern (substring name 1)))))))
     ((not (consp data)) nil)
     ((eq (car data) 'let-hash)
      ;; For nested ‘let-hash’ forms, ignore symbols appearing in the
