@@ -90,6 +90,7 @@
  '(flycheck-keymap-prefix "f")
  '(flycheck-mode-line-prefix "")
  '(flycheck-pos-tip-timeout 5)
+ '(font-lock-global-modes nil)
  '(gc-cons-threshold 33554432)
  '(global-prettify-symbols-mode t)
  '(gtags-disable-pushy-mouse-mapping t)
@@ -100,7 +101,7 @@
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(initial-buffer-choice t)
- '(initial-frame-alist nil)
+ '(initial-frame-alist '((alpha . 71) (fullscreen . fullboth)))
  '(initial-scratch-message nil)
  '(ivy-auto-select-single-candidate t t)
  '(ivy-completing-read-handlers-alist
@@ -116,7 +117,7 @@
  '(ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
  '(ivy-use-selectable-prompt t)
  '(ivy-use-virtual-buffers t)
- '(ivy-virtual-abbreviate 'full)
+ '(ivy-virtual-abbreviate 'abbreviate)
  '(ivy-wrap nil)
  '(jit-lock-stealth-load 200)
  '(jit-lock-stealth-time 1)
@@ -142,27 +143,16 @@
  '(org-capture-templates
    '(("l" "Link" entry
       (file+olp+datetree "")
-      "* %:description  %^g
-%(org-capture--quote)%?Source: %:link
-%U")
+      "* %:description  %^g\n%(org-capture--quote)%?Source: %:link\n%U")
      ("y" "YouTube" entry
       (file+olp+datetree "vids.org")
-      "* %(org-ytdl-capture)  %^g
-%(org-ytdl-run-template-hook)
-%?
-%U")
+      "* %(org-ytdl-capture)  %^g\n%(org-ytdl-run-template-hook)\n%?\n%U")
      ("t" "Todo" entry
       (file+olp+datetree "todo.org")
-      "* TODO %?
-%i
-%a
-%U")
+      "* TODO %?\n%i\n%a\n%U")
      ("n" "Note" entry
       (file+olp+datetree "")
-      "* %?
-%i
-%a
-%U")))
+      "* %?\n%i\n%a\n%U")))
  '(org-catch-invisible-edits 'show-and-error)
  '(org-confirm-babel-evaluate nil)
  '(org-directory "~/Dropbox/emacs/org")
@@ -177,10 +167,6 @@
  '(org-src-window-setup 'current-window)
  '(org-startup-indented t)
  '(org-startup-with-inline-images t)
- '(package-archives
-   '(("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "http://melpa.org/packages/")))
- '(package-enable-at-startup nil)
  '(pdf-tools-enabled-hook '(pdf-view-midnight-minor-mode auto-revert-mode))
  '(pdf-tools-enabled-modes
    '(pdf-history-minor-mode pdf-isearch-minor-mode pdf-links-minor-mode pdf-outline-minor-mode pdf-cache-prefetch-minor-mode pdf-view-auto-slice-minor-mode pdf-occur-global-minor-mode))
@@ -233,15 +219,13 @@
  '(url-cache-expire-time 604800)
  '(url-history-file "~/.emacs.d/url/history")
  '(url-mime-language-string "en-US,en")
- '(url-queue-parallel-processes 2)
  '(url-queue-timeout 60)
  '(url-user-agent
-   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0")
+   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0")
  '(user-full-name "Madoka Machitani")
  '(windmove-window-distance-delta 2)
  '(windmove-wrap-around t)
  '(window-combination-resize t)
- '(window-resize-pixelwise t)
  '(winner-dont-bind-my-keys t)
  '(yas-use-menu nil))
 (custom-set-faces
