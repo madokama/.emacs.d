@@ -26,26 +26,30 @@ symbol, and each cdr is the same symbol without the `.'."
     (t (append (let-hash--deep-dot-search (car data))
                (let-hash--deep-dot-search (cdr data))))))
 
+(defun let-hash--gethash-sexp (key hash)
+  `(when (hash-table-p ,hash)
+     (if (eq (hash-table-test ,hash) 'eq)
+         (gethash ',(intern key) ,hash)
+       (gethash ,key ,hash))))
+
 (defun let-hash--sexp (key hash let-p)
-  (let* ((hvar (make-symbol "hash"))
-         (vvar (make-symbol "val"))
-         (res (if (symbolp hash)
-                  `(when (hash-table-p ,hash)
-                     (gethash ,(symbol-name key) ,hash))
-                `(let ((,hvar ,hash))
-                   (when (hash-table-p ,hvar)
-                     (gethash ,(symbol-name key) ,hvar))))))
+  (let ((sexp (if (symbolp hash)
+                  (let-hash--gethash-sexp key hash)
+                (let ((hvar (make-symbol "hash")))
+                  `(let ((,hvar ,hash))
+                     ,(let-hash--gethash-sexp key hvar))))))
     (if let-p
-        res
-      `(let ((,vvar ,res))
-         (if (memq ,vvar '(:null :false))
-             nil
-           ,vvar)))))
+        sexp
+      (let ((vvar (make-symbol "val")))
+        `(let ((,vvar ,sexp))
+           (if (memq ,vvar '(:null :false))
+               nil
+             ,vvar))))))
 
 (defun let-hash--access-sexp (symbol variable)
   "Return a sexp used to access SYMBOL inside VARIABLE."
   (let-hash--list-to-sexp
-   (mapcar #'intern (nreverse (split-string (symbol-name symbol) "\\.")))
+   (nreverse (split-string (symbol-name symbol) "\\."))
    variable))
 
 (defun let-hash--list-to-sexp (lst variable &optional let-p)
@@ -58,15 +62,20 @@ intermediate `let' binding."
                       let-p)
     (let-hash--sexp (car lst) variable let-p)))
 
+(defun let-hash--internal (var body)
+  `(let ,(mapcar (lambda (x)
+                   `(,(car x) ,(let-hash--access-sexp (cdr x) var)))
+                 (delete-dups (let-hash--deep-dot-search body)))
+     ,@body))
+
 ;;;###autoload
 (defmacro let-hash (hash &rest body)
   (declare (indent 1) (debug t))
-  (let ((var (make-symbol "hash")))
-    `(let ((,var ,hash))
-       (let ,(mapcar (lambda (x)
-                       `(,(car x) ,(let-hash--access-sexp (cdr x) var)))
-                     (delete-dups (let-hash--deep-dot-search body)))
-         ,@body))))
+  (if (symbolp hash)
+      (let-hash--internal hash body)
+    (let ((var (make-symbol "hash")))
+      `(let ((,var ,hash))
+         ,(let-hash--internal var body)))))
 
 ;;;###autoload
 (defmacro map-hash (binding hash &rest body)
