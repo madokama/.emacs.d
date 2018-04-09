@@ -79,6 +79,10 @@ git update-index --assume-unchanged init.el
 
 ** TODO Dependencies
 * Environment Setups
+** Early-init
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(setq package-enable-at-startup nil)
+#+END_SRC
 ** Init of Inits
 #+BEGIN_SRC emacs-lisp
 ;; -*- lexical-binding: t; -*-
