@@ -75,7 +75,8 @@
          (let* ((dom
                  (page2feed-shogi-dom-find
                   (libxml-parse-html-region (match-beginning 0)
-                                            (match-end 0))
+                                            (match-end 0)
+                                            nil)
                   'ul))
                 (kif (thread-first dom
                        (dom-by-tag 'a)
@@ -136,12 +137,12 @@
                                     (content (dom-attr meta 'content)))
                           (when (string-match "url=\\(.+\\)$" content)
                             (url-expand-file-name (match-string 1 content) url))))
-                      (dom-by-tag (libxml-parse-html-region (point-min) (point-max))
+                      (dom-by-tag (libxml-parse-html-region (point-min) (point-max) nil)
                                   'meta))))))
     (url-curl-sync
      redir
      (lambda ()
-       (thread-first (libxml-parse-html-region (point-min) (point-max))
+       (thread-first (libxml-parse-html-region (point-min) (point-max) nil)
          (dom-by-id "jtweb-main-content")
          (dom-by-class "pcBlock")
          car
@@ -249,7 +250,8 @@
              while m
              nconc (page2feed-shogi-extract
                     (libxml-parse-html-region (match-beginning 0)
-                                              (match-end 0))))))
+                                              (match-end 0)
+                                              nil)))))
       (list 'link link
             'author (page2feed-shogi-author)
             'entries (mapcan #'page2feed-shogi-games

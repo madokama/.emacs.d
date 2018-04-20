@@ -102,7 +102,7 @@
           nil)))))
 
 (defsubst jcom--parse-html-region (begin end)
-  (thread-last (libxml-parse-html-region begin end)
+  (thread-last (libxml-parse-html-region begin end nil)
     caddr caddr))
 
 (defun jcom--device-params ()
@@ -228,7 +228,7 @@
                         "https://tv.myjcom.jp/wishList.action"
                         (jcom--build-reserve-form params prog))
         (let ((dom
-               (libxml-parse-html-region (point-min) (point-max))))
+               (libxml-parse-html-region (point-min) (point-max) nil)))
           (list .title
                 (car (dom-by-id dom "recResultTitle"))
                 (car (dom-by-class dom "cont"))))))))
@@ -254,7 +254,7 @@
   (with-temp-buffer
     (jcom--http (format "https://tv.myjcom.jp/mySearch.action?searchId=%s&p=1" id))
     (let* ((dom
-            (libxml-parse-html-region (point-min) (point-max)))
+            (libxml-parse-html-region (point-min) (point-max) nil))
            (key (jcom--search-keyword dom))
            (dom-result
             (thread-first dom
@@ -286,7 +286,7 @@
     (jcom--http "https://tv.myjcom.jp/jcom-pc/mySearchList.action")
     (mapcan (lambda (dom)
               (jcom-search-id (dom-attr (dom-by-tag dom 'input) 'value)))
-            (dom-by-class (libxml-parse-html-region (point-min) (point-max))
+            (dom-by-class (libxml-parse-html-region (point-min) (point-max) nil)
                           "mySearchListBox"))))
 
 (defun jcom-program-page (prog)

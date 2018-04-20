@@ -286,7 +286,7 @@
 
 (defun page2feed-scrape-linelive ()
   (when (re-search-forward "<meta .+?og:site_name.+?content=\"LINE LIVE" nil t)
-    (let-hash (thread-first (libxml-parse-html-region (point-min) (point-max))
+    (let-hash (thread-first (libxml-parse-html-region (point-min) (point-max) nil)
                  (dom-by-id "data")
                  (dom-attr 'data-channel)
                  json-parse-string)
