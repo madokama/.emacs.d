@@ -1119,6 +1119,18 @@ Just to suppress lighter
   (add-hook 'prog-mode-hook #'idle-highlight-mode))
 #+END_SRC
 
+*** symbol-overlay
+#+BEGIN_SRC emacs-lisp
+(use-package symbol-overlay
+  :load-path "site-lisp/symbol-overlay"
+  :bind (:map symbol-overlay-map
+         ("C-g" . symbol-overlay-remove-all)
+         :map search-map
+         ("." . symbol-overlay-put))
+  :delight " Ⓞ"
+  :hook (prog-mode-hook . symbol-overlay-mode))
+#+END_SRC
+
 *** eval-sexp-fu
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package eval-sexp-fu
