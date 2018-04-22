@@ -21,7 +21,7 @@
                               (mapcar #'ft (cddr tr)))
                       (cons 'horz
                             (mapcar #'ft (cddr tr))))
-                  (with-current-buffer (window-buffer tr)
+                  (with-selected-window tr
                     (let ((file (buffer-file-name)))
                       (cond ((and file (file-exists-p file))
                              (list 'file file (point)))
