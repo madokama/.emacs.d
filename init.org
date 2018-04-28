@@ -2218,6 +2218,7 @@ until we have some outputs"
               (apply oldfun r)))
         (apply oldfun r))))
   (advice-add 'flycheck-may-enable-mode :around #'ad-flycheck-may-enable-mode)
+  (advice-add 'flycheck-relevant-error-other-file-p :override #'ignore)
 
   (defun pml-flycheck ()
     (unless (eq flycheck-last-status-change 'no-checker)
@@ -2237,6 +2238,18 @@ until we have some outputs"
   (setq flycheck-emacs-lisp-package-initialize-form
         (flycheck-sexp-to-string
          '(load (expand-file-name "loaddefs" user-emacs-directory) nil t)))
+
+  (defvar flycomp-mode-alist
+    '((emacs-lisp-mode . byte-recompile-file)))
+
+  (defun flycomp (status)
+    (when (and (eq status 'finished)
+               (not (buffer-modified-p))
+               (null (flycheck-count-errors flycheck-current-errors)))
+      (when-let ((fn (alist-get major-mode flycomp-mode-alist)))
+        (funcall fn  buffer-file-name))))
+
+  (add-hook 'flycheck-status-changed-functions #'flycomp)
 
   (global-flycheck-mode))
 
