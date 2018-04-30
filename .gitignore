@@ -21,5 +21,6 @@ $Recycle.Bin
 /bookmarks
 /init-util.el
 /init.el
+/early-init.el
 /eshell
 **/Thumbs.db
