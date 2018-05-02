@@ -11,8 +11,7 @@
 (require 'cl-seq)
 (require 'solmath)
 
-
-;; Utility functions
+;;; Utility functions
 
 (defun 9stars--rotate (lst seekfn n)
   (seq-take (funcall seekfn (setcdr (last lst) lst))

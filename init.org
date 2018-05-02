@@ -177,8 +177,6 @@ to view the log.
 
 ** Setenv
 #+BEGIN_SRC emacs-lisp
-(when (eq system-type 'windows-nt)
-  (setenv "MSYSTEM" "MINGW64"))
 (setenv "SHELL" "bash")
 #+END_SRC
 
@@ -207,7 +205,7 @@ From: [[http://www49.atwiki.jp/ntemacs/pages/16.html][NTEmacs @ ウィキ - UTF-
 
 (set-file-name-coding-system 'cp932)
 (setq coding-system-for-read (or 'undecided 'utf-8) ; for ls to work
-      coding-system-for-write 'utf-8-unix
+      ;; coding-system-for-write 'utf-8-unix
       locale-coding-system 'utf-8-unix
       default-process-coding-system '(undecided-dos . utf-8-unix))
 
@@ -243,7 +241,7 @@ From: [[http://www49.atwiki.jp/ntemacs/pages/16.html][NTEmacs @ ウィキ - UTF-
 See how unicode font sets are configured:
 [[file:~/git/emacs/lisp/international/fontset.el::(set-fontset-font%20"fontset-default"%20symbol-subgroup%20"Symbola"%20nil%20'prepend))][default fontset]]
 
-Font samples [[file:etc/org/emojis.org][emojis.org]] which contains:
+Font samples [[file:org/emojis.org][emojis.org]] which contains:
  - [[https://icomoon.io/#icons-icomoon][IcoMoon-Free]]
  - [[http://fontawesome.io/][FontAwesome]]
  - [[file:~/Documents/junk/2016-04-22-185254.org][Segoe UI Emoji]]
@@ -826,7 +824,7 @@ narrowed."
   :load-path "site-lisp/ace-link"
   :bind ("M-o" . ace-link)
   :commands ace-link-setup-default
-  :after (info help-mode eww elfeed)
+  :after (:or info help-mode eww elfeed)
   :config (ace-link-setup-default "o"))
 #+END_SRC
 *** smex
@@ -904,15 +902,8 @@ narrowed."
   (use-package recentb-shell
     :config
     (setq recentb-shell-action-function #'recentb-shell-action-msys2
-          recentb-shell-history-function #'recentb-shell-history-msys2))
-  (use-package recentb-abema
-    :config
-    (setq recentb-abema-channels '(shogi pet))
-    (cond ((eq system-type 'windows-nt)
-           (setq abema-watch-browser
-                 "C:\\Program Files (x86)\\Vivaldi\\Application\\vivaldi.exe")))))
+          recentb-shell-history-function #'recentb-shell-history-msys2)))
 #+END_SRC
-
 *** view-mode
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package view
@@ -995,7 +986,7 @@ narrowed."
 #+END_SRC
 
 *** alpha frame
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package alpha-frame
   :defer 0.8
   :if (window-system)
@@ -1035,14 +1026,14 @@ From [[http://endlessparentheses.com/disable-mouse-only-inside-emacs.html][Disab
 
 #+BEGIN_SRC emacs-lisp
 (use-package disable-mouse
-  :if (and (window-system) (not noninteractive))
+  :if (and window-system (not noninteractive))
   :load-path "site-lisp/disable-mouse"
   :defer 3
   :delight
   (disable-mouse-mode "")
-  (global-disable-mouse-mode "")
+  (disable-mouse-global-mode "")
   :config
-  (global-disable-mouse-mode))
+  (disable-mouse-global-mode))
 #+END_SRC
 
 ** Visual Effects
@@ -1110,7 +1101,7 @@ Just to suppress lighter
 #+END_SRC
 
 *** idle-highlight-mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package idle-highlight-mode
   :unless noninteractive
   :load-path "site-lisp/idle-highlight-mode"
@@ -1351,10 +1342,12 @@ Just to suppress lighter
                         cd (current-buffer)))))
 
   (defun ad-shell-cd (orig-fun &rest args)
-    (let ((cd default-directory))
-      (with-current-buffer (apply orig-fun args)
+    (let* ((cd default-directory)
+           (buf (apply orig-fun args)))
+      (with-current-buffer buf
         (when (file-directory-p cd)
-          (shell-mode-sync-cd (abbreviate-file-name cd))))))
+          (shell-mode-sync-cd (abbreviate-file-name cd))))
+      buf))
 
   (advice-add 'shell :around #'ad-shell-cd)
 
@@ -1831,9 +1824,9 @@ until we have some outputs"
   (bind-key "C-c c" #'hydra-org-capture/body))
 #+END_SRC
 *** org-eldoc
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package org-eldoc
-  :load-path "site-lisp/org-mode/contrib/lisp"
+  ;; :load-path "site-lisp/org-mode/contrib/lisp"
   :after org)
 #+END_SRC
 
@@ -2172,10 +2165,7 @@ until we have some outputs"
                           (looking-at-p "^;;"))
                   'region)))
 
-  ;; Since `diminish' only accepts string as the second argument
-  (setq minor-mode-alist
-        (cons '(lispy-mode (:eval (lispy-visualize-mode)))
-              (assq-delete-all 'lispy-mode minor-mode-alist)))
+  (delight 'lispy-mode '(:eval (lispy-visualize-mode)) 'lispy)
 
   (defun conditionally-enable-lispy ()
     (when (eq this-command 'eval-expression)
@@ -2280,7 +2270,7 @@ until we have some outputs"
                 (ggtags-mode 1)))))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package counsel-gtags
   :unless noninteractive
   :load-path "site-lisp/counsel-gtags"
@@ -2289,7 +2279,7 @@ until we have some outputs"
               ("M-." . counsel-gtags-dwim)
               ;; ("M-r" . counsel-gtags-find-reference)
               ;; ("M-s" . counsel-gtags-find-symbol)
-              ("M-," . counsel-gtags-pop))
+              ("M-," . counsel-gtags-go-backward))
   :init
   (add-hook 'c-mode-hook #'counsel-gtags-mode)
   (add-hook 'c++-mode-hook #'counsel-gtags-mode)
@@ -2345,6 +2335,10 @@ until we have some outputs"
   :defer 3
   :delight " Ⓒ"
   ;;:init (add-hook 'prog-mode-hook #'company-mode-on)
+  :bind (:map company-active-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("C-d" . company-show-doc-buffer))
   :config
   ;; (bind-keys :map company-active-map
   ;;            ("C-n" . company-select-next)
@@ -2609,6 +2603,7 @@ Indentation
   (put 'use-package 'common-lisp-indent-function 1)
   (put 'pcase-lambda 'common-lisp-indent-function '(&lambda &rest lisp-indent-function-lambda-hack))
   (put 'custom-theme-set-faces 'common-lisp-indent-function 1)
+  (put 'define-derived-mode 'common-lisp-indent-function 1)
   (defalias 'common-lisp-indent-function #'common-lisp-indent-function-1))
 #+END_SRC
 *** Scheme
@@ -2777,7 +2772,7 @@ Indentation
 #+END_SRC
 
 *** sclang
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package sclang
   :load-path "~/git/supercollider/editors/scel/el"
   :commands sclang-start
@@ -2839,7 +2834,7 @@ Indentation
 #+BEGIN_SRC emacs-lisp
 (use-package youtube-dl
   ;; :commands (youtube-dl--url)
-  :defer 10
+  :defer 4
   :preface
   (with-eval-after-load 'browse-url
     (add-to-list 'browse-url-browser-function
@@ -2903,13 +2898,12 @@ Indentation
         ;; corruption at edit points
         ffedit-preview-params/mpv (nconc ffedit-preview-params/mpv
                                          '("--ytdl-raw-options=no-mark-watched="
-                                           ;; "--hwdec=no"
-                                           ))
+                                           "--hwdec=no"))
         ytdl-format/hd (eval-when-compile
                          (string-join
-                          '("(bestvideo[ext=mp4]/bestvideo[ext=webm])[height<=?1080][protocol!=http_dash_segments]+(bestaudio[ext=m4a]/bestaudio[ext=webm])[protocol!=http_dash_segments]"
+                          '("(bestvideo[ext=mp4]/bestvideo[ext=webm])[height<=?720][protocol!=http_dash_segments]+(bestaudio[ext=m4a]/bestaudio[ext=webm])[protocol!=http_dash_segments]"
                             ;; "bestvideo[ext=mp4][height<=?1080][protocol!=http_dash_segments]+bestaudio[ext=m4a][protocol!=http_dash_segments]"
-                            "best[height<=?1080]")
+                            "best[height<=?720]")
                           "/"))))
 #+END_SRC
 
