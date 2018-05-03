@@ -366,9 +366,9 @@ the generative order.")
                  (9stars--parse-month (match-string 1 date))
                  (string-to-number (match-string 2 date))))
           ((string-match (rx bos
-                             (group (+ digit)) ?年
-                             (group (+ digit)) ?月
-                             (group (+ digit)) ?日)
+                             (group (+ digit)) (or ?年 ?.)
+                             (group (+ digit)) (or ?月 ?.)
+                             (group (+ digit)) (or ?日 (opt ?.)))
                          date)
            (mapcar (lambda (n)
                      (string-to-number (match-string n date)))
