@@ -374,16 +374,19 @@ the generative order.")
                      (string-to-number (match-string n date)))
                    (list 1 2 3))))))
 
+(defun 9stars--parse-entry (data)
+  (pcase data
+    (`(,name ,y ,m ,d)
+      (list (string-trim name) y m d))
+    (`(,name ,date)
+      (cons (string-trim name)
+            (9stars--parse-date (string-trim date))))
+    (data (message "[9s] Parse failed: %S" data)
+          nil)))
+
 (defun 9stars--read-db1 ()
   (condition-case nil
-      (pcase (read (current-buffer))
-        (`(,name ,y ,m ,d)
-          (list (string-trim name) y m d))
-        (`(,name ,date)
-          (cons (string-trim name)
-                (9stars--parse-date (string-trim date))))
-        (data (message "[9s] Parse failed: %S" data)
-              nil))
+      (read (current-buffer))
     (end-of-file nil)))
 
 (defun 9stars-read-db (db)
@@ -394,9 +397,9 @@ the generative order.")
             (cl-loop until (eobp)
                      collect (9stars--read-db1))))))
 
+;;; Entry point
 
-;;;
-
+;;;###autoload
 (defun 9stars-birtyday-relations (a b)
   (nconc (list (format "%s - %s" (plist-get a :name) (plist-get b :name)))
          (9stars-star-relation
@@ -406,22 +409,25 @@ the generative order.")
          (9stars-branch-relations
           (plist-get a :year-branch) (plist-get b :year-branch))))
 
-(defun 9stars-birthday-profile (name year month day)
-  (let* ((solar (9stars-solar-month year month day))
-         (solar-year (plist-get solar :year))
-         (solar-month (plist-get solar :month))
-         (year-branch (9stars-year-branch solar-year)))
-    (list :name name
-          :year-star (9stars-year-star solar-year)
-          :month-star
-          (9stars-month-star (9stars--plist-animal year-branch) solar-month)
-          :year-stem (9stars-year-stem solar-year)
-          :year-branch year-branch
-          :month-stem (9stars-month-stem solar-year solar-month)
-          :month-branch (9stars-month-branch solar-month)
-          ;; NOTE Use normal gregorian year and month for the following
-          :day-stem (9stars-day-stem year month day)
-          :day-branch (9stars-day-branch year month day))))
+;;;###autoload
+(defun 9stars-birthday-profile (data)
+  (pcase (9stars--parse-entry data)
+    (`(,name ,year ,month ,day)
+      (let* ((solar (9stars-solar-month year month day))
+             (solar-year (plist-get solar :year))
+             (solar-month (plist-get solar :month))
+             (year-branch (9stars-year-branch solar-year)))
+        (list :name name
+              :year-star (9stars-year-star solar-year)
+              :month-star
+              (9stars-month-star (9stars--plist-animal year-branch) solar-month)
+              :year-stem (9stars-year-stem solar-year)
+              :year-branch year-branch
+              :month-stem (9stars-month-stem solar-year solar-month)
+              :month-branch (9stars-month-branch solar-month)
+              ;; NOTE Use normal gregorian year and month for the following
+              :day-stem (9stars-day-stem year month day)
+              :day-branch (9stars-day-branch year month day))))))
 
 (provide '9stars)
 ;;; 9stars.el ends here
