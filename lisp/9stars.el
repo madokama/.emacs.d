@@ -389,6 +389,7 @@ the generative order.")
       (read (current-buffer))
     (end-of-file nil)))
 
+;;;###autoload
 (defun 9stars-read-db (db)
   (with-current-buffer (find-file-noselect db)
     (save-excursion
@@ -399,18 +400,10 @@ the generative order.")
 
 ;;; Entry point
 
-;;;###autoload
-(defun 9stars-birtyday-relations (a b)
-  (nconc (list (format "%s - %s" (plist-get a :name) (plist-get b :name)))
-         (9stars-star-relation
-          (plist-get a :year-star) (plist-get b :year-star))
-         (9stars-stem-combination-p
-          (plist-get a :day-stem) (plist-get b :day-stem))
-         (9stars-branch-relations
-          (plist-get a :year-branch) (plist-get b :year-branch))))
+(defsubst 9stars--profile-p (data)
+  (and (consp data) (plist-get data :year-star)))
 
-;;;###autoload
-(defun 9stars-birthday-profile (data)
+(defun 9stars--birthday-profile (data)
   (pcase (9stars--parse-entry data)
     (`(,name ,year ,month ,day)
       (let* ((solar (9stars-solar-month year month day))
@@ -428,6 +421,37 @@ the generative order.")
               ;; NOTE Use normal gregorian year and month for the following
               :day-stem (9stars-day-stem year month day)
               :day-branch (9stars-day-branch year month day))))))
+
+;;;###autoload
+(defun 9stars-birthday-profile (data)
+  (if (9stars--profile-p data)
+      data
+    (9stars--birthday-profile data)))
+
+;;;###autoload
+(defun 9stars-birtyday-relations (a b)
+  (let ((a (9stars-birthday-profile a))
+        (b (9stars-birthday-profile b)))
+    (nconc (list (format "%s - %s" (plist-get a :name) (plist-get b :name)))
+           (9stars-star-relation
+            (plist-get a :year-star) (plist-get b :year-star))
+           (9stars-stem-combination-p
+            (plist-get a :day-stem) (plist-get b :day-stem))
+           (9stars-branch-relations
+            (plist-get a :year-branch) (plist-get b :year-branch)))))
+
+;;;###autoload
+(defun 9stars-birthday-relations/many (one many)
+  (seq-sort-by
+   (pcase-lambda (`(_ . ,lst))
+     (+ (cond ((memq :相生 lst) 2)
+              ((memq :比和 lst) 2)
+              (t 0))
+        (length (cl-intersection lst '(:干合 :支合 :三合)))))
+   #'>
+   (mapcar (apply-partially #'9stars-birtyday-relations
+                            (9stars-birthday-profile one))
+           many)))
 
 (provide '9stars)
 ;;; 9stars.el ends here
