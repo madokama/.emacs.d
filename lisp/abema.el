@@ -62,7 +62,7 @@
       (let ((json (json-parse-buffer)))
         (when (gethash "message" json)
           (error "Authentication failed: %S" json))
-        (when-let* ((save (plist-get auth :save-function)))
+        (when-let ((save (plist-get auth :save-function)))
           (funcall save))
         json))))
 

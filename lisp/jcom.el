@@ -78,25 +78,25 @@
         (jcom-ajax-get "https://tv.myjcom.jp/jcom-pc/remoteRecList.action?recListType=1&limit=100"
                        location)
         (goto-char (point-min))
-        (if-let* ((progs
-                   (cl-loop while (re-search-forward (rx "detail.action?"
-                                                         (group (+ (not (any "\"")))))
-                                                     nil t)
-                            collect (let ((params
-                                           (url-parse-query-string (match-string 1))))
-                                      (cl-flet ((get (k)
-                                                  (cadr (assoc k params))))
-                                        (let ((serviceCode
-                                               (split-string (get "serviceCode") "_")))
-                                          ;; Collect program data to later weed
-                                          ;; out reserved programs from the wish
-                                          ;; list. Since `eventId' is not unique
-                                          ;; enough, we record several other
-                                          ;; parameters as well.
-                                          `((channelType . ,(get "channelType"))
-                                            (serviceId . ,(car serviceCode))
-                                            (networkId . ,(cadr serviceCode))
-                                            (eventId . ,(get "eventId")))))))))
+        (if-let ((progs
+                  (cl-loop while (re-search-forward (rx "detail.action?"
+                                                        (group (+ (not (any "\"")))))
+                                                    nil t)
+                           collect (let ((params
+                                          (url-parse-query-string (match-string 1))))
+                                     (cl-flet ((get (k)
+                                                 (cadr (assoc k params))))
+                                       (let ((serviceCode
+                                              (split-string (get "serviceCode") "_")))
+                                         ;; Collect program data to later weed
+                                         ;; out reserved programs from the wish
+                                         ;; list. Since `eventId' is not unique
+                                         ;; enough, we record several other
+                                         ;; parameters as well.
+                                         `((channelType . ,(get "channelType"))
+                                           (serviceId . ,(car serviceCode))
+                                           (networkId . ,(cadr serviceCode))
+                                           (eventId . ,(get "eventId")))))))))
             progs
           (message "WARN:%s" (buffer-string))
           nil)))))
@@ -276,7 +276,7 @@
               (cl-delete-if-not
                (lambda (dom)
                  (seq-find (lambda (dom)
-                             (when-let* ((onclick (dom-attr dom 'onclick)))
+                             (when-let ((onclick (dom-attr dom 'onclick)))
                                (string-match-p "^doRemoteRec" onclick)))
                            (dom-by-tag (dom-by-class dom "resBox02") 'img)))
                dom-result)))))
@@ -322,7 +322,7 @@
                    collect (jcom--program-at-point)
                  end
                  do (forward-line 1)))
-      (when-let* ((prog (jcom--program-at-point)))
+      (when-let ((prog (jcom--program-at-point)))
         (list prog))))
 
 (defun jcom-mode-mark ()
@@ -374,7 +374,7 @@
                (cons 'cookie jcom-cookie)
                (cons 'programs (jcom--marked-programs)))))
    (lambda (results)
-     (if-let* ((failed (cl-delete-if #'jcom--reserve-success-p results)))
+     (if-let ((failed (cl-delete-if #'jcom--reserve-success-p results)))
          (error "[JCOM] %S" failed)
        (message "[JCOM] Done.")))))
 

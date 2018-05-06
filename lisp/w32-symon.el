@@ -117,7 +117,7 @@
   (if w32-symon-mode
       (progn
         (mapc (lambda (object)
-                (when-let* ((init (plist-get object :init)))
+                (when-let ((init (plist-get object :init)))
                   (funcall init)))
               w32-symon-monitors)
         (setq w32-symon-process

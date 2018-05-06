@@ -169,7 +169,7 @@
           (pts-p (alist-get 'pts-p info))
           (inparams
            (append (list "-i" video "-y")
-                   ;; (when-let* (start (ffprobe-start-offset json))
+                   ;; (when-let (start (ffprobe-start-offset json))
                    ;;   (list "-itsoffset" start))
                    ))
           (outparams '("-c" "copy" "-avoid_negative_ts" "1" "-sn"))
@@ -220,7 +220,7 @@
 ;;                        (ffmpeg-normalize-params
 ;;                         `(,@(when (cdr (assq 'seek-timestamp info))
 ;;                               '("-seek_timestamp" "1"))
-;;                             ,@(when-let* (start (ffprobe-start-offset json))
+;;                             ,@(when-let ((start (ffprobe-start-offset json)))
 ;;                                 (list "-itsoffset" start))
 ;;                             ;; "-noaccurate_seek"
 ;;                             "-ss"

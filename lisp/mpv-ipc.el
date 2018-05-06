@@ -94,7 +94,7 @@
 
 (defun mpv-ipc--query (ipc &rest cmd)
   (when (process-live-p ipc)
-    (when-let* ((tag (process-get ipc :sock)))
+    (when-let ((tag (process-get ipc :sock)))
       (catch tag
         (process-send-string ipc
                              (apply #'mpv-ipc-jsoncmd tag cmd))
@@ -149,7 +149,7 @@
 (defun mpv-ipc-interact (ipc)
   (cl-block nil
     (while t
-      (if-let* ((char (read-char "mpv>")))
+      (if-let ((char (read-char "mpv>")))
           (progn
             (mpv-ipc:keypress ipc (string char))
             (when (memq char '(?q ?Q ?))

@@ -26,7 +26,7 @@
 
 (defsubst elshogi-display-generic (op &rest args)
   ;; (info "sicp#2-4-3")
-  (if-let* ((f (plist-get elshogi-display-handler op)))
+  (if-let ((f (plist-get elshogi-display-handler op)))
       (apply f args)
     (message "Operation %s on %S not defined for %s"
              op args elshogi-display-style)))
@@ -97,11 +97,11 @@
 
 (defun elshogi-display-note (game)
   (when (elshogi-game/watch-p game)
-    (when-let* ((mrec (elshogi-game-latest-move game)))
+    (when-let ((mrec (elshogi-game-latest-move game)))
       (with-current-buffer (elshogi-display-note-buffer game)
         (let ((inhibit-read-only t))
           (erase-buffer)
-          (when-let* ((note (elshogi-mrec/note mrec)))
+          (when-let ((note (elshogi-mrec/note mrec)))
             (save-excursion
               (insert note)
               (elshogi-display-note-urlify game))
@@ -137,9 +137,9 @@
                              `(game ,game))))))
 
 (defun elshogi-display-note-scroll (cmd)
-  (when-let* ((win
-               (get-buffer-window
-                (elshogi-display-note-bufname elshogi-current-game))))
+  (when-let ((win
+              (get-buffer-window
+               (elshogi-display-note-bufname elshogi-current-game))))
     (with-selected-window win
       (call-interactively cmd))))
 

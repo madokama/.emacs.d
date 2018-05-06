@@ -50,9 +50,9 @@
   (interactive)
   ;; TODO Allow operation on multi-line selection
   (save-excursion
-    (when-let* ((url
-                 (plist-get (get-text-property (point-at-bol) 'eww-history)
-                            :url)))
+    (when-let ((url
+                (plist-get (get-text-property (point-at-bol) 'eww-history)
+                           :url)))
       (cl-delete-if (lambda (data)
                       (string= (plist-get data :url) url))
                     eww-savehist)

@@ -133,7 +133,7 @@
                (org-src-coderef-regexp coderef) "" expand nil nil 1))))
          ;; TODO handle these parameters.
          ;; (session (org-babel-sh-initiate-session (alist-get :session params)))
-         ;; (stdin (when-let* ((stdin (alist-get :stdin params)))
+         ;; (stdin (when-let ((stdin (alist-get :stdin params)))
          ;;          (org-babel-sh-var-to-string (org-babel-ref-resolve stdin))))
          ;; (cmdline (alist-get :cmdline params))
          (full-body (org-babel-expand-body:generic

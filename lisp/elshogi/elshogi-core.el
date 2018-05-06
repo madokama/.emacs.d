@@ -189,8 +189,8 @@
        (eq (elshogi-piece/name p1) (elshogi-piece/name p2))))
 
 (defun elshogi-pack= (p1 p2)
-  (if-let* ((p1~ (elshogi-pack:piece p1))
-            (p2~ (elshogi-pack:piece p2)))
+  (if-let ((p1~ (elshogi-pack:piece p1))
+           (p2~ (elshogi-pack:piece p2)))
       (elshogi-piece= p1~ p2~)
     (= (elshogi-pack:index p1) (elshogi-pack:index p2))))
 

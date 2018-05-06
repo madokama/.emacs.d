@@ -18,7 +18,7 @@
     (let* ((body (aref .gamebodies 0))
            (url (gethash "url" body)))
       (list 'title (format "%s%s%s―%s%s %s%s%s"
-                           (if-let* ((status (gethash "status" body)))
+                           (if-let ((status (gethash "status" body)))
                                (format "*%s " status)
                              "")
                            .player1.name
@@ -42,7 +42,7 @@
           (gethash "games" json)))
 
 (defun page2feed-shogi-dom-find (dom stop)
-  (when-let* ((tag (dom-tag dom)))
+  (when-let ((tag (dom-tag dom)))
     (cond ((eq tag stop) dom)
           ((stringp tag)
            (page2feed-shogi-dom-find (cdr dom) stop))
@@ -133,8 +133,8 @@
           url
           (lambda ()
             (seq-some (lambda (meta)
-                        (when-let* ((attr (dom-attr meta 'http-equiv))
-                                    (content (dom-attr meta 'content)))
+                        (when-let ((attr (dom-attr meta 'http-equiv))
+                                   (content (dom-attr meta 'content)))
                           (when (string-match "url=\\(.+\\)$" content)
                             (url-expand-file-name (match-string 1 content) url))))
                       (dom-by-tag (libxml-parse-html-region (point-min) (point-max) nil)
@@ -156,8 +156,8 @@
             (url-expand-file-name "../professional/live/index.html"
                                   (plist-get plst :url)))))
       ;; Time may be nil after the match.
-      (when-let* ((time (page2feed-shogi-jt-time dom))
-                  (kif (page2feed-shogi-jt-kif dom)))
+      (when-let ((time (page2feed-shogi-jt-time dom))
+                 (kif (page2feed-shogi-jt-kif dom)))
         (list
          (list 'title (page2feed-shogi-jt-title dom)
                'link kif

@@ -38,12 +38,12 @@
         (port
          (string-to-number (or (car extempore-connect-port-history-list)
                                extempore-default-port))))
-    (when-let* ((proc
-                 (or (lispy--eval-extempore-running-p host port)
-                     (save-window-excursion
-                       (extempore-repl host port)
-                       (sleep-for 0.2) ; needed for some obscure reason
-                       (lispy--eval-extempore-running-p host port)))))
+    (when-let ((proc
+                (or (lispy--eval-extempore-running-p host port)
+                    (save-window-excursion
+                      (extempore-repl host port)
+                      (sleep-for 0.2) ; needed for some obscure reason
+                      (lispy--eval-extempore-running-p host port)))))
       (with-current-buffer (process-buffer proc)
         (extempore-repl-send proc e-str)
         (with-timeout (lispy--eval-extempore-timeout)

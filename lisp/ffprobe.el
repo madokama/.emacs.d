@@ -9,7 +9,7 @@
 
 (defun ffprobe-video (video)
   ;; TODO Parse time_base from ffmpeg dumps
-  (when-let* ((probe (executable-find "ffprobe")))
+  (when-let ((probe (executable-find "ffprobe")))
     (with-temp-buffer
       (call-process probe nil t nil
                     "-v" "error"
@@ -66,7 +66,7 @@
     (ffprobe--compute-ratio (list .duration_ts .nb_frames))))
 
 (defun ffprobe-pts-time (json pts &optional delta)
-  (when-let* ((time-base (ffprobe-time-base json)))
+  (when-let ((time-base (ffprobe-time-base json)))
     (+ (* pts time-base) (or delta 0))))
 
 (defun ffprobe-pts-shift (json)

@@ -44,9 +44,9 @@
 
 (defun page2feed-recode-buffer (beg end)
   (when (search-forward-regexp "<meta[^>]*?charset=\"?\\([-_[:alnum:]]+\\)" nil t)
-    (when-let* ((cs
-                 (ignore-errors
-                   (check-coding-system (intern-soft (downcase (match-string 1)))))))
+    (when-let ((cs
+                (ignore-errors
+                  (check-coding-system (intern-soft (downcase (match-string 1)))))))
       (recode-region beg end cs 'raw-text))))
 
 (defun page2feed (r)
@@ -59,8 +59,8 @@
           (page2feed-recode-buffer beg end)
           (goto-char beg)
           (cl-dolist (s page2feed-scrapers)
-            (when-let* ((parsed (save-excursion (funcall s)))
-                        (title (page2feed-title)))
+            (when-let ((parsed (save-excursion (funcall s)))
+                       (title (page2feed-title)))
               ;; Region could change after reencode.
               (delete-region beg (point-max))
               (insert "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
@@ -145,17 +145,17 @@
                                 (title nil ,(plist-get entry 'title))
                                 ;; TODO Separate `link' with `enclosure'
                                 (link ((href . ,elink)
-                                       ,@(when-let* ((type
+                                       ,@(when-let ((type
                                                      (plist-get entry 'enclosure)))
                                           `((rel . "enclosure")
                                             (type . ,type)))))
                                 (id nil ,(page2feed--entry-id elink))
                                 (updated nil ,(plist-get entry 'updated))
-                                ,@(when-let* ((summary (plist-get entry 'summary)))
+                                ,@(when-let ((summary (plist-get entry 'summary)))
                                    `((summary nil ,summary)))
-                                ,@(when-let* ((content (plist-get entry 'content)))
-                                   `((content ((type . "xhtml")) ,content))))))
-                    entries))))
+                                ,@(when-let ((content (plist-get entry 'content)))
+                                    `((content ((type . "xhtml")) ,content))))))
+                     entries))))
 
 (defun page2feed-match-date/paoweb (str)
   (when (string-match "\\([[:alpha:]]\\{3\\}\\)[[:alpha:].]*\\s +\\([[:digit:]]+\\)[, ]+\\([[:digit:]]+\\)" str)

@@ -22,18 +22,18 @@
 (defun elshogi-replay-prev-internal (game)
   (let* ((cursor (elshogi-game-cursor game))
          (mrec (dlink/content cursor)))
-    (when-let* ((piece (elshogi-mrec/piece mrec))
-                (origin (elshogi-mrec/origin mrec))
-                (target (elshogi-mrec/target mrec))
-                (side (elshogi-mrec/side mrec)))
+    (when-let ((piece (elshogi-mrec/piece mrec))
+               (origin (elshogi-mrec/origin mrec))
+               (target (elshogi-mrec/target mrec))
+               (side (elshogi-mrec/side mrec)))
       (cond ((elshogi-mrec-drop-p mrec)
              (elshogi-move-capture-internal game piece side)
              (elshogi-move-set-index game target nil))
             (t
              (elshogi-move-set-index game
                                      target
-                                     (when-let* ((capture
-                                                  (elshogi-mrec/capture mrec)))
+                                     (when-let ((capture
+                                                 (elshogi-mrec/capture mrec)))
                                        (elshogi-move-drop-internal
                                         game capture side)
                                        capture))
@@ -42,7 +42,7 @@
                                      (if (elshogi-mrec/promote mrec)
                                          (elshogi-flip-piece piece)
                                        piece))))
-      (when-let* ((prev (dlink/prev cursor)))
+      (when-let ((prev (dlink/prev cursor)))
         (setf (elshogi-current-side game) side)
         (setf (elshogi-game-cursor game) prev)
         (cl-decf (elshogi-position/count (elshogi-game/position game))))))
@@ -59,7 +59,7 @@
              (elshogi-move-drop-internal game piece side)
              (elshogi-move-set-index game target piece))
             (t
-             (when-let* ((capture (elshogi-mrec/capture mrec)))
+             (when-let ((capture (elshogi-mrec/capture mrec)))
                (elshogi-move-capture-internal game capture side))
              (elshogi-move-set-index game origin nil)
              (elshogi-move-set-index game target piece)))

@@ -92,7 +92,7 @@
                 (cl-return)))
 
 (defun ivy-view--kill-action (x)
-  (if-let* ((view (assoc x ivy-views)))
+  (if-let ((view (assoc x ivy-views)))
       (ivy-pop-view-action view)
     (kill-buffer x)
     (ivy--reset-state ivy-last)))

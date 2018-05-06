@@ -136,7 +136,7 @@
 
 (defun elfeed--reload-entry ()
   (interactive)
-  (when-let* ((entry elfeed-show-entry))
+  (when-let ((entry elfeed-show-entry))
     (cl-loop for hook in elfeed-new-entry-hook
              do (funcall hook entry))
     (elfeed-deref-entry entry)

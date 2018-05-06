@@ -20,8 +20,8 @@
     elshogi-game-buffer get-buffer-window select-window))
 
 (defun elshogi-game-frame (game)
-  (when-let* ((win
-               (get-buffer-window (elshogi-game-buffer game) t)))
+  (when-let ((win
+              (get-buffer-window (elshogi-game-buffer game) t)))
     (window-frame win)))
 
 (defsubst elshogi-game-moves (game)

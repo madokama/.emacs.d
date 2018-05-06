@@ -79,7 +79,7 @@
 (declare-function org-make-link-string "org")
 
 (defun mpa-now-playing ()
-  (when-let* ((url (mpv-ipc:get-path mpa-ipc)))
+  (when-let ((url (mpv-ipc:get-path mpa-ipc)))
     (let-hash (ytdl-get-json url)
       (insert "\n"
               (org-make-link-string url .title)

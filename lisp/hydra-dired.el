@@ -16,8 +16,8 @@
 ;; http://oremacs.com/2015/01/12/dired-file-size/
 (defun dired-get-size ()
   (interactive)
-  (when-let* ((du (executable-find "du"))
-              (files (dired-get-marked-files)))
+  (when-let ((du (executable-find "du"))
+             (files (dired-get-marked-files)))
     (with-temp-buffer
       (apply 'call-process du nil t nil "-sch" files)
       (message
@@ -60,7 +60,7 @@
   (concat (mapconcat
            #'identity
            `(,(format "%s: size" (propertize "dz" 'face 'hydra-face-red))
-              ,@(when-let* ((vids (dired-ffmpeg-filter-videos)))
+              ,@(when-let ((vids (dired-ffmpeg-filter-videos)))
                   (list (format "%s: info"
                                 (propertize "di" 'face 'hydra-face-red))
                         (format "%s: edit"
