@@ -13,7 +13,7 @@
   :candidate recentb-eww-candidate)
 
 (defun recentb-eww-history ()
-  (eww-savehist-prune))
+  eww-savehist)
 
 (defun recentb-eww-sync-history ()
   (setq recentb-eww eww-savehist))
