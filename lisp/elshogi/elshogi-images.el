@@ -8,6 +8,7 @@
   (require 'subr-x))
 (require 'elshogi-game)
 (require 'elshogi-display)
+(require 'shr)
 (require 'url-cache)
 
 (defvar elshogi-images-name-alist
@@ -156,17 +157,14 @@
                                  nil nil :margin 1))))))
 
 (defun elshogi-images-insert-cache (url buf)
-  (let ((cache (url-cache-create-filename url)))
-    (when (file-readable-p cache)
-      (condition-case nil
-          (with-current-buffer buf
-            (save-excursion
-              (goto-char (point-min))
-              (insert-image (create-image cache))
-              (insert ?\n))
-            t)
-        (error (delete-file cache)
-               nil)))))
+  (when-let ((spec (shr-get-image-data url)))
+    (with-current-buffer buf
+      (save-excursion
+        (goto-char (point-min))
+        (insert-image (create-image (car spec) nil t
+                                    :format (cadr spec)))
+        (insert ?\n))
+      t)))
 
 (defun elshogi-images-draw-player (player)
   (when-let ((url (elshogi-player/image player)))
