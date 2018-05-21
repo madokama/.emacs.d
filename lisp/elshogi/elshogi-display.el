@@ -93,6 +93,7 @@
     (or (get-buffer bufname)
         (with-current-buffer (generate-new-buffer bufname)
           (setq mode-line-format nil)
+          (setq truncate-lines nil)
           (current-buffer)))))
 
 (defun elshogi-display-note (game)
