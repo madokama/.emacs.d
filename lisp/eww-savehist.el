@@ -25,8 +25,9 @@
 (defun eww-savehist-add ()
   (when (bound-and-true-p eww-data)
     (setq eww-savehist
-          (cons (copy-sequence (eww-savehist-normalize-data eww-data))
-                eww-savehist))))
+          (eww-savehist-prune
+           (cons (copy-sequence (eww-savehist-normalize-data eww-data))
+                 eww-savehist)))))
 
 (add-hook 'eww-after-render-hook #'eww-savehist-add)
 
@@ -35,17 +36,14 @@
 
 (add-hook 'eww-mode-hook #'eww-savehist-load)
 
-(defun eww-savehist-prune ()
-  (setq eww-savehist
-        (seq-take (cl-delete-duplicates eww-savehist
-                                        :test
-                                        (lambda (a b)
-                                          (string= (plist-get a :url)
-                                                   (plist-get b :url)))
-                                        :from-end t) ;retain the newer one
-                  (or eww-history-limit 0))))
-
-(add-hook 'savehist-save-hook #'eww-savehist-prune)
+(defun eww-savehist-prune (history)
+  (seq-take (cl-delete-duplicates history
+                                  :test
+                                  (lambda (a b)
+                                    (string= (plist-get a :url)
+                                             (plist-get b :url)))
+                                  :from-end t) ;retain the newer one
+            (or eww-history-limit 0)))
 
 (defun eww-savehist-delete-entry ()
   "Delete the history entry at point."
