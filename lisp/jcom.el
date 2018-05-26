@@ -305,6 +305,7 @@
     (define-key map (kbd "n") #'jcom-mode-next-line)
     (define-key map (kbd "p") #'jcom-mode-prev-line)
     (define-key map (kbd "t") #'jcom-mode-mark-all)
+    (define-key map (kbd "U") #'jcom-mode-unmark-all)
     (define-key map (kbd "R") #'jcom-mode-do-reserve)
     (define-key map (kbd "C-d") #'jcom-mode-delete)
     (define-key map [remap undo] #'jcom-mode-undo)
@@ -313,38 +314,56 @@
 (defun jcom--program-at-point ()
   (get-text-property (point) 'jcom))
 
+(defun jcom--program-marked-p ()
+  (= (char-after (line-beginning-position)) ?*))
+
 (defun jcom--marked-programs ()
   ;; List program at point if none marked.
   (or (save-excursion
         (goto-char (point-min))
         (cl-loop while (not (eobp))
-                 if (eq (following-char) ?\*)
+                 if (jcom--program-marked-p)
                    collect (jcom--program-at-point)
                  end
                  do (forward-line 1)))
       (when-let ((prog (jcom--program-at-point)))
         (list prog))))
 
+(defun jcom-mode-iterate (fn)
+  (save-excursion
+    (let ((inhibit-read-only t))
+      (goto-char (point-min))
+      (while (not (eobp))
+        (funcall fn)
+        (forward-line 1)))))
+
+(defun jcom-mode-toggle-mark ()
+  (let* ((bol (line-beginning-position))
+         (mark (char-after bol)))
+    (subst-char-in-region bol (1+ bol)
+                          mark (if (eq mark ? ) ?* ? ) t)))
+
 (defun jcom-mode-mark ()
   "Mark/unmark the program at point."
   (interactive)
   (let ((inhibit-read-only t))
-    (save-excursion
-      (goto-char (line-beginning-position))
-      (let ((mark (following-char)))
-        (subst-char-in-region (point) (1+ (point))
-                              mark
-                              (if (eq mark ?\ ) ?\* ?\ )
-                              t)))
+    (jcom-mode-toggle-mark)
     (forward-line 1)))
 
 (defun jcom-mode-mark-all ()
   "Toggle marks for all programs."
   (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (while (not (eobp))
-      (jcom-mode-mark))))
+  (jcom-mode-iterate
+   (lambda ()
+     (jcom-mode-toggle-mark))))
+
+(defun jcom-mode-unmark-all ()
+  "Remove all marks."
+  (interactive)
+  (jcom-mode-iterate
+   (lambda ()
+     (when (jcom--program-marked-p)
+       (jcom-mode-toggle-mark)))))
 
 (defun jcom-mode-next-line ()
   "Move cursor down."
