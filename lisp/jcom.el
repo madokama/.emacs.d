@@ -415,6 +415,12 @@
   (let ((inhibit-read-only t))
     (delete-region (line-beginning-position) (1+ (line-end-position)))))
 
+(defvar jcom-program-format-function #'jcom-program-format-default)
+
+(defun jcom-program-format-default (prog)
+  (let-alist prog
+    (format "%s|[%s]%s" .channelName (or .keyword "") .title)))
+
 ;;;###autoload
 (defun jcom-list-programs (&rest _)
   "Show JCOM TV programs for online reservation."
@@ -438,12 +444,12 @@
                  (mapc (lambda (prog)
                          (let-alist prog
                            (insert
-                            (propertize (format " %s|[%s]%s\n"
-                                                .channelName
-                                                (or .keyword "")
-                                                .title)
-                                        'jcom prog
-                                        'help-echo .commentary))))
+                            (propertize
+                             (concat " "
+                                     (funcall jcom-program-format-function prog))
+                             'jcom prog
+                             'help-echo .commentary)
+                            "\n")))
                        .programs))
                (goto-char (point-min)))
              (pop-to-buffer buf))
