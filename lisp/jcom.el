@@ -465,7 +465,11 @@
                                 ((string-prefix-p "WARN:" output)
                                  (with-current-buffer
                                      (pop-to-buffer "*jcom warning*")
-                                   (insert (substring output 5))))
+                                   (unless (derived-mode-p 'special-mode)
+                                     (special-mode))
+                                   (let ((inhibit-read-only t))
+                                     (erase-buffer)
+                                     (insert (substring output 5)))))
                                 (t
                                  (with-current-buffer (process-buffer proc)
                                    (insert output))))))))
