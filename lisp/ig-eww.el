@@ -175,18 +175,14 @@
                    media)
          (pre nil ,(instagram-entry-caption json))))
 
-(defun ig-eww-display-images (images json)
-  (let ((dom (ig-eww--make-dom images json))
-        (inhibit-read-only t))
-    (save-excursion (shr-insert-document dom))))
-
 (defun ig-eww-render-entry (json)
   (let ((media (instagram-entry-media json)))
     ;; Media may be plist or list of plists.
-    (ig-eww-display-images (if (consp (car media))
-                               media
-                             (list media))
-                           json)))
+    (shr-insert-document
+     (ig-eww--make-dom (if (consp (car media))
+                           media
+                         (list media))
+                       json))))
 
 
 ;; Mode commands
@@ -239,25 +235,24 @@
 
 ;;;###autoload
 (defun ig-eww-hook ()
-  (when (string-match-p (rx ".instagram.com/") (plist-get eww-data :url))
-    (when-let ((json (ig-eww--shared-data)))
-      (save-excursion
-        (cl-case (instagram-json-type json)
-          (feed
-           (let ((json (instagram-feed-json json)))
-             ;; json may be empty
-             (ig-eww-render-feed-stories)
-             (ig-eww-render-feed (or json (instagram-graphql-feed-page)))))
-          (user
-           (let ((json (instagram-user-json json)))
-             (if (ig-eww--saved-page-p)
-                 (ig-eww-render-saved json)
-               (ig-eww-render-user-story (instagram-user-id json))
-               (ig-eww-render-user json))))
-          (entry
-           (ig-eww-render-entry (instagram-entry-json json))))))))
+  (when-let ((json (ig-eww--shared-data)))
+    (save-excursion
+      (cl-case (instagram-json-type json)
+        (feed
+         (let ((json (instagram-feed-json json)))
+           ;; json may be empty
+           (ig-eww-render-feed-stories)
+           (ig-eww-render-feed (or json (instagram-graphql-feed-page)))))
+        (user
+         (let ((json (instagram-user-json json)))
+           (if (ig-eww--saved-page-p)
+               (ig-eww-render-saved json)
+             (ig-eww-render-user-story (instagram-user-id json))
+             (ig-eww-render-user json))))
+        (entry
+         (ig-eww-render-entry (instagram-entry-json json)))))))
 
-;;;###autoload(add-hook 'eww-after-render-hook #'ig-eww-hook)
+;;;###autoload(eww-register-hook "\\.instagram\\.com/" #'ig-eww-hook)
 
 (provide 'ig-eww)
 ;;; ig-eww.el ends here
