@@ -67,10 +67,12 @@
 
 (defun ffedit--parse-timebase ()
   (with-current-buffer (find-file-noselect ffedit-ffmpeg-log)
-    (save-excursion
-      (goto-char (point-min))
-      (when (search-forward-regexp "config in time_base: *\\([0-9/]+\\)" nil t)
-        (match-string 1)))))
+    (prog1
+        (save-excursion
+          (goto-char (point-min))
+          (when (search-forward-regexp "config in time_base: *\\([0-9/]+\\)" nil t)
+            (match-string 1)))
+      (kill-buffer (current-buffer)))))
 
 (defun ffedit--update-timebase (time-base)
   ;; Ffprobe and ffmpeg may report different values on `time_base'.
