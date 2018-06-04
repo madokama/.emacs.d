@@ -56,9 +56,10 @@
     (setq elshogi-watch-timer
           (run-with-timer (max elshogi-watch-update-interval 30) nil
                           (lambda (buf)
-                            (with-current-buffer buf
-                              (setq elshogi-watch-timer nil)
-                              (elshogi-watch-update)))
+                            (when (buffer-live-p buf)
+                              (with-current-buffer buf
+                                (setq elshogi-watch-timer nil)
+                                (elshogi-watch-update))))
                           (elshogi-game-buffer game)))))
 
 (defun elshogi-watch-update (&rest _)
