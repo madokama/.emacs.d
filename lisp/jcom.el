@@ -10,6 +10,7 @@
 (require 'json)
 (require 'cookie-sync)
 (require 'async)
+(require 'url-expand)
 
 (defgroup jcom nil
   "JCOM TV schedules."
@@ -381,6 +382,40 @@
   (let ((inhibit-read-only t))
     (undo)))
 
+(defun jcom--with-warn-buffer (output)
+  (with-current-buffer
+      (pop-to-buffer "*jcom warning*")
+    (unless (derived-mode-p 'special-mode)
+      (special-mode))
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (if (functionp output)
+          (funcall output)
+        (insert output)))))
+
+(defun jcom--report-reserve-error (result)
+  (jcom--with-warn-buffer
+   (lambda ()
+     (shr-insert-document
+      `(body
+        nil
+        ,@(mapcan
+           (pcase-lambda (`(,prog ,msg ,detail))
+             `((h1 nil ,(car (dom-strings msg)))
+               (h2 nil "番組: " ,prog)
+               (p nil
+                  ,(car (dom-strings (dom-by-class detail "errMessage"))))
+               (ul nil
+                   ,@(mapcar
+                      (lambda (dom)
+                        (let ((a (dom-by-tag dom 'a)))
+                          `(li nil
+                               (a ((href . ,(url-expand-file-name (dom-attr a 'href)
+                                                                  "https://tv.myjcom.jp/")))
+                                  ,@(dom-strings a)))))
+                      (dom-by-class detail "recordedDetail")))))
+           result))))))
+
 (defun jcom-mode-do-reserve ()
   "Reserve marked programs.  If none, reserve the program at point."
   (interactive)
@@ -394,7 +429,7 @@
                (cons 'programs (jcom--marked-programs)))))
    (lambda (results)
      (if-let ((failed (cl-delete-if #'jcom--reserve-success-p results)))
-         (error "[JCOM] %S" failed)
+         (jcom--report-reserve-error failed)
        (message "[JCOM] Done.")))))
 
 (define-derived-mode jcom-mode
@@ -463,13 +498,7 @@
                                             (string-trim-right
                                              (substring output 5)))))
                                 ((string-prefix-p "WARN:" output)
-                                 (with-current-buffer
-                                     (pop-to-buffer "*jcom warning*")
-                                   (unless (derived-mode-p 'special-mode)
-                                     (special-mode))
-                                   (let ((inhibit-read-only t))
-                                     (erase-buffer)
-                                     (insert (substring output 5)))))
+                                 (jcom--with-warn-buffer (substring output 5)))
                                 (t
                                  (with-current-buffer (process-buffer proc)
                                    (insert output))))))))
