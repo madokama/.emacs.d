@@ -106,6 +106,9 @@
   (thread-last (libxml-parse-html-region begin end nil)
     caddr caddr))
 
+(defsubst jcom--dom-string (dom)
+  (car (dom-strings dom)))
+
 (defun jcom--device-params ()
   (goto-char (point-min))
   (when (re-search-forward (rx "<div id=\"recDialogContents" (+? anything) "\n</div>")
@@ -115,14 +118,14 @@
            (device
             (dom-attr (seq-find (lambda (dom)
                                   (string= jcom-device-name
-                                           (car (dom-strings dom))))
+                                           (jcom--dom-string dom)))
                                 (dom-by-tag (dom-by-id dom "deviceListNumber")
                                             'option))
                       'value))
            (mode
             (dom-attr (seq-find (lambda (dom)
                                   (string= jcom-record-mode
-                                           (car (dom-strings dom))))
+                                           (jcom--dom-string dom)))
                                 (dom-by-tag (dom-by-class dom
                                                           (format "mode%s" device))
                                             'option))
@@ -219,7 +222,7 @@
    nil t))
 
 (defun jcom--reserve-success-p (result)
-  (string= "リモート録画予約が完了しました。" (caddr (cadr result))))
+  (string= "リモート録画予約が完了しました。" (cadr result)))
 
 (defun jcom--reserve1 (params)
   (lambda (prog)
@@ -231,7 +234,7 @@
         (let ((dom
                (libxml-parse-html-region (point-min) (point-max) nil)))
           (list .title
-                (car (dom-by-id dom "recResultTitle"))
+                (jcom--dom-string (car (dom-by-id dom "recResultTitle")))
                 (car (dom-by-class dom "cont"))))))))
 
 (defun jcom-make-reservation (data)
@@ -243,7 +246,7 @@
 (defun jcom--search-keyword (dom)
   "Extract search condition from the DOM of the searchId page."
   (seq-let (key _date _chan genre)
-      (mapcan #'dom-strings
+      (mapcar #'jcom--dom-string
               (thread-first dom
                 (dom-by-class "\\`condition\\'")
                 (dom-by-class "value")))
@@ -270,8 +273,7 @@
                                   'data-program-json)))
                       (desc (thread-first (dom-by-class dom "desbox")
                               (dom-by-tag 'dd)
-                              dom-strings
-                              car)))
+                              jcom--dom-string)))
                   (nconc json (list (cons 'commentary desc)
                                     (cons 'keyword key)))))
               (cl-delete-if-not
@@ -401,10 +403,9 @@
         nil
         ,@(mapcan
            (pcase-lambda (`(,prog ,msg ,detail))
-             `((h1 nil ,(car (dom-strings msg)))
+             `((h1 nil ,msg)
                (h2 nil "番組: " ,prog)
-               (p nil
-                  ,(car (dom-strings (dom-by-class detail "errMessage"))))
+               (p nil ,(jcom--dom-string (dom-by-class detail "errMessage")))
                (ul nil
                    ,@(mapcar
                       (lambda (dom)
@@ -412,7 +413,7 @@
                           `(li nil
                                (a ((href . ,(url-expand-file-name (dom-attr a 'href)
                                                                   "https://tv.myjcom.jp/")))
-                                  ,@(dom-strings a)))))
+                                  ,(jcom--dom-string a)))))
                       (dom-by-class detail "recordedDetail")))))
            result))))))
 
