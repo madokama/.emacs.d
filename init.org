@@ -652,6 +652,23 @@ narrowed."
   :commands popup-tip)
 #+END_SRC
 
+*** posframe
+#+BEGIN_SRC emacs-lisp
+(use-package posframe
+  :load-path "site-lisp/posframe"
+  :defer t)
+#+END_SRC
+
+**** ivy-posframe
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-posframe
+  :load-path "site-lisp/ivy-posframe"
+  :after ivy
+  :config
+  (setq ivy-display-function #'ivy-posframe-display)
+  (ivy-posframe-enable))
+#+END_SRC
+
 ** Navigation/Selection
 *** avy
 #+BEGIN_SRC emacs-lisp
