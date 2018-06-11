@@ -7,30 +7,11 @@
 (require 'hydra)
 
 (declare-function elfeed "ext:elfeed")
-(declare-function elfeed-search-buffer "ext:elfeed-search")
-
 (declare-function open-junk-file "ext:open-junk-file")
 (declare-function transpose-frame "ext:transpose-frame")
 (declare-function winner-redo "winner")
 (declare-function winner-undo "winner")
 (declare-function w32-symon-mode "ext:w32-symon")
-
-;; (defvar explicit-shell-file-name)
-
-;; (defun shell-wrap (arg)
-;;   "Wrapper function for `shell'.
-;; When prefix argument ARG is non-nil, run MS-Windows command
-;; prompt."
-;;   (interactive "P")
-;;   (if (and arg (eq system-type 'windows-nt))
-;;       (let ((explicit-shell-file-name "cmdproxy"))
-;;         (shell (get-buffer-create "*command prompt*")))
-;;     (call-interactively #'shell)))
-
-(declare-function alpha-frame-trans-inc "ext:alpha-frame")
-(declare-function alpha-frame-trans-dec "ext:alpha-frame")
-(declare-function alpha-frame-opaque "ext:alpha-frame")
-(declare-function alpha-frame-max "ext:alpha-frame")
 
 (defhydra hydra-alpha-frame ()
   "Frame"
@@ -54,7 +35,7 @@
     (unless (get-buffer buf-name)
       (cl-loop for win being the windows
                unless (window-parameter win 'window-side)
-                 do (delete-other-windows)
+                 do (with-selected-window win (delete-other-windows))
                     (cl-return))
       (elfeed))
     (add-to-list 'ivy-views `(,view-name (buffer ,buf-name)))

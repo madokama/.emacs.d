@@ -53,7 +53,7 @@
       (display-buffer-reuse-window display-buffer-pop-up-window))
      ("\\`\\*\\(?:shell\\)\\*"
       (display-buffer-reuse-window display-buffer-pop-up-window display-buffer-same-window))
-     ("\\`\\*\\(?:Compile-Log\\|Help\\|ggtags-global\\|ivy-occur.+?\\)\\*"
+     ("\\`\\*\\(?:Compile-Log\\|Help\\|ggtags-global\\|ivy-occur.+?\\|define:.+?\\)\\*"
       (display-buffer-reuse-window display-buffer-in-side-window)
       (reusable-frames . visible)
       (side . bottom)
@@ -91,12 +91,14 @@
  '(flycheck-mode-line-prefix "")
  '(flycheck-pos-tip-timeout 5)
  '(font-lock-global-modes nil)
+ '(gc-cons-percentage 0.6)
  '(gc-cons-threshold 33554432)
  '(global-prettify-symbols-mode t)
  '(gtags-disable-pushy-mouse-mapping t)
  '(history-delete-duplicates t)
+ '(hydra-lv 'posframe)
  '(idle-update-delay 2)
- '(iedit-toggle-key-default nil)
+ '(iedit-toggle-key-default nil t)
  '(image-animate-loop t)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -127,6 +129,7 @@
  '(lisp-indent-function 'common-lisp-indent-function)
  '(lispy-avy-style-symbol 'at-full)
  '(lispy-comment-use-single-semicolon t)
+ '(lispy-no-permanent-semantic t)
  '(lispy-no-space t)
  '(ls-lisp-use-insert-directory-program t)
  '(mailcap-user-mime-data '((pdf-view-mode "application/pdf" nil)))
@@ -136,23 +139,34 @@
  '(multi-term-program-switches "--login")
  '(next-error-recenter '(4))
  '(next-screen-context-lines 1)
- '(org-agenda-files '("~/Dropbox/emacs/org/notes.org"))
+ '(org-agenda-files '("~/Dropbox/emacs/org/piano.org"))
  '(org-babel-clojure-backend 'cider)
  '(org-babel-hash-show-time t)
  '(org-babel-shell-names '("sh" "bash" "cmd" "bat"))
  '(org-capture-templates
    '(("l" "Link" entry
       (file+olp+datetree "")
-      "* %:description  %^g\n%(org-capture--quote)%?Source: %:link\n%U")
+      "* %:description  %^g
+%(org-capture--quote)%?Source: %(org-make-link-string \"%:link\")
+%U")
      ("y" "YouTube" entry
       (file+olp+datetree "vids.org")
-      "* %(org-ytdl-capture)  %^g\n%(org-ytdl-run-template-hook)\n%?\n%U")
+      "* %(org-ytdl-capture)  %^g
+%(org-ytdl-run-template-hook)
+%?
+%U")
      ("t" "Todo" entry
       (file+olp+datetree "todo.org")
-      "* TODO %?\n%i\n%a\n%U")
+      "* TODO %?
+%i
+%a
+%U")
      ("n" "Note" entry
       (file+olp+datetree "")
-      "* %?\n%i\n%a\n%U")))
+      "* %?
+%i
+%a
+%U")))
  '(org-catch-invisible-edits 'show-and-error)
  '(org-confirm-babel-evaluate nil)
  '(org-directory "~/Dropbox/emacs/org")
@@ -160,9 +174,8 @@
  '(org-hide-emphasis-markers nil)
  '(org-image-actual-width nil)
  '(org-protocol-default-template-key "l")
- '(org-refile-targets '((org-agenda-files :maxlevel . 6)))
+ '(org-refile-targets '((org-agenda-files :maxlevel . 2)))
  '(org-return-follows-link t)
- '(org-src-fontify-natively t)
  '(org-src-preserve-indentation t)
  '(org-src-window-setup 'current-window)
  '(org-startup-indented t)
@@ -212,6 +225,7 @@
  '(tab-always-indent 'complete)
  '(tao-theme-use-height nil)
  '(tool-bar-mode nil)
+ '(truncate-lines t)
  '(undo-tree-incompatible-major-modes
    '(magit-status-mode magit-process-mode magit-diff-mode messages-buffer-mode term-mode shell-mode elfeed-search-mode elfeed-show-mode Custom-mode eww-mode))
  '(undo-tree-mode-lighter "")

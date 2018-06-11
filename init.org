@@ -361,7 +361,7 @@ Unicode
 
 ** Advices
 *** next/previous-line
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 ;; Keep cursor centered on the screen.
 ;; NOTE `scroll-preserve-screen-position' option has to be either `t'
 ;; or `nil' for this to work as intended
@@ -426,6 +426,7 @@ Visual tweaks
 (setq-default fringe-indicator-alist
               (cons '(truncation . nil)
                     (assq-delete-all 'truncation fringe-indicator-alist)))
+(setq auto-window-vscroll nil)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -688,13 +689,16 @@ narrowed."
   :delight
   :bind (("C-c C-r" . ivy-resume))
   :config
-  (setq ivy-initial-inputs-alist nil
-        ;; ivy-re-builders-alist '((swiper . ivy--regex-plus)
-        ;;                         (counsel-ag . ivy--regex-plus)
-        ;;                         (counsel-rg . ivy--regex-plus)
-        ;;                         (counsel-grep-or-swiper . ivy--regex-plus)
-        ;;                         (t . ivy--regex-fuzzy))
-        )
+  (setq ivy-initial-inputs-alist '((counsel-M-x . "\\<")
+                                   (counsel-describe-function . "\\<")
+                                   (counsel-describe-variable . "\\<")
+                                   (describe-symbol . "\\<"))
+        ivy-re-builders-alist '(;; (swiper . ivy--regex-plus)
+                                ;; (counsel-rg . ivy--regex-plus)
+                                ;; (counsel-grep-or-swiper . ivy--regex-plus)
+                                (t . ivy--regex-ignore-order
+                                     ;; ivy--regex-fuzzy
+                                 )))
 
   ;;(add-to-list 'ivy-sort-functions-alist '(find-library))
   (add-to-list 'ivy-sort-functions-alist '(describe-coding-system))
@@ -804,6 +808,10 @@ narrowed."
                  (lambda (word)
                    (format "http://debbugs.gnu.org/cgi/bugreport.cgi?bug=%s"
                            (match-string 1 word)))))
+
+  (setq counsel--git-grep-count-func
+        (lambda ()
+          (counsel--gg-count "" t)))
 
   (counsel-mode))
 #+END_SRC
@@ -1472,7 +1480,7 @@ Just to suppress lighter
   ;; カレントバッファが shellバッファのときに、動いている process の coding-system
   ;; の DECODING の設定を undecided にする
   (defun ad-comint-output-filter--shell-coding-system (&rest _)
-    (when-let* ((process (get-buffer-process (buffer-name))))
+    (when-let ((process (get-buffer-process (buffer-name))))
       (when (string-match "^shell" (process-name process))
         (let ((coding-system (process-coding-system process)))
           (set-process-coding-system process
@@ -1705,6 +1713,8 @@ until we have some outputs"
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :defer t
+  :bind (:map org-mode-map
+         ("C-c C-r" . nil))             ; reserved for ivy-resume
   :delight ((org-src-mode "") (outline-minor-mode " "))
   :init
   ;; (declare-function org-capture "ext:org-capture")
@@ -1949,7 +1959,8 @@ until we have some outputs"
 (use-package define-word
   :load-path "site-lisp/define-word"
   :bind
-  ("C-c d" . define-word-at-point))
+  (:map search-map
+        ("d" . define-word-at-point)))
 #+END_SRC
 
 *** twitter
@@ -1999,13 +2010,15 @@ until we have some outputs"
           (default-value 'browse-url-browser-function)))
   (add-hook 'eww-mode-hook #'eww-restore-browser-alist)
 
-  ;; (advice-add 'eww :around
-  ;;             (lambda (orig-fun &rest args)
-  ;;               (save-window-excursion
-  ;;                 (apply orig-fun args))
-  ;;               (unless (get-buffer-window "*eww*")
-  ;;                 (pop-to-buffer "*eww*"))))
-  )
+  (defun ad-eww-display-image (buffer)
+    "Add `shr-image-map' to the image."
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
+        (add-text-properties (point-min) (point-max)
+                             (list 'keymap shr-image-map
+                                   'image-url (plist-get eww-data :url))))))
+
+  (advice-add 'eww-display-image :after #'ad-eww-display-image))
 
 #+END_SRC
 #+BEGIN_SRC emacs-lisp
@@ -2029,8 +2042,7 @@ until we have some outputs"
   :config
   (require 'enh-elfeed)
   (use-package page2feed)
-  (load (expand-file-name "private/subscriptions" user-emacs-directory))
-  (cl-old-struct-compat-mode))
+  (load (expand-file-name "private/subscriptions" user-emacs-directory)))
 #+END_SRC
 
 *** org-elfeed
@@ -2070,8 +2082,7 @@ until we have some outputs"
 (use-package cookie-sync
   :after url-curl
   :config
-  (with-eval-after-load 'url-curl
-    (cookie-sync)))
+  (cookie-sync))
 #+END_SRC
 
 *** moz
@@ -2192,7 +2203,8 @@ until we have some outputs"
   (add-hook 'minibuffer-setup-hook #'conditionally-enable-lispy)
 
   ;; (advice-add 'lispy--ensure-visible :after #'recenter)
-  )
+
+  (setq lispy-delete-backward-recenter nil))
 #+END_SRC
 *** names
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -2432,7 +2444,8 @@ keybind definition: (\"key\" . func)"
 (use-package magit
   :defer t
   :load-path "site-lisp/magit/lisp"
-  ;;:delight (magit-auto-revert-mode " μρ")
+  :bind (:map magit-revision-mode-map
+              ("M-w" . nil))
   :init
   (info-add-manual "site-lisp/magit/Documentation/")
   :config
@@ -2864,7 +2877,7 @@ Indentation
                            "/")
                        'youtube-dl/play)))
   :config
-  (setq youtube-dl-command/play "mpv --ytdl-raw-options=netrc=,mark-watched= %s"
+  (setq youtube-dl-command/play "mpv --force-window=yes --ytdl-raw-options=netrc=,mark-watched= %s"
         youtube-dl-format nil)
 
   (defhydra hydra-youtube-dl (:exit t)
@@ -3025,7 +3038,7 @@ Indentation
                (regexp-opt
                 (delq nil
                       (mapcar (lambda (params)
-                                (when-let* ((path (cdr (assq 'path (cdr params)))))
+                                (when-let ((path (cdr (assq 'path (cdr params)))))
                                   (file-name-base path)))
                               elshogi-engines))
                 'words)))
@@ -3068,6 +3081,24 @@ Indentation
   ;; :init
   :config
   (so-long-enable))
+#+END_SRC
+
+*** which-func-mode
+Only for making characters visible.
+#+BEGIN_SRC emacs-lisp
+(use-package which-func
+  :defer t
+  :config
+  (setq which-func-format
+        `("["
+          (:propertize which-func-current
+		       local-map ,which-func-keymap
+		       face font-lock-function-name-face
+		       mouse-face mode-line-highlight
+		       help-echo "mouse-1: go to beginning\n\
+mouse-2: toggle rest visibility\n\
+mouse-3: go to end")
+          "]")))
 #+END_SRC
 
 ** Themes

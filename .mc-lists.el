@@ -33,12 +33,14 @@
         lispy-kill
         lispy-kill-word
         lispy-mark-symbol
+        lispy-move-beginning-of-line
         lispy-move-end-of-line
         lispy-parens
         lispy-quotes
         lispy-right
         lispy-space
         lispy-tick
+        lispy-wrap-round
         lispy-yank
         move-beginning-of-line-dwim
         org-beginning-of-line
@@ -143,6 +145,7 @@
         counsel-M-x
         dired-do-flagged-delete
         dired-summary
+        disable-mouse--handle
         edebug-continue-mode
         edebug-step-mode
         eval-defun
