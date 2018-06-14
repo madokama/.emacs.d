@@ -151,11 +151,11 @@
   (with-temp-buffer
     (save-match-data
       (jcom--http "https://tv.myjcom.jp/wishList.action")
-      (let ((params (jcom--device-params))
+      (let ((stb (jcom--device-params))
             (progs (jcom--wish-list))
             (search (jcom-search-list))
             (reserved (jcom-reserve-list)))
-        (list (cons 'common params)
+        (list (cons 'stb stb)
               (cons 'cookie jcom-cookie)
               (cons 'programs
                     (seq-sort-by
@@ -204,7 +204,7 @@
                                          (match-string 2 .date)
                                          (match-string 1 .date)))))))))))
 
-(defun jcom--build-reserve-form (params prog)
+(defun jcom--build-reserve-form (stb prog)
   (url-build-query-string
    (let-alist prog
      `((broadCastType , .channelType)
@@ -218,19 +218,19 @@
        (title , .title)
        (genreId , .genreId)
        (chName ,(concat .channelName .channelNo))
-       ,@params))
+       ,@stb))
    nil t))
 
 (defun jcom--reserve-success-p (result)
   (string= "リモート録画予約が完了しました。" (cadr result)))
 
-(defun jcom--reserve1 (params)
+(defun jcom--reserve1 (stb)
   (lambda (prog)
     (let-alist prog
       (with-temp-buffer
         (jcom-ajax-post "https://tv.myjcom.jp/remoteRecSubmit.action"
                         "https://tv.myjcom.jp/wishList.action"
-                        (jcom--build-reserve-form params prog))
+                        (jcom--build-reserve-form stb prog))
         (let ((dom
                (libxml-parse-html-region (point-min) (point-max) nil)))
           (list .title
@@ -241,7 +241,7 @@
   (let-alist data
     (when .cookie
       (setq jcom-cookie .cookie))
-    (mapcar (jcom--reserve1 .common) .programs)))
+    (mapcar (jcom--reserve1 .stb) .programs)))
 
 (defun jcom--search-keyword (dom)
   "Extract search condition from the DOM of the searchId page."
@@ -299,7 +299,7 @@
 
 ;;; Major mode
 
-(defvar-local jcom-meta nil)
+(defvar-local jcom-stb nil)
 
 (defvar jcom-mode-map
   (let ((map (make-sparse-keymap)))
@@ -425,7 +425,7 @@
    `(lambda ()
       ,@(jcom--async-common)
       (jcom-make-reservation
-       ',(list (cons 'common jcom-meta)
+       ',(list (cons 'stb jcom-stb)
                (cons 'cookie jcom-cookie)
                (cons 'programs (jcom--marked-programs)))))
    (lambda (results)
@@ -474,7 +474,7 @@
              (with-current-buffer buf
                (unless (derived-mode-p 'jcom-mode)
                  (jcom-mode))
-               (setq jcom-meta .common)
+               (setq jcom-stb .stb)
                (let ((inhibit-read-only t))
                  (erase-buffer)
                  (mapc (lambda (prog)
