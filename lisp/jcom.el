@@ -309,27 +309,27 @@
     (define-key map (kbd "p") #'jcom-mode-prev-line)
     (define-key map (kbd "t") #'jcom-mode-mark-all)
     (define-key map (kbd "U") #'jcom-mode-unmark-all)
-    (define-key map (kbd "R") #'jcom-mode-do-reserve)
+    (define-key map (kbd "R") #'jcom-mode-reserve)
     (define-key map (kbd "C-d") #'jcom-mode-delete)
     (define-key map [remap undo] #'jcom-mode-undo)
     map))
 
-(defun jcom--program-at-point ()
+(defun jcom-program-at-point ()
   (get-text-property (point) 'jcom))
 
-(defun jcom--program-marked-p ()
+(defun jcom-program-marked-p ()
   (= (char-after (line-beginning-position)) ?*))
 
-(defun jcom--marked-programs ()
+(defun jcom-marked-programs ()
   ;; List program at point if none marked.
   (or (save-excursion
         (goto-char (point-min))
         (cl-loop while (not (eobp))
-                 if (jcom--program-marked-p)
-                   collect (jcom--program-at-point)
+                 if (jcom-program-marked-p)
+                   collect (jcom-program-at-point)
                  end
                  do (forward-line 1)))
-      (when-let ((prog (jcom--program-at-point)))
+      (when-let ((prog (jcom-program-at-point)))
         (list prog))))
 
 (defun jcom-mode-iterate (fn)
@@ -365,7 +365,7 @@
   (interactive)
   (jcom-mode-iterate
    (lambda ()
-     (when (jcom--program-marked-p)
+     (when (jcom-program-marked-p)
        (jcom-mode-toggle-mark)))))
 
 (defun jcom-mode-next-line ()
@@ -402,9 +402,9 @@
       `(body
         nil
         ,@(mapcan
-           (pcase-lambda (`(,prog ,msg ,detail))
+           (pcase-lambda (`(,title ,msg ,detail))
              `((h1 nil ,msg)
-               (h2 nil "番組: " ,prog)
+               (h2 nil "番組: " ,title)
                (p nil ,(jcom--dom-string (dom-by-class detail "errMessage")))
                (ul nil
                    ,@(mapcar
@@ -417,7 +417,7 @@
                       (dom-by-class detail "recordedDetail")))))
            result))))))
 
-(defun jcom-mode-do-reserve ()
+(defun jcom-mode-reserve ()
   "Reserve marked programs.  If none, reserve the program at point."
   (interactive)
   (message "[JCOM] Making reservations...")
@@ -427,7 +427,7 @@
       (jcom-make-reservation
        ',(list (cons 'stb jcom-stb)
                (cons 'cookie jcom-cookie)
-               (cons 'programs (jcom--marked-programs)))))
+               (cons 'programs (jcom-marked-programs)))))
    (lambda (results)
      (if-let ((failed (cl-delete-if #'jcom--reserve-success-p results)))
          (jcom--report-reserve-error failed)
@@ -443,7 +443,7 @@
 (defun jcom-mode-enter ()
   "Reserve program at point."
   (interactive)
-  (browse-url (jcom-program-page (jcom--program-at-point))))
+  (browse-url (jcom-program-page (jcom-program-at-point))))
 
 (defun jcom-mode-delete ()
   "Delete program at point."
