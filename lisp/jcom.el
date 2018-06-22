@@ -70,6 +70,53 @@
 (defun jcom-ajax-post (url referer data)
   (jcom--http url (jcom--ajax-headers referer) data))
 
+(defsubst jcom--dom-string (dom)
+  (car (dom-strings dom)))
+
+(defun jcom--parse-reserve-params (url)
+  (when (stringp url)
+    (let ((params
+           (url-parse-query-string
+            (cadr (split-string url "\\?")))))
+      (cl-flet ((get (k)
+                  (cadr (assoc k params))))
+        (let ((serviceCode
+               (split-string (get "serviceCode") "_")))
+          ;; Collect program data to later weed out reserved programs
+          ;; from the wish list. Since `eventId' is not unique enough,
+          ;; we record several other parameters as well.
+          `((date . ,(get "programDate"))
+            (channelType . ,(get "channelType"))
+            (serviceId . ,(car serviceCode))
+            (networkId . ,(cadr serviceCode))
+            (eventId . ,(get "eventId"))))))))
+
+(defun jcom--reserved-prog/url (dom)
+  "Collect data from the program url in DOM."
+  (thread-first dom
+    (dom-by-class (rx bos "prName"))
+    (dom-by-tag 'a)
+    (dom-attr 'href)
+    jcom--parse-reserve-params))
+
+(defun jcom--reserved-prog/dom (dom)
+  "Collect the rest of metadata from #recDataN-N in DOM."
+  (let ((data
+         (dom-by-id dom (rx bos "recData"))))
+    (cl-flet ((get (k)
+                (jcom--dom-string (dom-by-class data k))))
+      `((title . ,(get "recTitle"))
+        (startTime . ,(get "recStart"))
+        (endTime . ,(get "recEnd"))
+        (airTime . ,(get "recMins"))
+        (channelName . ,(get "recChName"))
+        (channelNo . ,(get "recChNo"))
+        (itemId . ,(get "recItemId"))))))
+
+(defun jcom--reserved-prog-params (dom)
+  (nconc (jcom--reserved-prog/url dom)
+         (jcom--reserved-prog/dom dom)))
+
 (defun jcom-reserve-list ()
   (with-temp-buffer
     (save-match-data
@@ -78,36 +125,21 @@
         (erase-buffer)
         (jcom-ajax-get "https://tv.myjcom.jp/jcom-pc/remoteRecList.action?recListType=1&limit=100"
                        location)
-        (goto-char (point-min))
         (if-let ((progs
-                  (cl-loop while (re-search-forward (rx "detail.action?"
-                                                        (group (+ (not (any "\"")))))
-                                                    nil t)
-                           collect (let ((params
-                                          (url-parse-query-string (match-string 1))))
-                                     (cl-flet ((get (k)
-                                                 (cadr (assoc k params))))
-                                       (let ((serviceCode
-                                              (split-string (get "serviceCode") "_")))
-                                         ;; Collect program data to later weed
-                                         ;; out reserved programs from the wish
-                                         ;; list. Since `eventId' is not unique
-                                         ;; enough, we record several other
-                                         ;; parameters as well.
-                                         `((channelType . ,(get "channelType"))
-                                           (serviceId . ,(car serviceCode))
-                                           (networkId . ,(cadr serviceCode))
-                                           (eventId . ,(get "eventId")))))))))
-            progs
+                  (cl-delete-if
+                   (lambda (dom)
+                     (dom-by-tag dom 'th))
+                   (thread-first (libxml-parse-html-region (point-min) (point-max))
+                     (dom-by-id "recList")
+                     car
+                     (dom-by-tag 'tr)))))
+            (mapcar #'jcom--reserved-prog-params progs)
           (message "WARN:%s" (buffer-string))
           nil)))))
 
 (defsubst jcom--parse-html-region (begin end)
   (thread-last (libxml-parse-html-region begin end nil)
     caddr caddr))
-
-(defsubst jcom--dom-string (dom)
-  (car (dom-strings dom)))
 
 (defun jcom--device-params ()
   (goto-char (point-min))
@@ -157,6 +189,7 @@
             (reserved (jcom-reserve-list)))
         (list (cons 'stb stb)
               (cons 'cookie jcom-cookie)
+              (cons 'reserved reserved)
               (cons 'programs
                     (seq-sort-by
                      (lambda (prog)
@@ -169,9 +202,11 @@
                      (cl-delete-if
                       (lambda (prog)
                         (seq-find (lambda (res)
-                                    (seq-every-p (pcase-lambda (`(,k . ,v))
-                                                   (string= v (alist-get k prog)))
-                                                 res))
+                                    (cl-every
+                                     (lambda (k)
+                                       (string= (alist-get k res)
+                                                (alist-get k prog)))
+                                     '(date channelType serviceId networkId eventId)))
                                   reserved))
                       (cl-delete-duplicates
                        (nconc progs search)
@@ -241,7 +276,9 @@
   (let-alist data
     (when .cookie
       (setq jcom-cookie .cookie))
-    (mapcar (jcom--reserve1 .stb) .programs)))
+    (cons (cons 'results
+                (mapcar (jcom--reserve1 .stb) .programs))
+          data)))
 
 (defun jcom--search-keyword (dom)
   "Extract search condition from the DOM of the searchId page."
@@ -300,6 +337,8 @@
 ;;; Major mode
 
 (defvar-local jcom-stb nil)
+
+(defvar-local jcom-reserved nil)
 
 (defvar jcom-mode-map
   (let ((map (make-sparse-keymap)))
@@ -426,12 +465,16 @@
       ,@(jcom--async-common)
       (jcom-make-reservation
        ',(list (cons 'stb jcom-stb)
+               (cons 'reserved jcom-reserved)
                (cons 'cookie jcom-cookie)
                (cons 'programs (jcom-marked-programs)))))
-   (lambda (results)
-     (if-let ((failed (cl-delete-if #'jcom--reserve-success-p results)))
-         (jcom--report-reserve-error failed)
-       (message "[JCOM] Done.")))))
+   (lambda (data)
+     (let-alist data
+       (if-let ((failed
+                 (cl-delete-if #'jcom--reserve-success-p .results)))
+           (jcom--report-reserve-error failed)
+         (message "[JCOM] Done."))))))
+
 
 (define-derived-mode jcom-mode
   special-mode "JCOM"
@@ -474,7 +517,8 @@
              (with-current-buffer buf
                (unless (derived-mode-p 'jcom-mode)
                  (jcom-mode))
-               (setq jcom-stb .stb)
+               (setq jcom-stb .stb
+                     jcom-reserved .reserved)
                (let ((inhibit-read-only t))
                  (erase-buffer)
                  (mapc (lambda (prog)
