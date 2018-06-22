@@ -175,6 +175,7 @@
 (declare-function elfeed-entry-link "ext:elfeed-db")
 (declare-function eww-current-url "eww")
 (declare-function ffedit-export-url "ext:ffedit")
+(declare-function elfeed-search-selected "ext:elfeed-search")
 
 (defun youtube-dl--visiting-url ()
   (cond ((derived-mode-p 'org-mode)
@@ -184,7 +185,8 @@
         ((derived-mode-p 'elfeed-show-mode)
          (elfeed-entry-link elfeed-show-entry))
         ((derived-mode-p 'elfeed-search-mode)
-         (elfeed-entry-link (elfeed-search-selected t)))
+         (when-let ((entry (elfeed-search-selected t)))
+           (elfeed-entry-link entry)))
         ((derived-mode-p 'ffedit-mode)
          (ffedit-export-url))))
 
