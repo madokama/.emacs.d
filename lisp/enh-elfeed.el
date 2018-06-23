@@ -328,5 +328,29 @@ _s_: save db
 ;; (add-hook 'elfeed-show-mode-hook #'elfeed-show--enh-motion-keys)
 (add-hook 'elfeed-show-mode-hook #'hl-line-mode)
 
+(defun elfeed-update-active-tags ()
+  (cl-flet* ((feed-tags (tags)
+               (thread-last tags
+                 (delq 'unread)
+                 (delq 'junk)))
+             (matcher (feeds tags negate)
+               (if-let ((tags (feed-tags tags)))
+                   (funcall
+                    (if negate #'cl-remove-if #'cl-remove-if-not)
+                    (pcase-lambda (`(_ . ,tags~))
+                      (cl-intersection tags tags~))
+                    feeds)
+                 feeds)))
+    (let ((filter (elfeed-search-parse-filter elfeed-search-filter))
+          (elfeed--inhibit-update-init-hooks t))
+      (mapc (pcase-lambda (`(,feed . _))
+              (elfeed-update-feed feed))
+            (thread-first elfeed-feeds
+              (matcher (plist-get filter :must-have) nil)
+              (matcher (plist-get filter :must-not-have) t))))
+    (run-hooks 'elfeed-update-init-hooks)))
+
+(advice-add 'elfeed-search-fetch-visible :override #'elfeed-update-active-tags)
+
 (provide 'enh-elfeed)
 ;;; enh-elfeed.el ends here
