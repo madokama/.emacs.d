@@ -9,9 +9,9 @@
   (require 'youtube-dl))
 (require 'elfeed)
 (require 'seq)
+(require 'cl-seq)
 (require 'dash)
 (require 'hydra)
-(require 'avl-tree)
 
 (defmacro elfeed--define-tag-toggle (&rest args)
   `(progn
@@ -198,12 +198,13 @@
           (propertize (elfeed-entry-title elfeed-show-entry)
                       'face 'message-header-subject)))
 
-(setq elfeed-show-entry-switch
-      (lambda (buf)
-        (switch-to-buffer buf)
-        (when (> (point-max) (window-end (get-buffer-window buf) t))
-          (setq header-line-format
-                '(:eval (elfeed-show--header))))))
+(defun enh-elfeed-entry-switch (buf)
+  (switch-to-buffer buf)
+  (when (> (point-max) (window-end (get-buffer-window buf) t))
+    (setq header-line-format
+          '(:eval (elfeed-show--header)))))
+
+(setq elfeed-show-entry-switch #'enh-elfeed-entry-switch)
 
 (declare-function el-pocket-add "ext:el-pocket")
 
