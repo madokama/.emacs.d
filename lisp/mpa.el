@@ -37,26 +37,16 @@
     (mpv-ipc:request-log mpa-ipc))
   (mpv-ipc:load mpa-ipc (mpa-scrape lst)))
 
-(defun mpa--filter (tag json)
+(defun mpa--filter (json)
   (let-hash json
-    (cond (.event
-           (pcase .event
-             ("log-message"
-              (pcase .prefix
-                ("ytdl_hook"
-                 (message "[mpa] %s" (string-trim-right .text)))))))
-          (.request_id
-           (throw tag .data)))))
+    (pcase .event
+      ("log-message"
+       (pcase .prefix
+         ("ytdl_hook"
+          (message "[mpa] %s" (string-trim-right .text))))))))
 
 (defun mpa-interact ()
-  (cl-block nil
-    (while t
-      (if-let* ((char (read-char "mpa>")))
-          (progn
-            (mpv-ipc:keypress mpa-ipc (string char))
-            (when (memq char '(?q ?Q))
-              (cl-return)))
-        (cl-return)))))
+  (mpv-ipc-interact mpa-ipc))
 
 (defun mpa-next ()
   (mpv-ipc:next mpa-ipc))
