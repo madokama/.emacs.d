@@ -39,7 +39,8 @@
 
 (defun mpv-ipc-watch (args &optional ev-handler)
   (let ((path (mpv-ipc--sockpath))
-        (cb (mpv-ipc-receive (or ev-handler #'ignore))))
+        (cb (mpv-ipc-receive (or ev-handler #'ignore)))
+        (w32-pipe-read-delay 50))
     (cl-block nil
       ;; Returns socket process if successful.
       (accept-process-output
