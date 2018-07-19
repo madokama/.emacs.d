@@ -501,7 +501,7 @@
     (format "%s|[%s]%s" .channelName (or .keyword "") .title)))
 
 ;;;###autoload
-(defun jcom-list-programs (&rest _)
+(defun jcom-schedule (&rest _)
   "Show JCOM TV programs for online reservation."
   (interactive)
   (jcom-prepare-cookie)
