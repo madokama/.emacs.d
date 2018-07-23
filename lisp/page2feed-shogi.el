@@ -144,9 +144,8 @@
      (lambda ()
        (thread-first (libxml-parse-html-region (point-min) (point-max) nil)
          (dom-by-id "jtweb-main-content")
-         (dom-by-class "pcBlock")
-         car
-         (dom-by-class "\\_<relay\\_>")
+         (dom-by-class (rx bos "pcBlock" eos))
+         (dom-by-class (rx bos "relay" eos))
          car)))))
 
 (defun page2feed-shogi-games/jt (plst)
