@@ -171,7 +171,7 @@
          ,@(mapcar (lambda (medium)
                      (when-let ((video (plist-get medium :video)))
                        (funcall ig-eww-video-player video))
-                     `(img ((src . ,(plist-get medium :image)))))
+                     `(div nil (img ((src . ,(plist-get medium :image))))))
                    media)
          (pre nil ,(instagram-entry-caption json))))
 
