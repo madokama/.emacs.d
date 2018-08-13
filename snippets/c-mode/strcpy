@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: strcpy
+# key: sc
+# --
+${1:dest} = malloc(strlen(${2:src}) + 1);
+strcpy($1, $2);

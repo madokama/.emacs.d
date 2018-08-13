@@ -17,7 +17,7 @@
 
 (defvar firefox-profile-directory nil)
 
-(defun firefox-mozlz4 (file)
+(defun firefox-mozlz4/python (file)
   (with-temp-buffer
     (insert "import sys, lz4\n"
             "out = sys.stdout\n"
@@ -29,6 +29,15 @@
     (call-process-region (point-min) (point-max) "python3" t t nil)
     (goto-char (point-min))
     (json-parse-buffer)))
+
+(defun firefox-mozlz4 (file)
+  ;; https://github.com/avih/dejsonlz4
+  (if (executable-find "dejsonlz4")
+      (with-temp-buffer
+        (call-process "dejsonlz4" nil t nil file)
+        (goto-char (point-min))
+        (json-parse-buffer))
+    (firefox-mozlz4/python file)))
 
 (defun firefox-session-tabs (json)
   (cl-flet ((normalize (url)

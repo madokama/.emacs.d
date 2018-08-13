@@ -80,14 +80,19 @@
             "")))
 
 (defun mpv-ipc-jsoncmd (tag cmd &rest params)
-  (format "{\"command\":[%S%s],\"request_id\":%S}\n"
-          cmd
-          (if params
-              (concat "," (mapconcat (lambda (param)
-                                       (format "%S" param))
-                                     params ","))
-            "")
-          tag))
+  (let ((hsh (make-hash-table :size 2)))
+    (puthash "command" (apply #'vector cmd params) hsh)
+    (puthash "request_id" tag hsh)
+    (concat (json-serialize hsh) "\n"))
+  ;; (format "{\"command\":[%S%s],\"request_id\":%S}\n"
+  ;;         cmd
+  ;;         (if params
+  ;;             (concat "," (mapconcat (lambda (param)
+  ;;                                      (format "%S" param))
+  ;;                                    params ","))
+  ;;           "")
+  ;;         tag)
+  )
 
 (defun mpv-ipc--do (ipc &rest cmd)
   (when (process-live-p ipc)

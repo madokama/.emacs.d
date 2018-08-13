@@ -4,8 +4,12 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'cl-macs))
+
 (cl-defstruct promise
   value forced)
+;;;###autoload(autoload 'promise-p "delay")
 
 ;;;###autoload
 (defun force (p)

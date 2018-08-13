@@ -299,60 +299,6 @@
 
 (add-hook 'page2feed-scrapers #'page2feed-scrape-linelive)
 
-;; Instagram
-
-(require 'instagram)
-
-(defun page2feed-instagram-image (item)
-  (let ((img (instagram-item-image item)))
-    (format "<a href=%S><img src=%S /></a>"
-            (or (instagram-item-video item) img)
-            img)))
-
-(defun page2feed-instagram-entry (item)
-  (let* ((caption (instagram-item-caption item))
-         (caption (and caption (split-string caption "\n"))))
-    (list 'title (car caption)
-          'link (instagram-item-link item)
-          'updated (instagram-item-time item)
-          'content
-          (concat (if (instagram-item-carousel-p item)
-                      (mapconcat #'page2feed-instagram-image
-                                 (instagram-item-carousel item)
-                                 "\n")
-                    (page2feed-instagram-image item))
-                  (mapconcat (lambda (line)
-                               (format "<div>%s</div>" line))
-                             (cdr caption) "\n")))))
-
-(defun page2feed-instagram-scrape ()
-  (when (re-search-forward "<meta .*?content=\"Instagram\"" nil t)
-    (cl-flet ((re1 (regex)
-                (when (re-search-forward regex nil t)
-                  (match-string 1))))
-      ;; Order matters!
-      (let ((user (re1 "<meta .*?username=\\(.+?\\)\""))
-            (url (re1 "<link rel=\"canonical\" href=\"\\(.+?\\)\""))
-            (user-id (instagram-user-id))
-            (auth (instagram-credentials)))
-        (list 'link url
-              'author user
-              'entries
-              (append (mapcar #'page2feed-ig-story-entry
-                              (instagram-user-story user-id auth))
-                      (mapcar #'page2feed-instagram-entry
-                              (instagram-user-feed user-id auth))))))))
-
-(defun page2feed-ig-story-entry (item)
-  (let ((time (instagram-item-time item))
-        (caption (instagram-item-caption item)))
-    (list 'title (or caption (format-time-string "%F %T" time))
-          'link (or (instagram-item-video item) (instagram-item-image item))
-          'updated time
-          'content (page2feed-instagram-image item))))
-
-(add-hook 'page2feed-scrapers #'page2feed-instagram-scrape)
-
 (advice-add 'elfeed-xml-parse-region :filter-args #'page2feed)
 
 (provide 'page2feed)

@@ -82,6 +82,16 @@ git update-index --assume-unchanged init.el
 ** Early-init
 #+BEGIN_SRC emacs-lisp :tangle early-init.el
 (setq package-enable-at-startup nil)
+
+;; Tip from: https://blog.d46.us/advanced-emacs-startup/
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+;; Make gc pauses faster by decreasing the threshold.
+(add-hook 'after-init-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 2 1024 1024))))
 #+END_SRC
 ** Init of Inits
 #+BEGIN_SRC emacs-lisp
@@ -217,7 +227,8 @@ From: [[http://www49.atwiki.jp/ntemacs/pages/16.html][NTEmacs @ ウィキ - UTF-
                     :filter-args
                     (lambda (args)
                       "w32: encode arg strings with cp932"
-                      (when (nthcdr ,args-pos args)
+                      (when (and (integerp ,args-pos)
+                                 (nthcdr ,args-pos args))
                         (setf (nthcdr ,args-pos args)
                               (mapcar #'w32-encode-process-arg-cp932
                                       (nthcdr ,args-pos args))))
@@ -234,6 +245,11 @@ From: [[http://www49.atwiki.jp/ntemacs/pages/16.html][NTEmacs @ ウィキ - UTF-
 
 (advice-add 'start-process-shell-command
             :around #'ad-w32-start-process-shell-command)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle (if (eq system-type 'windows-nt) "init.el" "no")
+;; http://lists.gnu.org/archive/html/emacs-devel/2018-06/msg00711.html
+(setq w32-pipe-buffer-size 16384)
 #+END_SRC
 
 ** Fonts
@@ -439,6 +455,34 @@ Visual tweaks
       `((".*" ,temporary-file-directory t)))
 #+END_SRC
 
+*** forward-sexp
+Enable slurping hash table literals
+
+#+BEGIN_SRC emacs-lisp
+(defun forward-sexp-elisp (arg)
+  (let ((target (scan-sexps (point) arg)))
+    (when (and target
+               (> arg 0)
+               (string= "#s"
+                        (string-trim-left (buffer-substring (point) target))))
+      (setq target (scan-sexps target (cl-signum arg))))
+    (when target
+      (goto-char target))
+    (when (< arg 0)
+      (when (lispy-after-string-p "#s")
+        (goto-char (- (point) 2)))
+      (backward-prefix-chars))))
+
+(defun my-forward-sexp (arg)
+  (cond ((derived-mode-p 'emacs-lisp-mode)
+         (forward-sexp-elisp arg))
+        (t
+         ;; Copied from `forward-sexp' in lisp.el
+         (goto-char (or (scan-sexps (point) arg) (buffer-end arg)))
+         (if (< arg 0) (backward-prefix-chars)))))
+(setq forward-sexp-function #'my-forward-sexp)
+#+END_SRC
+
 ** Utility Functions
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle init-util.el
@@ -538,6 +582,50 @@ narrowed."
     (info-initialize)
     (add-to-list 'Info-directory-list
                  (expand-file-name path user-emacs-directory))))
+#+END_SRC
+
+*** delete this file
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(defun delete-this-file ()
+  "Trash the visiting file."
+  (interactive)
+  (when (file-exists-p buffer-file-name)
+    (delete-file buffer-file-name t)))
+#+END_SRC
+
+*** shutdown
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(defun shutdown ()
+  (interactive)
+  (add-hook 'kill-emacs-hook
+            (lambda ()
+              (call-process "nircmd" nil nil nil "exitwin" "poweroff"))
+            t)
+  (let ((confirm-kill-emacs nil))
+    (save-buffers-kill-emacs '(4))))
+
+;;;###autoload
+(defun reboot ()
+  (interactive)
+  (add-hook 'kill-emacs-hook
+            (lambda ()
+              (call-process "nircmd" nil nil nil "exitwin" "reboot"))
+            t)
+  (let ((confirm-kill-emacs nil))
+    (save-buffers-kill-emacs '(4))))
+#+END_SRC
+
+*** git diff
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(defun my-git-diff (dir range)
+  (let ((default-directory dir))
+    (pop-to-buffer (generate-new-buffer (format "*git diff:%s*" dir)))
+    (call-process "git" nil t nil "diff" range)
+    (special-mode)
+    (goto-char (point-min))))
 #+END_SRC
 
 ** Keybindings
@@ -714,11 +802,11 @@ narrowed."
     (interactive)
     (if ivy--directory
         (ivy-quit-and-run
-         (dired ivy--directory)
-         (goto-char (point-min))
-         (when (re-search-forward
-                (regexp-quote (substring (ivy-state-current ivy-last) 0 -1)) nil t)
-           (goto-char (match-beginning 0))))
+          (dired ivy--directory)
+          (goto-char (point-min))
+          (when (re-search-forward
+                 (regexp-quote (substring (ivy-state-current ivy-last) 0 -1)) nil t)
+            (goto-char (match-beginning 0))))
       (user-error
        "Not completing files currently")))
 
@@ -770,10 +858,6 @@ narrowed."
   :bind (:map read-expression-map
               ("C-r" . counsel-minibuffer-history))
   :config
-  (ivy-add-actions
-   'counsel-find-file
-   '(("d" delete-file "delete")))
-
   (defun counsel-describe-variable-customize (name)
     (customize-option (intern name)))
 
@@ -1339,7 +1423,7 @@ Just to suppress lighter
 #+END_SRC
 
 *** redshift
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no 
 (use-package redshift
   :defer 6)
 #+END_SRC
@@ -1868,22 +1952,13 @@ until we have some outputs"
 
 #+BEGIN_SRC emacs-lisp
 (use-package url-curl
-  :after url-http)
-
-;; Nullify the cache store functionality, which url-curl does.
-(use-package url-cache
-  :unless noninteractive
-  :defer t
+  :after url-http
+;;  :init (setq url-curl-libcurl t)
   :config
-  (defun ad-url-cache-extract-dummy-head (cache)
-    (save-excursion
-      (goto-char (point-min))
-      ;; Prepend HTTP header; content-type is necessary for some image types.
-      (if (file-exists-p (concat cache ".h"))
-          (insert-file-contents-literally (concat cache ".h"))
-        (insert "\n\n"))))
-  (advice-add 'url-cache-extract :after #'ad-url-cache-extract-dummy-head)
-  (advice-add 'url-store-in-cache :override #'ignore))
+  ;; Nullify the cache store functionality, which url-curl does.
+  (use-package url-cache
+    :config
+    (advice-add 'url-store-in-cache :override #'ignore)))
 #+END_SRC
 
 *** shr
@@ -1926,8 +2001,9 @@ until we have some outputs"
                                (string-match-p (image-file-name-regexp) url))
                           url
                         (get-text-property (point) 'image-url))))
-      (when image-url
-        (shr--download-url image-url))))
+      (if image-url
+          (shr--download-url image-url)
+        (message "WARN: No URL under point."))))
 
   (defun shr--download-url (url)
     "Downloads the image under point"
@@ -2033,6 +2109,25 @@ until we have some outputs"
   :after eww)
 #+END_SRC
 
+**** eww-hook
+#+BEGIN_SRC emacs-lisp
+(use-package eww-hooks
+  :after eww
+  :custom
+  (eww-hooks-readable-alist
+   `((,(rx "://kifulog.shogi.or.jp/") . ,(rx bol "RSS"))
+     (,(rx "://www.rt.com/news/") . ,(rx bol "HomeWorld News"))
+     (,(rx "://github.com/" (+\? graph) "/commit/") . ,(rx bol "Browse files"))
+     (,(rx "://www.shogi.or.jp/game/schedule/") . ,(rx bol "対局予定")))))
+#+END_SRC
+
+*** ig-eww
+#+BEGIN_SRC emacs-lisp
+(use-package ig-eww
+  :defer t
+  :config
+  (setq ig-eww-video-player #'youtube-dl/play))
+#+END_SRC
 *** elfeed
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
@@ -2145,12 +2240,32 @@ until we have some outputs"
 #+END_SRC
 
 *** ping-mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no 
 (use-package ping
   :unless noninteractive
   :defer 10
   :config
   (ping-mode))
+#+END_SRC
+
+*** jcom
+#+BEGIN_SRC emacs-lisp
+(use-package jcom
+  :unless noninteractive
+  :defer t
+  :config
+  (setq jcom-program-format-function
+        (lambda (prog)
+          (let ((default (jcom-program-format-default prog)))
+            (let-alist prog
+              (if (and (string= "囲碁・将棋チャンネル" .channelName)
+                       (string-match-p (rx (or "徹底解説" "銀河戦")) .title))
+                  (concat default
+                          (format " (%s)"
+                                  (cl-find-if (lambda (txt)
+                                                (string-match-p "vs" txt))
+                                              (split-string .commentary "\n"))))
+                default))))))
 #+END_SRC
 
 ** Development Tools
@@ -2633,9 +2748,25 @@ Indentation
   (put 'use-package 'common-lisp-indent-function 1)
   (put 'pcase-lambda 'common-lisp-indent-function '(&lambda &rest lisp-indent-function-lambda-hack))
   (put 'custom-theme-set-faces 'common-lisp-indent-function 1)
-  (put 'define-derived-mode 'common-lisp-indent-function 1)
+  (put 'define-derived-mode 'common-lisp-indent-function 3)
   (defalias 'common-lisp-indent-function #'common-lisp-indent-function-1))
 #+END_SRC
+
+*** Emacs Lisp
+
+**** delayed evaluation
+#+BEGIN_SRC emacs-lisp
+(use-package delay
+  :after lispy
+  :config
+  (defun ad-lispy--eval-elisp-promise (oldfun e-str)
+    (let ((e-sexp (read e-str)))
+      (if (promise-p e-sexp)
+          (prin1-to-string (force e-sexp))
+        (funcall oldfun e-str))))
+  (advice-add 'lispy--eval-elisp :around #'ad-lispy--eval-elisp-promise))
+#+END_SRC
+
 *** Scheme
 **** SLIME
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -2972,7 +3103,7 @@ Indentation
   (setq pdf-info-epdfinfo-program "~/bin/epdfinfo.exe"
         pdf-view-midnight-colors (cons (face-attribute 'default :foreground)
                                        (face-attribute 'default :background)))
-  (add-hook 'pdf-view-mode-hook 'pdf-tools-enable-minor-modes))
+  :hook (pdf-view-mode . pdf-tools-enable-minor-modes))
 #+END_SRC
 
 ** Games

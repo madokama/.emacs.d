@@ -21,14 +21,15 @@
     (let ((param (car param-list)))
       (make-process :name "nircmd"
                     :command (cl-list* "nircmd.exe" "win" (car param)
-                                       "process" proc-id (cdr param))
+                                       "process" (alpha-frame-pid proc-id)
+                                       (cdr param))
                     :sentinel
                     (lambda (proc _signal)
                       (when (zerop (process-exit-status proc))
                         (alpha-frame-nircmd proc-id (cdr param-list))))))))
 
-(defun alpha-frame-pid ()
-  (format "/%s" (emacs-pid)))
+(defun alpha-frame-pid (pid)
+  (format "/%s" pid))
 
 (defvar alpha-frame-border-delete
   (eval-when-compile
@@ -43,11 +44,12 @@
              #x00100000                 ;WS_HSCROLL
              ))))
 
-;; (alpha-frame-delete-border "i_view64.exe")
+(defun alpha-frame-delete-border (pid)
+  (alpha-frame-nircmd pid `(("-style" ,alpha-frame-border-delete))))
 
 (defun alpha-frame-init ()
   (if alpha-frame-use-nircmd
-      (alpha-frame-nircmd (alpha-frame-pid)
+      (alpha-frame-nircmd (emacs-pid)
                           `(("-style" ,alpha-frame-border-delete)
                             ("max")
                             ;; ,alpha-frame-size-param
@@ -56,27 +58,31 @@
                              '((fullscreen . fullboth))))
   (set-frame-parameter nil 'alpha .713))
 
+;;;###autoload
 (defun alpha-frame-max ()
   "Maximize the current frame."
   (interactive)
   (if alpha-frame-use-nircmd
-      (alpha-frame-nircmd (alpha-frame-pid) '(("max")))
+      (alpha-frame-nircmd (emacs-pid) '(("max")))
     (set-frame-parameter nil 'fullscreen 'fullboth)))
 
 (defun alpha-frame-trans-set (arg)
   (set-frame-parameter nil 'alpha (min 1.0 arg)))
 
+;;;###autoload
 (defun alpha-frame-trans-inc (step)
   "Increase frame transparency with rate STEP."
   (interactive "p")
   (alpha-frame-trans-set (- (or (frame-parameter nil 'alpha) 1)
                       (/ step 100.0))))
 
+;;;###autoload
 (defun alpha-frame-trans-dec (step)
   "Decrease frame transparency with rate STEP."
   (interactive "p")
   (alpha-frame-trans-inc (- step)))
 
+;;;###autoload
 (defun alpha-frame-opaque ()
   "Make EMACS frame opaque."
   (interactive)

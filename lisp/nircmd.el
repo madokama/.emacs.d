@@ -5,7 +5,8 @@
 ;;; Code:
 
 (defsubst nircmd--execute (&rest cmd)
-  (unless (zerop (apply #'call-process "nircmd" nil nil nil cmd))
+  (if (zerop (apply #'call-process "nircmd" nil nil nil cmd))
+      t
     (error "[nircmd] %s failed (params: %s)" (car cmd) (cdr cmd))))
 
 ;;;###autoload

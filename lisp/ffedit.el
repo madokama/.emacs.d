@@ -344,7 +344,8 @@ With prefix argument ARG, play through to the end."
   (make-process :name "ffedit-preview"
                 :buffer (generate-new-buffer "*ffedit-preview*")
                 :command
-                (ytdl-detach-process (ffedit-preview-command/mpv path segs))
+                (ffedit-preview-command/mpv path segs)
+                ;; (ytdl-detach-process)
                 :sentinel
                 (lambda (proc signal)
                   ;; (message "[FFE]%s: %s" (process-exit-status proc) path)

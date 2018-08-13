@@ -60,6 +60,12 @@
                   (match-string 2 url)
                   (match-string 1 url)))))
 
+(defun page2feed-shogi-match-title (plst)
+  (format "%s-%s %s"
+          (plist-get plst :player1)
+          (plist-get plst :player2)
+          (plist-get plst :match)))
+
 (declare-function url-curl-sync "url-curl")
 
 ;; Mynavi
@@ -86,10 +92,7 @@
                              0 0 10
                              (page2feed-shogi-kif-date "mynavi" kif))))
            (list
-            (list 'title (format "%s-%s %s"
-                                 (plist-get plst :player1)
-                                 (plist-get plst :player2)
-                                 (plist-get plst :match))
+            (list 'title (page2feed-shogi-match-title plst)
                   'link kif
                   'updated time
                   'content (page2feed-shogi-watch-link kif)))))))))
@@ -167,6 +170,39 @@
                               (page2feed-shogi-kif-date "jt" kif)))
                'content (page2feed-shogi-watch-link kif)))))))
 
+(defun page2feed-shogi-games/mainichi (plst)
+  (when-let ((num
+              (and (string-match (rx (group digit)) (plist-get plst :match))
+                   (string-to-number (match-string 1 (plist-get plst :match))))))
+    (url-curl-sync
+     (plist-get plst :url)
+     (lambda ()
+       (when-let* ((dom
+                    (nth (1- num)
+                         (thread-first (libxml-parse-html-region
+                                        (point-min) (point-max)
+                                        (plist-get plst :url))
+                           (dom-by-class "table-typeA")
+                           car
+                           (dom-by-tag 'tbody)
+                           (dom-by-tag 'tr))))
+                   (kif (url-expand-file-name (dom-attr (dom-by-tag dom 'a) 'href)
+                                              (plist-get plst :url)))
+                   (date (and (string-match (rx "/"
+                                                (group (= 2 digit))
+                                                (group (= 2 digit))
+                                                (group (= 2 digit)))
+                                            kif)
+                              (mapcar #'string-to-number
+                                      (list (match-string 3 kif)
+                                            (match-string 2 kif)
+                                            (concat "20" (match-string 1 kif)))))))
+         (list
+          (list 'title (page2feed-shogi-match-title plst)
+                'link kif
+                'updated (apply #'encode-time 0 0 9 date)
+                'content (page2feed-shogi-watch-link kif))))))))
+
 ;; 
 (defun page2feed-shogi-games (plst)
   (let* ((url (plist-get plst :url))
@@ -184,6 +220,8 @@
        (page2feed-shogi-games/mynavi plst))
       ("www.jti.co.jp"
        (page2feed-shogi-games/jt plst))
+      ("mainichi.jp"
+       (page2feed-shogi-games/mainichi plst))
       (_
        (message "[p2f]Not supported yet: %S" plst)
        nil))))
@@ -210,8 +248,9 @@
   (cl-flet* ((find-kif (dom)
                (seq-find (lambda (node)
                            (and (consp node)
-                                (string= (car (dom-strings node))
-                                         "中継")))
+                                (string-match-p
+                                 (rx bos (or "中継" "毎日新聞ニュースサイト"))
+                                 (car (dom-strings node)))))
                          dom))
              (kifp (dom)
                (find-kif (dom-children (last (dom-children dom)))))

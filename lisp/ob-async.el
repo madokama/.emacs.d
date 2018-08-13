@@ -26,6 +26,11 @@
     (prog1 buf
       (with-current-buffer buf
         (special-mode)
+        (when (cl-member-if (lambda (param)
+                              (string= param "code"))
+                            (alist-get :result-params (nth 2 info)))
+          (pcase (car info)
+            ((or "emacs-lisp" "elisp") (emacs-lisp-mode))))
         (setq buffer-read-only nil))
       (display-buffer buf '(display-buffer-in-side-window)))))
 

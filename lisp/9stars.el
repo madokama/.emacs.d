@@ -164,6 +164,16 @@ the generative order.")
         (and (= month (plist-get term :month))
              (< day (plist-get term :day))))))
 
+(defun 9stars-next-year-p (year month day)
+  ;; Calculate winter solstice
+  (let ((term (solmath-solar-term year 270)))
+    (and (= (plist-get term :month) month)
+         (<= (plist-get term :day) day))))
+
+(defun 9stars-year-overlap-p (year month day)
+  (or (9stars-prev-year-p year month day)
+      (9stars-next-year-p year month day)))
+
 (defun 9stars-prev-month-p (year month day)
   (let ((term
          (solmath-solar-term year (alist-get month 9stars-solar-longitudes))))
@@ -189,8 +199,6 @@ the generative order.")
            if (assq n alst)
              return (cl-list* :phase phase
                               :number (assq n alst))))
-
-;; TODO handle year overlaps
 
 (defun 9stars-year-star (year)
   (9stars-number-star
@@ -276,10 +284,35 @@ the generative order.")
                                  (9stars--plist-phase b))
     (list :比和 (list '= (9stars--plist-kanji a) (9stars--plist-kanji b)))))
 
+(defun 9stars-star-special-p (a b)
+  ;; 四緑と八白の特殊関係
+  (when (equal (cl-sort (list (plist-get a :number)
+                              (plist-get b :number))
+                        #'<)
+               '(4 8))
+    (list :特殊 (list '* (9stars--plist-kanji a) (9stars--plist-kanji b)))))
+
 (defun 9stars-star-relation (a b)
   (or (9stars-star-generative-p a b)
       (9stars-star-overcoming-p a b)
-      (9stars-star-resonant-p a b)))
+      (9stars-star-resonant-p a b)
+      (9stars-star-special-p a b)))
+
+(defun 9stars--calc-overlaps (key overlap-key fn)
+  (lambda (a b)
+    (let ((a-overlap (plist-get a overlap-key))
+          (b-overlap (plist-get b overlap-key)))
+      (when (or a-overlap b-overlap)
+        (nconc (when a-overlap
+                 (funcall fn a-overlap (plist-get b key)))
+               (when b-overlap
+                 (funcall fn (plist-get a key) b-overlap))
+               (when (and a-overlap b-overlap)
+                 (funcall fn a-overlap b-overlap)))))))
+
+(defun 9stars-overlap-star-relation (a b)
+  (funcall (9stars--calc-overlaps :year-star :overlap-star #'9stars-star-relation)
+           a b))
 
 (defun 9stars-stem-combination (stem)
   ;; http://www.piano.or.jp/report/04ess/kyusei/2018/01/15_24151.html
@@ -329,6 +362,10 @@ the generative order.")
          (9stars-branch-combination/triangle-p a b)
          (9stars-branch-clash/opposite-p a b)))
 
+(defun 9stars-overlap-branch-relations (a b)
+  (funcall (9stars--calc-overlaps :year-branch :overlap-year #'9stars-branch-relations)
+           a b))
+
 ;;; Database
 
 (defun 9stars--parse-month (month)
@@ -374,12 +411,17 @@ the generative order.")
                      (string-to-number (match-string n date)))
                    (list 1 2 3))))))
 
+(defun 9stars--normalize-name (name)
+  (if (symbolp name)
+      name
+    (string-trim name)))
+
 (defun 9stars--parse-entry (data)
   (pcase data
     (`(,name ,y ,m ,d)
-      (list (string-trim name) y m d))
+      (list (9stars--normalize-name name) y m d))
     (`(,name ,date)
-      (cons (string-trim name)
+      (cons (9stars--normalize-name name)
             (9stars--parse-date (string-trim date))))
     (data (message "[9s] Parse failed: %S" data)
           nil)))
@@ -410,17 +452,21 @@ the generative order.")
              (solar-year (plist-get solar :year))
              (solar-month (plist-get solar :month))
              (year-branch (9stars-year-branch solar-year)))
-        (list :name name
-              :year-star (9stars-year-star solar-year)
-              :month-star
-              (9stars-month-star (9stars--plist-animal year-branch) solar-month)
-              :year-stem (9stars-year-stem solar-year)
-              :year-branch year-branch
-              :month-stem (9stars-month-stem solar-year solar-month)
-              :month-branch (9stars-month-branch solar-month)
-              ;; NOTE Use normal gregorian year and month for the following
-              :day-stem (9stars-day-stem year month day)
-              :day-branch (9stars-day-branch year month day))))))
+        (nconc
+         (list :name name
+               :year-star (9stars-year-star solar-year)
+               :month-star
+               (9stars-month-star (9stars--plist-animal year-branch) solar-month)
+               :year-stem (9stars-year-stem solar-year)
+               :year-branch year-branch
+               :month-stem (9stars-month-stem solar-year solar-month)
+               :month-branch (9stars-month-branch solar-month)
+               ;; NOTE Use normal gregorian year and month for the following
+               :day-stem (9stars-day-stem year month day)
+               :day-branch (9stars-day-branch year month day))
+         (when (9stars-year-overlap-p year month day)
+           (list :overlap-star (9stars-year-star (1+ solar-year))
+                 :overlap-year (9stars-year-branch (1+ solar-year)))))))))
 
 ;;;###autoload
 (defun 9stars-birthday-profile (data)
@@ -430,24 +476,27 @@ the generative order.")
 
 ;;;###autoload
 (defun 9stars-birtyday-relations (a b)
-  (let ((a (9stars-birthday-profile a))
-        (b (9stars-birthday-profile b)))
+  (when-let ((a (9stars-birthday-profile a))
+             (b (9stars-birthday-profile b)))
     (nconc (list (format "%s - %s" (plist-get a :name) (plist-get b :name)))
            (9stars-star-relation
             (plist-get a :year-star) (plist-get b :year-star))
+           (9stars-overlap-star-relation a b)
            (9stars-stem-combination-p
             (plist-get a :day-stem) (plist-get b :day-stem))
            (9stars-branch-relations
-            (plist-get a :year-branch) (plist-get b :year-branch)))))
+            (plist-get a :year-branch) (plist-get b :year-branch))
+           (9stars-overlap-branch-relations a b))))
 
 ;;;###autoload
 (defun 9stars-birthday-relations/many (one many)
   (seq-sort-by
    (pcase-lambda (`(_ . ,lst))
-     (+ (cond ((memq :相生 lst) 2)
-              ((memq :比和 lst) 2)
-              (t 0))
-        (length (cl-intersection lst '(:干合 :支合 :三合)))))
+     (cl-loop for x in lst
+              if (memq x '(:相生 :比和))
+                sum 2
+              else
+                count (memq x '(:干合 :支合 :三合))))
    #'>
    (mapcar (apply-partially #'9stars-birtyday-relations
                             (9stars-birthday-profile one))

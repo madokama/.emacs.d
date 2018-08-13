@@ -79,7 +79,8 @@
 ;;        (funcall callback (string-to-number (match-string 0 data)))))))
 
 (defun w32-symon-update ()
-  (when (eq t (frame-visible-p (selected-frame)))
+  (when (and mode-line-format
+             (eq t (frame-visible-p (selected-frame))))
     (mapc (lambda (object)
             (w32-symon-get-status object
                                   (lambda (cell)

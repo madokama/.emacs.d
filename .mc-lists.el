@@ -19,6 +19,7 @@
         hydra-motion/body
         hydra-motion/hydra-motion-forwad
         hydra-motion/nil
+        indent-for-tab-command
         insert-parentheses
         kill-region
         kill-sexp

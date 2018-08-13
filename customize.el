@@ -19,6 +19,7 @@
  '(company-global-modes '(not shell-mode term-mode))
  '(company-minimum-prefix-length 2)
  '(company-selection-wrap-around t)
+ '(company-tooltip-align-annotations t)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
  '(confirm-kill-emacs 'y-or-n-p)
@@ -31,7 +32,6 @@
  '(counsel-mode-override-describe-bindings t)
  '(counsel-yank-pop-preselect-last t)
  '(create-lockfiles nil)
- '(cursor-in-non-selected-windows nil)
  '(custom-raised-buttons nil)
  '(custom-safe-themes t)
  '(default-frame-alist
@@ -117,6 +117,7 @@
  '(ivy-ignore-buffers
    '("\\` " "company-statistics-cache\\.el" "/elfeed/index" "~\\'"))
  '(ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
+ '(ivy-posframe-parameters '((alpha . 80)))
  '(ivy-use-selectable-prompt t)
  '(ivy-use-virtual-buffers t)
  '(ivy-virtual-abbreviate 'abbreviate)
@@ -190,8 +191,9 @@
  '(powerline-default-separator 'chamfer)
  '(proced-auto-update-flag t)
  '(proced-tree-flag t)
- '(recentb-abema-channels '(shogi))
+ '(recentb-abema-channels '(shogi shogi-live))
  '(recenter-positions '(top middle bottom))
+ '(recenter-redisplay t)
  '(recentf-auto-cleanup 300)
  '(recentf-exclude '("~\\'" "\\.elc\\'" "/\\.emacs\\.d/url/cache/"))
  '(recentf-max-saved-items 999)
@@ -205,6 +207,7 @@
  '(save-place-ignore-files-regexp "\\(?:COMMIT_EDITMSG\\|/elfeed/index\\)$")
  '(scroll-bar-mode nil)
  '(scroll-conservatively 2305843009213693951)
+ '(scroll-margin 1)
  '(sentence-end-double-space nil)
  '(shell-completion-execonly nil)
  '(shell-dynamic-complete-functions

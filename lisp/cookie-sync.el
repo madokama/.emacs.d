@@ -11,6 +11,8 @@
 (defvar cookie-sync-browsers
   '(cookie-sync-firefox-params cookie-sync-chrome-params))
 
+(defvar cookie-sync-hooks nil)
+
 (defun cookie-sync--prepare-buffer ()
   (with-current-buffer (generate-new-buffer " *csync*")
     (insert "# Netscape HTTP Cookie File\n# http://www.netscape.com/newsref/std/cookie_spec.html\n# This is a generated file!  Do not edit.\n\n")
@@ -74,6 +76,7 @@ cookies will be written."
         (require 'cookie-sync)
         (cookie-sync-try ',params-list ,cookie))
      (lambda (_)
+       (run-hooks 'cookie-sync-hooks)
        (message "Cookies synced.")))))
 
 (defun cookie-sync--match-host (key hosts)

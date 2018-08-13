@@ -10,10 +10,7 @@
 (require 'url-cache)
 
 (defvar url-curl-default-ua-regexp
-  (rx bow (or "google.com" "reddit.com") eos))
-
-(defvar url-curl-no-cookie-regexp
-  (rx bow "reddit.com" eos))
+  (rx bow (or "google.com") eos))
 
 
 ;; Lock system
@@ -94,11 +91,10 @@
            ,@(unless (string= url-request-method "HEAD")
                (when (url-cache-prepare cache)
                  (list "-o" cache)))
-           ,@(unless (string-match-p url-curl-no-cookie-regexp (url-host url))
-               (when-let ((use-cookies (url-use-cookies url))
-                          (cookie (expand-file-name (url-curl-cookie))))
-                 (list "-b" cookie ;; "-c" cookie
-                       )))
+           ,@(when-let ((use-cookies (url-use-cookies url))
+                        (cookie (expand-file-name (url-curl-cookie))))
+               (list "-b" cookie ;; "-c" cookie
+                     ))
            ,@(mapcan (pcase-lambda (`(,name . ,value))
                        (list "-H" (format "%s: %s" name value)))
                      url-request-extra-headers)
@@ -134,11 +130,7 @@
        ;; 307 Temporary redirect
        (when-let ((loc (or (mail-fetch-field "Location")
                            (mail-fetch-field "URI"))))
-         (setq status
-               (list :redirect
-                     ;; Handle case where server returns relative paths.
-                     (url-expand-file-name loc
-                                           (url-recreate-url url-current-object))))
+         (setq status (list :redirect loc))
          (delete-region (point-min) (point-max))))
       (4
        (setq status (list :error (list 'error 'http code))))
@@ -173,7 +165,6 @@
          (referer (url-curl-referer))
          (cache (url-cache-create-filename url)))
     (with-temp-buffer
-      (setq url-current-object url)
       (setq-local url-request-method (or url-request-method "GET"))
       (apply #'call-process "curl" nil t nil
              `(,@(url-curl--args url referer)
@@ -187,7 +178,7 @@
           (insert-file-contents-literally cache)
           (write-region (point-min) (point-max) cache nil 5))))
     (when (file-exists-p cache)
-      (with-current-buffer (find-file-noselect cache t t)
+      (with-current-buffer (find-file-noselect cache)
         (goto-char (point-min))
         (search-forward "\n\n")
         (unwind-protect
@@ -198,7 +189,62 @@
 
 
 
-(defun url-curl--sentinel (url cache callback cbargs)
+(declare-function curl-get "ext:curl-core")
+(declare-function curl-load-cookies "ext:curl-core")
+
+(defvar url-curl-libcurl nil)
+
+(defun url--libcurl-internal (url referer cache buffer callback cbargs)
+  (url-cache-prepare cache)
+  (when-let ((status
+              (curl-get url
+                        (vconcat
+                         (cond
+                           ((string-match-p url-curl-default-ua-regexp
+                                            (url-host url))
+                            (list (format "User-Agent: %s"
+                                          (url-http--user-agent-default-string)))))
+                         (when referer
+                           (list (format "Referer: %s" referer)))
+                         (mapcar (pcase-lambda (`(,name . ,value))
+                                   (format "%s: %s" name value))
+                                 url-request-extra-headers))
+                        cache)))
+    (setf (car cbargs) (nconc status (car cbargs))))
+  (when (file-exists-p cache)
+    (with-current-buffer buffer
+      (set-buffer-multibyte nil)
+      (insert-file-contents-literally cache)
+      (apply callback cbargs))))
+
+;; (defun url-libcurl-post-data (url callback cbargs &rest _)
+;;   ;; TODO "multipart/form-data" for file uploads
+;;   )
+
+(defun url-libcurl (url callback cbargs &rest _)
+  (let ((referer (url-curl-referer))
+        (buffer
+         (generate-new-buffer
+          (format " *http %s:%d*" (url-host url) (url-port url))))
+        (cache (url-cache-create-filename url)))
+    (if (url-asynchronous url)
+        (make-thread
+         (lambda ()
+           (url--libcurl-internal url referer cache buffer callback cbargs)))
+      (url--libcurl-internal url referer cache buffer callback cbargs))
+    buffer))
+
+(defun url-libcurl-load-cookies ()
+  (let ((jar (expand-file-name (url-curl-cookie))))
+    (when (file-readable-p jar)
+      (curl-load-cookies jar))))
+
+(when (and url-curl-libcurl
+           (require 'curl-core nil t))
+  (url-libcurl-load-cookies)
+  (add-hook 'cookie-sync-hooks #'url-libcurl-load-cookies))
+
+(defun url-curl--senginel (url cache callback cbargs)
   (lambda (proc _signal)
     (when (and (zerop (process-exit-status proc))
                (file-exists-p cache))
@@ -224,12 +270,6 @@
                (apply callback cbargs)))
         (url-curl--cache-unlock cache)))))
 
-(defvar url-curl--debug nil)
-(defun url-curl--debug (x)
-  (when url-curl--debug
-    (message "[url-curl] %S" x))
-  x)
-
 (defun url-curl (url callback cbargs &rest _)
   (let ((cache (url-cache-create-filename url)))
     (url-curl--cache-lock cache)
@@ -244,9 +284,8 @@
         (make-process
          :name "url-curl"
          :buffer buffer
-         :command (url-curl--debug
-                   `("curl" ,@(url-curl--args url referer)
-                            ,(url-recreate-url url)))
+         :command `("curl" ,@(url-curl--args url referer)
+                           ,(url-recreate-url url))
          :coding 'binary
          :connection-type 'pipe
          :filter
@@ -254,7 +293,7 @@
            ;; NOTE processing header only.
            (with-current-buffer (process-buffer proc)
              (insert (replace-regexp-in-string "\r" "" str))))
-         :sentinel (url-curl--sentinel url cache callback cbargs)))
+         :sentinel (url-curl--senginel url cache callback cbargs)))
       buffer)))
 
 (advice-add 'url-http :override #'url-curl)

@@ -475,13 +475,21 @@
            (jcom--report-reserve-error failed)
          (message "[JCOM] Done."))))))
 
+(defun jcom-cancel-program (prog stb)
+  "Cancel reservation of program PROG.
+Second parameter STB is required to identify the recording hwardware."
+  (url-build-query-string
+   `(("remoteRecEditData.itemIdStr" ,(alist-get 'itemId prog))
+     ("remoteRecEditData.deviceListNumber" ,(cadr (assq 'deviceListNumber stb)))
+     ("method:doCancelRec"))
+   nil t))
 
 (define-derived-mode jcom-mode
   special-mode "JCOM"
   "Major mode for JCOM online reservation interface.
 
 \\{jcom-mode-map}"
-  (setq-local revert-buffer-function #'jcom-list-programs))
+  (setq-local revert-buffer-function #'jcom-schedule))
 
 (defun jcom-mode-enter ()
   "Reserve program at point."

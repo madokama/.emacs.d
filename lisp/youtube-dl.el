@@ -28,6 +28,8 @@
   "~/Downloads/vids/"
   "Download directory.")
 
+(defvar youtube-dl-hooks nil)
+
 ;;;
 
 (defun youtube-dl--raw-formats (url)
@@ -142,6 +144,10 @@
                    (ytdl-detach-process
                     (youtube-dl--command-list template url query-fmt))
                    :noquery t
+                   :filter
+                   (lambda (_proc output)
+                     (when (string-match-p "^VO: " output)
+                       (run-hooks 'youtube-dl-hooks)))
                    :sentinel
                    (lambda (proc signal)
                      (let ((stop (process-get proc :spinner)))
@@ -221,6 +227,8 @@
 
 ;;;###autoload
 (defun youtube-dl/play (url &optional query-fmt)
+  "Play video URL.
+With prefix argument QUERY-FMT, interactively ask user the preferred quality."
   (interactive (list nil current-prefix-arg))
   (youtube-dl--execute youtube-dl-command/play url query-fmt))
 
